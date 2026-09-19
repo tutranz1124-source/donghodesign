@@ -90,15 +90,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Dynamic Navigation Items based on role
   const navItems = isAdmin
     ? [
-        { label: 'Tổng Quan Bảng Điều Khiển', href: '/admin', icon: LayoutDashboard },
-        { label: 'Giao Diện & Canvas Trang Chủ', href: '/admin/pages', icon: Layers },
-        { label: 'Quản Lý Bài Viết Blog', href: '/admin/blog', icon: FileText },
-        { label: 'Thư Viện Hình Ảnh & Asset', href: '/admin/media', icon: ImageIcon },
-        { label: 'Tài Khoản & Phân Quyền', href: '/admin/users', icon: Users }
+        { label: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
+        { label: 'Trang chủ & Canvas', href: '/admin/pages', icon: Layers },
+        { label: 'Bài viết Blog', href: '/admin/blog', icon: FileText },
+        { label: 'Thư viện Media', href: '/admin/media', icon: ImageIcon },
+        { label: 'Tài khoản & Quyền', href: '/admin/users', icon: Users }
       ]
     : [
-        { label: 'Quản Lý Bài Viết Blog', href: '/admin/blog', icon: FileText },
-        { label: 'Thư Viện Hình Ảnh & Asset', href: '/admin/media', icon: ImageIcon }
+        { label: 'Bài viết Blog', href: '/admin/blog', icon: FileText },
+        { label: 'Thư viện Media', href: '/admin/media', icon: ImageIcon }
       ];
 
   return (
@@ -107,18 +107,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Sticky Sidebar Desktop (Always fixed to viewport while user scrolls) */}
         <aside
           className={`hidden md:flex bg-[#04092b] text-white flex-col justify-between shrink-0 border-r border-[#c5a26c]/20 z-40 transition-all duration-300 sticky top-0 h-screen overflow-hidden ${
-            isCollapsed ? 'w-16' : 'w-56'
+            isCollapsed ? 'w-16' : 'w-64'
           }`}
         >
           <div className="flex flex-col flex-1 overflow-y-auto scrollbar-none">
             {/* Logo & Header */}
             <div
-              className={`p-3 border-b border-white/10 flex items-center ${
+              className={`p-3.5 border-b border-white/10 flex items-center ${
                 isCollapsed ? 'justify-center flex-col gap-1.5' : 'justify-between'
               }`}
             >
-              <div className="flex items-center gap-2">
-                <div className="relative h-7 w-9 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="relative h-8 w-10 shrink-0">
                   <Image
                     src="/uploads/logo-dong-hoa-property.png"
                     alt="Đông Hòa Design"
@@ -127,9 +127,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   />
                 </div>
                 {!isCollapsed && (
-                  <div>
-                    <h2 className="font-bold text-[12.5px] text-white font-display truncate">Đông Hòa Design</h2>
-                    <p className="text-[8.5px] text-[#c5a26c] uppercase tracking-wider font-accent">Studio CMS</p>
+                  <div className="min-w-0">
+                    <h2 className="font-bold text-[13px] text-white font-display truncate">Đông Hòa Design</h2>
+                    <p className="text-[9px] text-[#c5a26c] uppercase tracking-wider font-accent">Studio CMS</p>
                   </div>
                 )}
               </div>
@@ -137,7 +137,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <button
                 type="button"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="p-1 rounded-lg bg-white/5 hover:bg-[#c5a26c] hover:text-[#04092b] text-white transition-all"
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-[#c5a26c] hover:text-[#04092b] text-white transition-all shrink-0"
                 title={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
               >
                 {isCollapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
@@ -146,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* User Profile Capsule in Sidebar */}
             {user && !isCollapsed && (
-              <div className="m-2 p-2 bg-white/5 rounded-xl border border-white/10 flex items-center gap-2.5">
+              <div className="mx-3 my-2.5 p-2 bg-white/5 hover:bg-white/10 transition-colors rounded-xl border border-white/10 flex items-center gap-2.5">
                 <div
                   className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[11.5px] shadow-xs shrink-0 ${
                     isAdmin ? 'bg-[#c5a26c] text-[#04092b]' : 'bg-blue-600 text-white'
@@ -155,14 +155,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-bold text-[11.5px] text-white truncate leading-tight">{user.name}</p>
+                  <p className="font-bold text-[12px] text-white truncate leading-tight">{user.name}</p>
                   <div className="flex items-center gap-1 mt-0.5">
                     {isAdmin ? (
-                      <span className="text-[8.5px] font-bold text-[#c5a26c] bg-[#c5a26c]/20 px-1 py-0.2 rounded inline-flex items-center gap-0.5">
+                      <span className="text-[9px] font-semibold text-[#c5a26c] bg-[#c5a26c]/20 px-1.5 py-0.2 rounded inline-flex items-center gap-0.5">
                         <ShieldCheck className="w-2.5 h-2.5" /> Admin
                       </span>
                     ) : (
-                      <span className="text-[8.5px] font-bold text-blue-300 bg-blue-500/20 px-1 py-0.2 rounded inline-flex items-center gap-0.5">
+                      <span className="text-[9px] font-semibold text-blue-300 bg-blue-500/20 px-1.5 py-0.2 rounded inline-flex items-center gap-0.5">
                         <Edit3 className="w-2.5 h-2.5" /> Editor
                       </span>
                     )}
@@ -172,7 +172,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
 
             {/* Navigation */}
-            <nav className="p-2 space-y-1 flex-1">
+            <nav className="p-3 space-y-1.5 flex-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href;
@@ -181,17 +181,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     key={item.href}
                     href={item.href}
                     title={item.label}
-                    className={`flex items-center gap-2.5 px-2.5 py-2 text-[12px] font-medium transition-all rounded-lg relative group ${
+                    className={`flex items-center gap-3 px-3 py-2.5 text-[12.5px] font-medium transition-all rounded-xl relative group ${
                       active
-                        ? 'bg-[#c5a26c] text-[#04092b] font-bold shadow-xs'
+                        ? 'bg-[#c5a26c] text-[#04092b] font-bold shadow-sm'
                         : 'text-white/80 hover:bg-white/10 hover:text-white'
                     } ${isCollapsed ? 'justify-center' : ''}`}
                   >
-                    <Icon className="w-3.5 h-3.5 shrink-0" />
+                    <Icon className="w-4 h-4 shrink-0" />
                     {!isCollapsed && <span className="truncate flex-1">{item.label}</span>}
                     {/* Collapsed Tooltip */}
                     {isCollapsed && (
-                      <div className="absolute left-full ml-2 px-2 py-0.5 bg-[#04092b] text-white text-[11px] font-bold rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-[#c5a26c]/40 shadow-lg">
+                      <div className="absolute left-full ml-2 px-2.5 py-1 bg-[#04092b] text-white text-[11px] font-bold rounded-md whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-[#c5a26c]/40 shadow-lg">
                         {item.label}
                       </div>
                     )}
@@ -202,7 +202,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Bottom Actions */}
-          <div className="p-2 border-t border-white/10 space-y-1">
+          <div className="p-3 border-t border-white/10 space-y-1.5">
             <Link
               href="/blog"
               target="_blank"

@@ -28,17 +28,17 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
   const getPageMeta = () => {
     switch (pathname) {
       case '/admin':
-        return { title: 'Tổng Quan Bảng Điều Khiển', shortTitle: 'Tổng Quan', icon: LayoutDashboard, category: 'Dashboard' };
+        return { title: 'Tổng quan', shortTitle: 'Tổng quan', icon: LayoutDashboard, category: 'Dashboard' };
       case '/admin/pages':
-        return { title: 'Giao Diện & Canvas Trang Chủ', shortTitle: 'Trang Chủ', icon: Layers, category: 'Page Builder' };
+        return { title: 'Trang chủ & Canvas', shortTitle: 'Trang chủ', icon: Layers, category: 'Page Builder' };
       case '/admin/blog':
-        return { title: 'Quản Lý Bài Viết & Tin Tức', shortTitle: 'Bài Viết', icon: FileText, category: 'Blog CMS' };
+        return { title: 'Bài viết Blog', shortTitle: 'Bài viết', icon: FileText, category: 'Blog CMS' };
       case '/admin/media':
-        return { title: 'Thư Viện Hình Ảnh & Asset', shortTitle: 'Thư Viện', icon: ImageIcon, category: 'Media Library' };
+        return { title: 'Thư viện Media', shortTitle: 'Media', icon: ImageIcon, category: 'Media Library' };
       case '/admin/users':
-        return { title: 'Tài Khoản & Phân Quyền', shortTitle: 'Tài Khoản', icon: Users, category: 'System' };
+        return { title: 'Tài khoản & Phân quyền', shortTitle: 'Tài khoản', icon: Users, category: 'System' };
       default:
-        return { title: 'Quản Trị CMS', shortTitle: 'CMS', icon: Sparkles, category: 'Admin' };
+        return { title: 'Quản trị CMS', shortTitle: 'CMS', icon: Sparkles, category: 'Admin' };
     }
   };
 
