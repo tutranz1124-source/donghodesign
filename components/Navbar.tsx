@@ -95,11 +95,11 @@ export default function Navbar({ settings }: NavbarProps) {
           <HeaderSearchBar />
 
           <a
-            href="tel:0906499279"
+            href={`tel:${(settings.hotline || '0906.499.279').replace(/\D/g, '')}`}
             className="flex items-center gap-1.5 text-[13px] font-semibold text-[#c5a26c] hover:text-white transition-colors whitespace-nowrap"
           >
             <PhoneCall className="w-3.5 h-3.5" />
-            <span>0906.499.279</span>
+            <span>{settings.hotline || '0906.499.279'}</span>
           </a>
 
           <a
@@ -118,9 +118,9 @@ export default function Navbar({ settings }: NavbarProps) {
           <HeaderSearchBar />
 
           <a
-            href="tel:0906499279"
+            href={`tel:${(settings.hotline || '0906.499.279').replace(/\D/g, '')}`}
             className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-[#c5a26c] hover:text-white rounded-lg transition-colors"
-            title="Gọi Hotline 0906.499.279"
+            title={`Gọi Hotline ${settings.hotline || '0906.499.279'}`}
           >
             <PhoneCall className="w-4 h-4 sm:w-5 sm:h-5 text-[#c5a26c]" strokeWidth={2} />
           </a>
@@ -171,11 +171,11 @@ export default function Navbar({ settings }: NavbarProps) {
               Nhận Tư Vấn Thiết Kế
             </a>
             <a
-              href="tel:0906499279"
+              href={`tel:${(settings.hotline || '0906.499.279').replace(/\D/g, '')}`}
               className="w-full text-center border border-[#c5a26c] py-2.5 font-semibold text-[13px] text-[#c5a26c] flex items-center justify-center gap-2 hover:bg-[#c5a26c]/10 rounded-sm"
             >
               <PhoneCall className="w-4 h-4" />
-              <span>Hotline: 0906.499.279</span>
+              <span>Hotline: {settings.hotline || '0906.499.279'}</span>
             </a>
           </div>
         </div>

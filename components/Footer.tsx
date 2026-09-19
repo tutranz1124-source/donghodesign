@@ -23,15 +23,16 @@ export default function Footer({ settings }: FooterProps) {
         <div className="col-span-1 md:col-span-5 space-y-4 sm:space-y-6">
           <div className="relative h-[48px] w-[190px] sm:h-[56px] sm:w-[220px]">
             <Image
-              src={settings.logo || '/uploads/logo-dong-hoa-property.png'}
-              alt={settings.siteName || 'Đông Hòa Design'}
+              src={settings?.logo || '/uploads/logo-dong-hoa-property.png'}
+              alt={settings?.siteName || 'Đông Hòa Design'}
               fill
               className="object-contain object-left"
             />
           </div>
 
           <p className="text-[14px] text-white/80 leading-relaxed font-light max-w-md">
-            Đông Hòa Design là đơn vị chuyên thiết kế và thi công trọn gói, mang đến giải pháp không gian tối ưu công năng, chuẩn mực thẩm mỹ và nâng tầm giá trị cho từng công trình.
+            {settings?.siteDescription ||
+              'Đông Hòa Design là đơn vị chuyên thiết kế và thi công trọn gói, mang đến giải pháp không gian tối ưu công năng, chuẩn mực thẩm mỹ và nâng tầm giá trị cho từng công trình.'}
           </p>
         </div>
 
@@ -43,24 +44,39 @@ export default function Footer({ settings }: FooterProps) {
           <ul className="space-y-3 text-[13.5px] text-white/85 font-light">
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-[#c5a26c] shrink-0 mt-0.5" />
-              <span>113-115 Ung Văn Khiêm, Phường Thạnh Mỹ Tây, TP Hồ Chí Minh, Việt Nam</span>
+              <span>{settings?.address || '113-115 Ung Văn Khiêm, Phường Thạnh Mỹ Tây, TP Hồ Chí Minh, Việt Nam'}</span>
             </li>
             <li className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-[#c5a26c] shrink-0" />
-              <a href="tel:0906499279" className="hover:text-[#c5a26c] transition-colors font-medium">
-                Hotline: 0906.499.279
+              <a
+                href={`tel:${(settings?.hotline || '0906.499.279').replace(/\D/g, '')}`}
+                className="hover:text-[#c5a26c] transition-colors font-medium"
+              >
+                Hotline: {settings?.hotline || '0906.499.279'}
               </a>
             </li>
             <li className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-[#c5a26c] shrink-0" />
-              <a href="mailto:info@donghoagroup.vn" className="hover:text-[#c5a26c] transition-colors">
-                Email: info@donghoagroup.vn
+              <a
+                href={`mailto:${settings?.email || 'info@donghoagroup.vn'}`}
+                className="hover:text-[#c5a26c] transition-colors"
+              >
+                Email: {settings?.email || 'info@donghoagroup.vn'}
               </a>
             </li>
             <li className="flex items-center gap-3">
               <Globe className="w-4 h-4 text-[#c5a26c] shrink-0" />
-              <a href="https://www.DongHoaGroup.vn" target="_blank" rel="noopener noreferrer" className="hover:text-[#c5a26c] transition-colors">
-                Website: www.DongHoaGroup.vn
+              <a
+                href={
+                  settings?.website?.startsWith('http')
+                    ? settings.website
+                    : `https://${settings?.website || 'www.DongHoaGroup.vn'}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-[#c5a26c] transition-colors"
+              >
+                Website: {settings?.website || 'www.DongHoaGroup.vn'}
               </a>
             </li>
           </ul>
@@ -73,7 +89,7 @@ export default function Footer({ settings }: FooterProps) {
           </h4>
           <ul className="space-y-2.5 text-[13.5px] text-white/80 font-light">
             <li>
-              <Link href="#about" className="hover:text-[#c5a26c] transition-colors">
+              <Link href="#philosophy" className="hover:text-[#c5a26c] transition-colors">
                 Giới thiệu công ty
               </Link>
             </li>
@@ -88,12 +104,12 @@ export default function Footer({ settings }: FooterProps) {
               </Link>
             </li>
             <li>
-              <a href="#privacy" className="hover:text-[#c5a26c] transition-colors">
+              <a href="#philosophy" className="hover:text-[#c5a26c] transition-colors">
                 Chính sách quyền riêng tư
               </a>
             </li>
             <li>
-              <a href="#terms" className="hover:text-[#c5a26c] transition-colors">
+              <a href="#philosophy" className="hover:text-[#c5a26c] transition-colors">
                 Điều khoản và điều kiện
               </a>
             </li>
@@ -109,7 +125,7 @@ export default function Footer({ settings }: FooterProps) {
       {/* Bottom Bar */}
       <div className="border-t border-white/10 py-6 px-4 sm:px-8 lg:px-20 bg-[#03061f]">
         <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-[12px] text-white/60">
-          <p>© 2026 Đông Hòa Design - Dong Hoa Group. All rights reserved.</p>
+          <p>{settings?.copyright || '© 2026 Đông Hòa Design - Dong Hoa Group. All rights reserved.'}</p>
           <button
             onClick={scrollToTop}
             className="flex items-center gap-1.5 hover:text-[#c5a26c] transition-colors text-white/80"

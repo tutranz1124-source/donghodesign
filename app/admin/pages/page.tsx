@@ -1994,7 +1994,7 @@ export default function AdminPageEditor() {
                       <Layers className="w-4 h-4 text-[#c5a26c]" /> Quản Lý Lớp &amp; Danh Sách Món Đồ
                     </span>
                     <span className="text-[11px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded font-bold">
-                      {currentStage?.items?.length || 0} món
+                      {currentStageItems.length} món
                     </span>
                   </div>
 
@@ -2003,7 +2003,7 @@ export default function AdminPageEditor() {
                   </p>
 
                   <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
-                    {[...(currentStage?.items || [])]
+                    {[...currentStageItems]
                       .map((item, originalIdx) => ({ item, originalIdx }))
                       .reverse()
                       .map(({ item, originalIdx }) => {
@@ -2042,7 +2042,7 @@ export default function AdminPageEditor() {
                               <button
                                 type="button"
                                 onClick={() => bringForward(originalIdx)}
-                                disabled={originalIdx >= (currentStage?.items?.length || 1) - 1}
+                                disabled={originalIdx >= currentStageItems.length - 1}
                                 className={`p-1 rounded text-xs transition-colors disabled:opacity-20 ${
                                   isThisSelected ? 'hover:bg-white/20 text-white' : 'hover:bg-[#e2ddd3] text-[#04092b]'
                                 }`}
@@ -2332,32 +2332,88 @@ export default function AdminPageEditor() {
               <h3 className="font-bold text-[18px] text-[#04092b] flex items-center gap-2">
                 <Layout className="w-5 h-5 text-[#c5a26c]" /> Hero Banner
               </h3>
-              <span className="text-[12px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded-full">
-                Slide {heroSlideIndex + 1} / {hero?.slides?.length || 3}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded-full">
+                  Slide {heroSlideIndex + 1} / {hero?.slides?.length || 3}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSlide = {
+                      tag: 'ĐÔNG HÒA DESIGN',
+                      monogram: 'Đ',
+                      line1: 'Không gian sống',
+                      line2: 'Đẳng cấp & Tinh tế',
+                      description: 'Giải pháp thiết kế & thi công nội thất cao cấp mang dấu ấn riêng.',
+                      backgroundImage: '/uploads/hero_slide_1.png',
+                      buttonText: 'Xem thêm',
+                      buttonTarget: '#contact',
+                      secondaryText: 'Tìm hiểu về chúng tôi →',
+                      secondaryTarget: '#philosophy'
+                    };
+                    const updated = [...(hero?.slides || []), newSlide];
+                    setData({ ...data, hero: { ...hero, slides: updated } });
+                    setHeroSlideIndex(updated.length - 1);
+                  }}
+                  className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> + Thêm Slide
+                </button>
+              </div>
             </div>
 
             {/* Slide Selector Buttons */}
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-wrap gap-2">
               {hero?.slides?.map((slide, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setHeroSlideIndex(idx)}
-                  className={`p-2.5 rounded-xl font-bold text-[13px] border transition-all text-center ${
-                    idx === heroSlideIndex
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-md ring-2 ring-[#c5a26c]/40'
-                      : 'bg-[#f4f1ea] text-[#04092b] hover:bg-[#e2ddd3]'
-                  }`}
-                >
-                  Slide {idx + 1} ({slide.monogram})
-                </button>
+                <div key={idx} className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setHeroSlideIndex(idx)}
+                    className={`px-3 py-2 rounded-xl font-bold text-[13px] border transition-all text-center ${
+                      idx === heroSlideIndex
+                        ? 'bg-[#04092b] text-[#c5a26c] shadow-md ring-2 ring-[#c5a26c]/40'
+                        : 'bg-[#f4f1ea] text-[#04092b] hover:bg-[#e2ddd3]'
+                    }`}
+                  >
+                    Slide {idx + 1} ({slide.monogram})
+                  </button>
+                  {hero.slides.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = hero.slides.filter((_, i) => i !== idx);
+                        setData({ ...data, hero: { ...hero, slides: updated } });
+                        if (heroSlideIndex >= updated.length) {
+                          setHeroSlideIndex(Math.max(0, updated.length - 1));
+                        }
+                      }}
+                      className="p-1 text-red-400 hover:text-red-600 rounded"
+                      title="Xóa slide này"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
 
             {/* Current Slide Editor */}
             {hero?.slides?.[heroSlideIndex] && (
               <div className="space-y-4 pt-2">
+                <div>
+                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Nhãn Tag Nhỏ (Eyebrow)</label>
+                  <input
+                    type="text"
+                    value={hero.slides[heroSlideIndex].tag || ''}
+                    onChange={(e) => {
+                      const updated = [...hero.slides];
+                      updated[heroSlideIndex].tag = e.target.value;
+                      setData({ ...data, hero: { ...hero, slides: updated } });
+                    }}
+                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Monogram</label>
@@ -2712,6 +2768,71 @@ export default function AdminPageEditor() {
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
               />
             </div>
+
+            {/* 3 Philosophy Features / Pillars */}
+            <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
+              <div className="flex items-center justify-between">
+                <label className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider">
+                  3 Trụ Cột / Đặc Trưng Nổi Bật
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newFeat = { title: 'Tiêu chuẩn chất lượng', description: 'Cam kết chất lượng vật liệu và thẩm mỹ đạt chuẩn cao nhất.' };
+                    const feats = [...(philosophy?.features || []), newFeat];
+                    setData({ ...data, philosophy: { ...philosophy, features: feats } });
+                  }}
+                  className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                >
+                  <Plus className="w-3 h-3" /> + Thêm Trụ Cột
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {philosophy?.features?.map((feat, fIdx) => (
+                  <div key={fIdx} className="p-3.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11.5px] font-bold text-[#c5a26c]">Trụ cột #{fIdx + 1}</span>
+                      {philosophy.features.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = philosophy.features.filter((_, i) => i !== fIdx);
+                            setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                          }}
+                          className="text-red-400 hover:text-red-600 p-1"
+                          title="Xóa trụ cột này"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Tiêu đề (VD: Thiết kế độc bản)"
+                      value={feat.title}
+                      onChange={(e) => {
+                        const updated = [...philosophy.features];
+                        updated[fIdx] = { ...updated[fIdx], title: e.target.value };
+                        setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                      }}
+                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                    />
+                    <textarea
+                      rows={2}
+                      placeholder="Mô tả chi tiết"
+                      value={feat.description}
+                      onChange={(e) => {
+                        const updated = [...philosophy.features];
+                        updated[fIdx] = { ...updated[fIdx], description: e.target.value };
+                        setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                      }}
+                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Right Live Preview Workstation */}
@@ -2954,6 +3075,17 @@ export default function AdminPageEditor() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Lời Nhắn / Báo Giá (Quote)</label>
+              <textarea
+                rows={3}
+                value={contact?.quote || ''}
+                onChange={(e) => setData({ ...data, contact: { ...contact, quote: e.target.value } })}
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                placeholder="Để lại thông tin, đội ngũ Kiến trúc sư..."
+              />
+            </div>
           </div>
 
           {/* Right Live Preview Workstation */}
@@ -3178,6 +3310,42 @@ export default function AdminPageEditor() {
               ))}
             </div>
 
+            {/* Section Level Settings */}
+            <div className="space-y-3 p-4 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3]">
+              <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                Tiêu Đề &amp; Mô Tả Khối Phong Cách
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tag Nhỏ (Eyebrow)</label>
+                  <input
+                    type="text"
+                    value={stylesOverview?.tag || ''}
+                    onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, tag: e.target.value } })}
+                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] focus:border-[#c5a26c] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
+                  <input
+                    type="text"
+                    value={stylesOverview?.heading || ''}
+                    onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, heading: e.target.value } })}
+                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Đoạn Văn Giới Thiệu Chung</label>
+                <textarea
+                  rows={2}
+                  value={stylesOverview?.description || ''}
+                  onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, description: e.target.value } })}
+                  className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
             {/* Current Style Card Editor */}
             {stylesOverview?.styles?.[selectedStyleIndex] && (
               <div className="space-y-4 pt-2">
@@ -3208,6 +3376,21 @@ export default function AdminPageEditor() {
                       className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Chi Tiết Thẻ</label>
+                  <textarea
+                    rows={3}
+                    value={stylesOverview.styles[selectedStyleIndex].description || ''}
+                    onChange={(e) => {
+                      const updated = [...stylesOverview.styles];
+                      updated[selectedStyleIndex].description = e.target.value;
+                      setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                    }}
+                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                    placeholder="Mô tả phong cách thiết kế..."
+                  />
                 </div>
 
                 {/* Card Thumbnail Image */}
@@ -3489,6 +3672,17 @@ export default function AdminPageEditor() {
               </div>
             </div>
 
+            {/* Tagline / Subtitle */}
+            <div>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tagline / Tiêu Đề Phụ</label>
+              <input
+                type="text"
+                value={office?.tag || ''}
+                onChange={(e) => setData({ ...data, office: { ...office, tag: e.target.value } })}
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+              />
+            </div>
+
             {/* Description */}
             <div>
               <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Không Gian Văn Phòng</label>
@@ -3498,6 +3692,186 @@ export default function AdminPageEditor() {
                 onChange={(e) => setData({ ...data, office: { ...office, description: e.target.value } })}
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
               />
+            </div>
+
+            {/* Color Swatches Editor */}
+            <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
+              <div className="flex items-center justify-between">
+                <label className="block text-[13.5px] font-bold text-[#04092b]">
+                  Bảng Màu Thiết Kế (Color Swatches)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = office?.colorSwatches || [
+                      { color: '#e5dfd7', label: 'Sand Cream' },
+                      { color: '#8c7b6c', label: 'Earthy Taupe' },
+                      { color: '#395224', label: 'Forest Sage' },
+                      { color: '#d2a679', label: 'Warm Caramel' }
+                    ];
+                    setData({
+                      ...data,
+                      office: {
+                        ...office,
+                        colorSwatches: [...current, { color: '#c5a26c', label: 'Tông màu mới' }]
+                      }
+                    });
+                  }}
+                  className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
+                >
+                  + Thêm Màu
+                </button>
+              </div>
+              <div className="space-y-2">
+                {(office?.colorSwatches || [
+                  { color: '#e5dfd7', label: 'Sand Cream' },
+                  { color: '#8c7b6c', label: 'Earthy Taupe' },
+                  { color: '#395224', label: 'Forest Sage' },
+                  { color: '#d2a679', label: 'Warm Caramel' }
+                ]).map((swatch, sIdx) => (
+                  <div key={sIdx} className="flex items-center gap-2 p-2 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
+                    <input
+                      type="color"
+                      value={swatch.color}
+                      onChange={(e) => {
+                        const next = [...(office?.colorSwatches || [
+                          { color: '#e5dfd7', label: 'Sand Cream' },
+                          { color: '#8c7b6c', label: 'Earthy Taupe' },
+                          { color: '#395224', label: 'Forest Sage' },
+                          { color: '#d2a679', label: 'Warm Caramel' }
+                        ])];
+                        next[sIdx] = { ...next[sIdx], color: e.target.value };
+                        setData({ ...data, office: { ...office, colorSwatches: next } });
+                      }}
+                      className="w-8 h-8 rounded cursor-pointer border border-[#e2ddd3] p-0.5 bg-white shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={swatch.color}
+                      onChange={(e) => {
+                        const next = [...(office?.colorSwatches || [
+                          { color: '#e5dfd7', label: 'Sand Cream' },
+                          { color: '#8c7b6c', label: 'Earthy Taupe' },
+                          { color: '#395224', label: 'Forest Sage' },
+                          { color: '#d2a679', label: 'Warm Caramel' }
+                        ])];
+                        next[sIdx] = { ...next[sIdx], color: e.target.value };
+                        setData({ ...data, office: { ...office, colorSwatches: next } });
+                      }}
+                      className="w-24 p-1.5 border border-[#e2ddd3] rounded-lg text-[12px] font-mono"
+                      placeholder="#hex"
+                    />
+                    <input
+                      type="text"
+                      value={swatch.label}
+                      onChange={(e) => {
+                        const next = [...(office?.colorSwatches || [
+                          { color: '#e5dfd7', label: 'Sand Cream' },
+                          { color: '#8c7b6c', label: 'Earthy Taupe' },
+                          { color: '#395224', label: 'Forest Sage' },
+                          { color: '#d2a679', label: 'Warm Caramel' }
+                        ])];
+                        next[sIdx] = { ...next[sIdx], label: e.target.value };
+                        setData({ ...data, office: { ...office, colorSwatches: next } });
+                      }}
+                      className="flex-1 p-1.5 border border-[#e2ddd3] rounded-lg text-[12px]"
+                      placeholder="Tên màu"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = (office?.colorSwatches || [
+                          { color: '#e5dfd7', label: 'Sand Cream' },
+                          { color: '#8c7b6c', label: 'Earthy Taupe' },
+                          { color: '#395224', label: 'Forest Sage' },
+                          { color: '#d2a679', label: 'Warm Caramel' }
+                        ]).filter((_, i) => i !== sIdx);
+                        setData({ ...data, office: { ...office, colorSwatches: next } });
+                      }}
+                      className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
+                      title="Xóa màu"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Gallery Cards (3 Cards) */}
+            <div className="space-y-4 pt-3 border-t border-[#e2ddd3]">
+              <label className="block text-[13.5px] font-bold text-[#04092b]">
+                Bộ Sưu Tập Ảnh Dưới Khối Văn Phòng (3 Thẻ)
+              </label>
+              {(office?.galleryCards || [
+                { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+              ]).map((card, cIdx) => (
+                <div key={cIdx} className="p-3 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0">
+                      <Image
+                        src={card.image || '/uploads/office_card_1.png'}
+                        alt={card.alt || `Card ${cIdx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={card.image || ''}
+                          onChange={(e) => {
+                            const next = [...(office?.galleryCards || [
+                              { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                              { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                              { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                            ])];
+                            next[cIdx] = { ...next[cIdx], image: e.target.value };
+                            setData({ ...data, office: { ...office, galleryCards: next } });
+                          }}
+                          className="flex-1 p-2 border border-[#e2ddd3] rounded-lg text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                          placeholder="Đường dẫn ảnh"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            openMediaPicker(`Chọn ảnh thẻ #${cIdx + 1}`, (url) => {
+                              const next = [...(office?.galleryCards || [
+                                { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                                { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                                { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                              ])];
+                              next[cIdx] = { ...next[cIdx], image: url };
+                              setData({ ...data, office: { ...office, galleryCards: next } });
+                            })
+                          }
+                          className="px-3 py-2 bg-white hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg transition-colors shrink-0 border border-[#e2ddd3]"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5 inline mr-1" /> Chọn
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={card.alt || ''}
+                        onChange={(e) => {
+                          const next = [...(office?.galleryCards || [
+                            { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                            { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                            { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                          ])];
+                          next[cIdx] = { ...next[cIdx], alt: e.target.value };
+                          setData({ ...data, office: { ...office, galleryCards: next } });
+                        }}
+                        className="w-full p-2 border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
+                        placeholder="Mô tả / Alt text cho ảnh"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -3608,18 +3982,35 @@ export default function AdminPageEditor() {
                   <p className="text-[14.5px] text-[#5f6361] leading-relaxed line-clamp-3">{office?.description}</p>
                 </div>
 
+                {/* Color Swatches Preview */}
+                <div className="flex items-center gap-2 pt-1">
+                  {(office?.colorSwatches || [
+                    { color: '#e5dfd7', label: 'Sand Cream' },
+                    { color: '#8c7b6c', label: 'Earthy Taupe' },
+                    { color: '#395224', label: 'Forest Sage' },
+                    { color: '#d2a679', label: 'Warm Caramel' }
+                  ]).map((swatch, i) => (
+                    <div
+                      key={i}
+                      className="w-6 h-6 rounded-full border border-[#e2ddd3] shadow-xs"
+                      style={{ backgroundColor: swatch.color }}
+                      title={swatch.label}
+                    />
+                  ))}
+                </div>
+
                 {/* 3 Gallery Cards Preview */}
                 <div className="grid grid-cols-3 gap-3.5 pt-3 border-t border-[#e2ddd3]">
-                  {[
-                    { label: 'Phòng Họp Sang Trọng', src: '/uploads/office_card_meeting.png' },
-                    { label: 'Bàn Làm Việc Gỗ', src: '/uploads/office_card_desk.png' },
-                    { label: 'Khu Vực Tiếp Khách', src: '/uploads/office_card_lounge.png' },
-                  ].map((card, i) => (
+                  {(office?.galleryCards || [
+                    { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                    { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                    { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                  ]).map((card, i) => (
                     <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2.5 shadow-xs">
                       <div className="relative w-full h-[105px] rounded-lg overflow-hidden bg-black/10">
-                        <Image src={card.src} alt={card.label} fill className="object-cover" />
+                        <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
                       </div>
-                      <p className="text-[12px] font-bold text-[#04092b] mt-2 truncate">{card.label}</p>
+                      <p className="text-[12px] font-bold text-[#04092b] mt-2 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
                     </div>
                   ))}
                 </div>
@@ -3650,7 +4041,7 @@ export default function AdminPageEditor() {
                       />
                     </div>
                     <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                      {office?.tag}
+                      {office?.tag || 'CÁC SẢN PHẨM ĐẶC BIỆT'}
                     </span>
                     <h4 className="text-[20px] font-bold font-display">
                       {office?.headingLine1} {office?.headingLine2}
@@ -3658,15 +4049,15 @@ export default function AdminPageEditor() {
                     <p className="text-[12.5px] text-[#6e706a] line-clamp-3 leading-relaxed">{office?.description}</p>
 
                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#e2ddd3]">
-                      {[
-                        { label: 'Phòng Họp', src: '/uploads/office_card_meeting.png' },
-                        { label: 'Bàn Làm Việc', src: '/uploads/office_card_desk.png' },
-                      ].map((card, i) => (
+                      {(office?.galleryCards || [
+                        { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                        { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                      ]).slice(0, 2).map((card, i) => (
                         <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2">
                           <div className="relative w-full h-[75px] rounded-lg overflow-hidden">
-                            <Image src={card.src} alt={card.label} fill className="object-cover" />
+                            <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
                           </div>
-                          <p className="text-[11px] font-bold text-[#04092b] mt-1 truncate">{card.label}</p>
+                          <p className="text-[11px] font-bold text-[#04092b] mt-1 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
                         </div>
                       ))}
                     </div>
@@ -3682,12 +4073,55 @@ export default function AdminPageEditor() {
       {activeTab === 'settings' && (
         <div className="bg-white p-4 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm max-w-4xl space-y-6">
           <h3 className="font-bold text-[20px] text-[#04092b] border-b border-[#e2ddd3] pb-4 flex items-center gap-2.5">
-            <Building className="w-5 h-5 text-[#c5a26c]" /> Thông Tin Thương Hiệu &amp; Chân Trang (Footer)
+            <Building className="w-5 h-5 text-[#c5a26c]" /> Thông Tin Thương Hiệu &amp; Cài Đặt Chung
           </h3>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Logo */}
+          <div className="space-y-2">
+            <label className="block text-[13.5px] font-bold text-[#04092b]">
+              Logo Thương Hiệu (Header &amp; Footer)
+            </label>
+            <div className="flex items-center gap-3">
+              <div className="relative w-36 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#04092b] p-2 shrink-0 shadow-sm flex items-center justify-center">
+                <Image
+                  src={settings?.logo || '/uploads/logo-dong-hoa-property.png'}
+                  alt="Logo Preview"
+                  fill
+                  className="object-contain p-1"
+                />
+              </div>
+              <input
+                type="text"
+                value={settings?.logo || ''}
+                onChange={(e) => setData({ ...data, settings: { ...settings, logo: e.target.value } })}
+                className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  openMediaPicker('Chọn Logo thương hiệu', (url) => {
+                    setData({ ...data, settings: { ...settings, logo: url } });
+                  })
+                }
+                className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+              >
+                <ImageIcon className="w-4 h-4" /> Đổi Logo
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tên Thương Hiệu</label>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tên Website (Site Name)</label>
+              <input
+                type="text"
+                value={settings?.siteName || ''}
+                onChange={(e) => setData({ ...data, settings: { ...settings, siteName: e.target.value } })}
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tên Thương Hiệu (Brand Name)</label>
               <input
                 type="text"
                 value={settings?.brandName || ''}
@@ -3695,6 +4129,18 @@ export default function AdminPageEditor() {
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
               />
             </div>
+            <div>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Khẩu Hiệu (Tagline)</label>
+              <input
+                type="text"
+                value={settings?.siteTagline || ''}
+                onChange={(e) => setData({ ...data, settings: { ...settings, siteTagline: e.target.value } })}
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Hotline Liên Hệ</label>
               <input
@@ -3704,9 +4150,6 @@ export default function AdminPageEditor() {
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Email Công Ty</label>
               <input
@@ -3716,6 +4159,9 @@ export default function AdminPageEditor() {
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Website Chính Thức</label>
               <input
@@ -3725,15 +4171,24 @@ export default function AdminPageEditor() {
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
               />
             </div>
+            <div>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Địa Chỉ Trụ Sở Văn Phòng</label>
+              <input
+                type="text"
+                value={settings?.address || ''}
+                onChange={(e) => setData({ ...data, settings: { ...settings, address: e.target.value } })}
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Địa Chỉ Trụ Sở Văn Phòng</label>
-            <input
-              type="text"
-              value={settings?.address || ''}
-              onChange={(e) => setData({ ...data, settings: { ...settings, address: e.target.value } })}
-              className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+            <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Chân Trang / Giới Thiệu Chân Trang (Footer)</label>
+            <textarea
+              rows={3}
+              value={settings?.siteDescription || ''}
+              onChange={(e) => setData({ ...data, settings: { ...settings, siteDescription: e.target.value } })}
+              className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
             />
           </div>
 
@@ -3745,6 +4200,100 @@ export default function AdminPageEditor() {
               onChange={(e) => setData({ ...data, settings: { ...settings, copyright: e.target.value } })}
               className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
             />
+          </div>
+
+          {/* Navigation Links Editor */}
+          <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
+            <div className="flex items-center justify-between">
+              <label className="block text-[13.5px] font-bold text-[#04092b]">
+                Menu Thanh Điều Hướng (Navbar Links)
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const current = settings?.navLinks || [
+                    { label: 'Giới thiệu', url: '#about' },
+                    { label: 'Phong cách thiết kế', url: '#styles' },
+                    { label: 'Thi công', url: '#about' },
+                    { label: 'Tin tức', url: '/blog' },
+                    { label: 'Liên hệ', url: '#contact' }
+                  ];
+                  setData({
+                    ...data,
+                    settings: {
+                      ...settings,
+                      navLinks: [...current, { label: 'Mục mới', url: '#' }]
+                    }
+                  });
+                }}
+                className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
+              >
+                + Thêm Menu
+              </button>
+            </div>
+            <div className="space-y-2">
+              {(settings?.navLinks || [
+                { label: 'Giới thiệu', url: '#about' },
+                { label: 'Phong cách thiết kế', url: '#styles' },
+                { label: 'Thi công', url: '#about' },
+                { label: 'Tin tức', url: '/blog' },
+                { label: 'Liên hệ', url: '#contact' }
+              ]).map((link, lIdx) => (
+                <div key={lIdx} className="flex items-center gap-2 p-2 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
+                  <input
+                    type="text"
+                    value={link.label}
+                    onChange={(e) => {
+                      const next = [...(settings?.navLinks || [
+                        { label: 'Giới thiệu', url: '#about' },
+                        { label: 'Phong cách thiết kế', url: '#styles' },
+                        { label: 'Thi công', url: '#about' },
+                        { label: 'Tin tức', url: '/blog' },
+                        { label: 'Liên hệ', url: '#contact' }
+                      ])];
+                      next[lIdx] = { ...next[lIdx], label: e.target.value };
+                      setData({ ...data, settings: { ...settings, navLinks: next } });
+                    }}
+                    className="w-1/2 p-2 border border-[#e2ddd3] rounded-lg text-[13px] font-medium focus:border-[#c5a26c] focus:outline-none"
+                    placeholder="Tên mục menu"
+                  />
+                  <input
+                    type="text"
+                    value={link.url}
+                    onChange={(e) => {
+                      const next = [...(settings?.navLinks || [
+                        { label: 'Giới thiệu', url: '#about' },
+                        { label: 'Phong cách thiết kế', url: '#styles' },
+                        { label: 'Thi công', url: '#about' },
+                        { label: 'Tin tức', url: '/blog' },
+                        { label: 'Liên hệ', url: '#contact' }
+                      ])];
+                      next[lIdx] = { ...next[lIdx], url: e.target.value };
+                      setData({ ...data, settings: { ...settings, navLinks: next } });
+                    }}
+                    className="flex-1 p-2 border border-[#e2ddd3] rounded-lg text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                    placeholder="#anchor hoặc /duong-dan"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = (settings?.navLinks || [
+                        { label: 'Giới thiệu', url: '#about' },
+                        { label: 'Phong cách thiết kế', url: '#styles' },
+                        { label: 'Thi công', url: '#about' },
+                        { label: 'Tin tức', url: '/blog' },
+                        { label: 'Liên hệ', url: '#contact' }
+                      ]).filter((_, i) => i !== lIdx);
+                      setData({ ...data, settings: { ...settings, navLinks: next } });
+                    }}
+                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    title="Xóa mục"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

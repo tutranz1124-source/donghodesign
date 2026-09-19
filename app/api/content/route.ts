@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getSiteContent, saveSiteContent } from '@/lib/storage';
 import { verifyAdminSession, verifyEditorSession, getSessionUser } from '@/lib/auth';
 
@@ -6,7 +7,13 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const content = getSiteContent();
-  return NextResponse.json(content);
+  return NextResponse.json(content, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0'
+    }
+  });
 }
 
 export async function POST(request: Request) {
@@ -30,6 +37,15 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
     }
     const saved = saveSiteContent(data);
+
+    try {
+      revalidatePath('/', 'layout');
+      revalidatePath('/blog', 'layout');
+      revalidatePath('/admin/pages');
+    } catch (e) {
+      // ignore
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Đã lưu toàn bộ cấu hình trang chủ thành công!',

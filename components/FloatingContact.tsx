@@ -8,11 +8,23 @@ export default function FloatingContact() {
   const pathname = usePathname();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [hotline, setHotline] = useState('0906.499.279');
 
   // Do not show on admin routes
   if (pathname?.startsWith('/admin')) {
     return null;
   }
+
+  useEffect(() => {
+    fetch('/api/content')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings?.hotline) {
+          setHotline(data.settings.hotline);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +86,7 @@ export default function FloatingContact() {
           <div className="space-y-2 pt-1">
             {/* Direct Call */}
             <a
-              href="tel:0906499279"
+              href={`tel:${hotline.replace(/\D/g, '') || '0906499279'}`}
               className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] transition-all shadow-sm group"
             >
               <div className="w-7 h-7 rounded-lg bg-white/10 group-hover:bg-[#04092b]/10 flex items-center justify-center shrink-0">
@@ -82,13 +94,13 @@ export default function FloatingContact() {
               </div>
               <div className="text-left">
                 <span className="block text-[10px] uppercase tracking-wider font-semibold opacity-80">Hotline 24/7</span>
-                <strong className="text-[13px] font-bold">0906.499.279</strong>
+                <strong className="text-[13px] font-bold">{hotline}</strong>
               </div>
             </a>
 
             {/* Zalo Chat */}
             <a
-              href="https://zalo.me/0906499279"
+              href={`https://zalo.me/${hotline.replace(/\D/g, '') || '0906499279'}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0068FF] hover:bg-[#0052cc] text-white transition-all shadow-sm group"
