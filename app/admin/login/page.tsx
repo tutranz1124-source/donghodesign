@@ -115,10 +115,11 @@ export default function AdminLoginPage() {
               <input
                 type="password"
                 required
+                autoComplete="off"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-[#e2ddd3] focus:border-[#c5a26c] focus:outline-none text-[14px] rounded-xl"
-                placeholder="••••••••"
+                className="w-full pl-10 pr-4 py-2.5 border border-[#e2ddd3] focus:border-[#c5a26c] focus:outline-none text-[13px] rounded-xl"
+                placeholder="Nhập mật khẩu..."
               />
             </div>
           </div>
