@@ -470,35 +470,37 @@ export default function AdminBlogListPage() {
   });
 
   return (
-    <div className="p-6 sm:p-10 max-w-[1440px] mx-auto space-y-8">
+    <div className="space-y-4 sm:space-y-5 max-w-[1440px] mx-auto pb-8 text-[12.5px]">
       {/* Top Banner & Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#e2ddd3] bg-white p-6 sm:p-8 shadow-sm rounded-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#e2ddd3] bg-white p-4 sm:p-5 shadow-2xs rounded-2xl">
         <div>
-          <span className="text-[11px] font-bold text-[#c5a26c] bg-[#04092b] px-3 py-0.5 rounded uppercase tracking-wider font-accent inline-block mb-1.5">
-            QUẢN LÝ BLOG & NỘI DUNG
-          </span>
-          <h1 className="text-[26px] sm:text-[32px] font-bold text-[#04092b] font-display">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10.5px] font-bold text-[#c5a26c] bg-[#04092b] px-2.5 py-0.5 rounded font-accent uppercase tracking-wider">
+              QUẢN LÝ BLOG
+            </span>
+          </div>
+          <h1 className="text-[18px] sm:text-[20px] font-bold text-[#04092b] font-display">
             Bài Viết Đông Hòa Design
           </h1>
-          <p className="text-[13px] text-[#6e706a] max-w-2xl">
-            Giao diện <strong>Blog Studio 2-Sidebar</strong> hoàn toàn mới: Thanh công cụ khối bên trái, khung soạn thảo canvas thoáng rộng ở giữa và bảng cài đặt xuất bản bên phải.
+          <p className="text-[12px] text-[#6e706a] mt-0.5">
+            Soạn thảo bài viết theo phong cách Studio 3 cột trực quan, hỗ trợ xem trước trên mọi thiết bị.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/blog"
             target="_blank"
-            className="border border-[#04092b] text-[#04092b] hover:bg-[#04092b] hover:text-white px-3.5 py-2 sm:px-4 sm:py-2.5 text-[12.5px] sm:text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="border border-[#e2ddd3] text-[#04092b] bg-[#faf8f5] hover:bg-white hover:border-[#04092b] px-3.5 py-2 text-[12px] font-medium rounded-xl transition-colors flex items-center justify-center gap-1.5"
           >
-            <ExternalLink className="w-4 h-4" /> Xem Blog Live
+            <ExternalLink className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem Blog Live
           </Link>
 
           <button
             onClick={() => setTemplatePickerOpen(true)}
-            className="bg-[#c5a26c] hover:bg-[#b08d55] text-[#04092b] px-3.5 py-2 sm:px-5 sm:py-2.5 text-[12px] sm:text-[13px] font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 shadow-md rounded-xl group"
+            className="bg-[#faf8f5] hover:bg-white border border-[#e2ddd3] hover:border-[#c5a26c] text-[#04092b] px-3.5 py-2 text-[12px] font-medium transition-all flex items-center justify-center gap-1.5 rounded-xl group"
           >
-            <LayoutTemplate className="w-4 h-4 transition-transform group-hover:rotate-12" />
+            <LayoutTemplate className="w-3.5 h-3.5 text-[#c5a26c] transition-transform group-hover:rotate-12" />
             <span>Mẫu Bài Viết</span>
           </button>
 
@@ -525,7 +527,7 @@ export default function AdminBlogListPage() {
               });
               setModalOpen(true);
             }}
-            className="bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] px-3.5 py-2 sm:px-5 sm:py-2.5 text-[12px] sm:text-[13px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-md rounded-xl"
+            className="bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] px-4 py-2 text-[12.5px] font-bold transition-colors flex items-center justify-center gap-1.5 shadow-sm rounded-xl"
           >
             <Plus className="w-4 h-4" /> Viết bài mới
           </button>

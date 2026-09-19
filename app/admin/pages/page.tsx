@@ -783,32 +783,29 @@ export default function AdminPageEditor() {
         className="hidden"
       />
 
-      {/* Top Header Bar */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border border-[#e2ddd3] bg-white p-3 sm:p-4 shadow-2xs rounded-xl">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-wider bg-[#04092b] px-2 py-0.5 rounded font-accent">
+      {/* Top Action Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider bg-[#04092b] px-2.5 py-0.5 rounded font-accent">
               CMS TÙY BIẾN
             </span>
-            <span className="text-[10.5px] font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-blue-600" /> Hệ thống Lưu &amp; Xem Thử Kép
-            </span>
           </div>
-          <h1 className="text-[17px] sm:text-[20px] font-bold text-[#04092b] font-display tracking-tight">
+          <h1 className="text-[18px] sm:text-[20px] font-bold text-[#04092b] font-display tracking-tight">
             Quản Lý &amp; Thiết Kế Không Gian Sống
           </h1>
-          <p className="text-[11.5px] text-[#6e706a]">
+          <p className="text-[12px] text-[#6e706a] mt-0.5">
             Tùy biến nội dung, kéo thả đồ nội thất trực quan, xem trước trên cả Desktop và Mobile.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 w-full xl:w-auto">
+        <div className="flex flex-wrap items-center gap-2">
           {/* View Website */}
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-2.5 py-1.5 text-[11.5px] font-bold text-[#04092b] border border-[#e2ddd3] hover:border-[#04092b] hover:bg-[#f4f1ea] transition-all rounded-lg uppercase flex items-center justify-center gap-1"
+            className="px-3 py-2 text-[12px] font-medium text-[#04092b] bg-[#faf8f5] border border-[#e2ddd3] hover:border-[#04092b] hover:bg-white transition-all rounded-xl flex items-center justify-center gap-1.5"
           >
             <Eye className="w-3.5 h-3.5 text-[#c5a26c]" />
             <span>Xem Web</span>
@@ -819,7 +816,7 @@ export default function AdminPageEditor() {
           <button
             type="button"
             onClick={handleExportJson}
-            className="px-2.5 py-1.5 text-[11.5px] font-bold text-[#04092b] border border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-[#faf8f5] transition-all rounded-lg flex items-center justify-center gap-1"
+            className="px-3 py-2 text-[12px] font-medium text-[#04092b] bg-[#faf8f5] border border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-white transition-all rounded-xl flex items-center justify-center gap-1.5"
             title="Tải file cấu hình JSON về máy tính để sao lưu dự phòng"
           >
             <Download className="w-3.5 h-3.5 text-[#c5a26c]" />
@@ -830,7 +827,7 @@ export default function AdminPageEditor() {
           <button
             type="button"
             onClick={() => importFileRef.current?.click()}
-            className="px-2.5 py-1.5 text-[11.5px] font-bold text-[#04092b] border border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-[#faf8f5] transition-all rounded-lg flex items-center justify-center gap-1"
+            className="px-3 py-2 text-[12px] font-medium text-[#04092b] bg-[#faf8f5] border border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-white transition-all rounded-xl flex items-center justify-center gap-1.5"
             title="Khôi phục cấu hình từ file JSON đã lưu"
           >
             <Upload className="w-3.5 h-3.5 text-[#c5a26c]" />
@@ -842,7 +839,7 @@ export default function AdminPageEditor() {
             type="button"
             onClick={() => handleSave()}
             disabled={savedStatus === 'saving'}
-            className="col-span-2 sm:col-span-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-xs rounded-lg"
+            className="bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] px-4 py-2 text-[12.5px] font-bold transition-all flex items-center justify-center gap-2 shadow-sm rounded-xl"
           >
             {savedStatus === 'saving' ? (
               <>
@@ -867,7 +864,7 @@ export default function AdminPageEditor() {
       {/* Toast Alert Banner */}
       {toastMessage && (
         <div
-          className={`p-3 rounded-xl border flex items-center justify-between gap-2 shadow-2xs transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
+          className={`p-3.5 rounded-xl border flex items-center justify-between gap-2 shadow-xs transition-all duration-300 animate-in fade-in slide-in-from-top-1 ${
             toastMessage.type === 'success'
               ? 'bg-emerald-50 text-emerald-900 border-emerald-300'
               : toastMessage.type === 'error'
@@ -875,7 +872,7 @@ export default function AdminPageEditor() {
               : 'bg-amber-50 text-amber-900 border-amber-300'
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {toastMessage.type === 'success' ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             ) : toastMessage.type === 'error' ? (
@@ -883,7 +880,7 @@ export default function AdminPageEditor() {
             ) : (
               <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
             )}
-            <p className="text-[12.5px] font-semibold">{toastMessage.text}</p>
+            <p className="text-[12.5px] font-medium">{toastMessage.text}</p>
           </div>
           <button
             type="button"
@@ -895,8 +892,8 @@ export default function AdminPageEditor() {
         </div>
       )}
 
-      {/* Tabs Navigation Bar: Horizontal swipeable pills on mobile, responsive grid on tablet/desktop */}
-      <div className="flex overflow-x-auto gap-1.5 py-0.5 scrollbar-none sm:grid sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 sm:gap-2">
+      {/* Tabs Navigation Bar: Sleek, spacious segmented pill bar */}
+      <div className="bg-white p-1.5 rounded-2xl border border-[#e2ddd3] shadow-2xs flex items-center gap-1.5 overflow-x-auto scrollbar-none">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -904,22 +901,14 @@ export default function AdminPageEditor() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-2.5 py-2 sm:p-2.5 rounded-xl border text-left transition-all shrink-0 flex items-center gap-2 sm:flex-col sm:items-start sm:justify-between whitespace-nowrap sm:whitespace-normal ${
+              className={`px-3.5 py-2.5 rounded-xl text-[12.5px] font-medium whitespace-nowrap transition-all shrink-0 flex items-center gap-2 ${
                 isActive
-                  ? 'bg-[#04092b] text-white border-[#04092b] shadow-xs ring-1 ring-[#c5a26c]'
-                  : 'bg-white text-[#04092b] border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-[#faf8f5] shadow-2xs'
+                  ? 'bg-[#04092b] text-[#c5a26c] font-bold shadow-xs'
+                  : 'text-[#6e706a] hover:text-[#04092b] hover:bg-[#faf8f5]'
               }`}
             >
-              <div className="flex items-center justify-between sm:w-full sm:mb-1">
-                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isActive ? 'text-[#c5a26c]' : 'text-[#6e706a]'}`} />
-                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#c5a26c] animate-pulse ml-1 sm:ml-0" />}
-              </div>
-              <div>
-                <p className="font-bold text-[11.5px] sm:text-[12px] line-clamp-1">{tab.name}</p>
-                <p className={`hidden sm:block text-[10px] mt-0.5 line-clamp-1 ${isActive ? 'text-white/80' : 'text-[#6e706a]'}`}>
-                  {tab.desc}
-                </p>
-              </div>
+              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#c5a26c]' : 'text-[#8e908a]'}`} />
+              <span>{tab.name}</span>
             </button>
           );
         })}
