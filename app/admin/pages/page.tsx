@@ -260,7 +260,33 @@ export default function AdminPageEditor() {
       .then((json) => {
         if (Array.isArray(json)) setMediaList(json);
       });
+
+    // Check query params for tab selection (e.g., ?tab=office)
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam) {
+        const validTabs = ['stages', 'hero', 'philosophy', 'contact', 'styles', 'office', 'settings'];
+        if (validTabs.includes(tabParam)) {
+          setActiveTab(tabParam as any);
+        } else if (tabParam === 'canva') {
+          setActiveTab('stages');
+        }
+      }
+    }
   }, []);
+
+  // Global Ctrl + S keyboard shortcut to save changes instantly
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [data]);
 
   useEffect(() => {
     if (toastMessage && toastMessage.type === 'success') {
