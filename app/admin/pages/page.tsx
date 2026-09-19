@@ -895,8 +895,8 @@ export default function AdminPageEditor() {
         </div>
       )}
 
-      {/* Tabs Navigation Bar: Horizontal swipeable pills on mobile, full grid on desktop */}
-      <div className="flex overflow-x-auto gap-2 py-1 scrollbar-none sm:grid sm:grid-cols-3 lg:grid-cols-7 sm:gap-3">
+      {/* Tabs Navigation Bar: Horizontal swipeable pills on mobile, responsive grid on tablet/desktop */}
+      <div className="flex overflow-x-auto gap-2 py-1 scrollbar-none sm:grid sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7 sm:gap-3">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -904,10 +904,10 @@ export default function AdminPageEditor() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`px-3 py-2 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all shrink-0 flex items-center gap-2 sm:flex-col sm:items-start sm:justify-between whitespace-nowrap sm:whitespace-normal ${
+              className={`px-3 py-2.5 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all shrink-0 flex items-center gap-2.5 sm:flex-col sm:items-start sm:justify-between whitespace-nowrap sm:whitespace-normal ${
                 isActive
                   ? 'bg-[#04092b] text-white border-[#04092b] shadow-md ring-2 ring-[#c5a26c]/60'
-                  : 'bg-white text-[#04092b] border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-[#faf8f5] shadow-xs'
+                  : 'bg-white text-[#04092b] border-[#e2ddd3] hover:border-[#c5a26c] hover:bg-[#faf8f5] shadow-2xs'
               }`}
             >
               <div className="flex items-center justify-between sm:w-full sm:mb-2">
@@ -915,7 +915,7 @@ export default function AdminPageEditor() {
                 {isActive && <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#c5a26c] animate-pulse ml-1 sm:ml-0" />}
               </div>
               <div>
-                <p className="font-bold text-[12px] sm:text-[13.5px] line-clamp-1">{tab.name}</p>
+                <p className="font-bold text-[12.5px] sm:text-[13.5px] line-clamp-1">{tab.name}</p>
                 <p className={`hidden sm:block text-[11.5px] mt-0.5 line-clamp-1 ${isActive ? 'text-white/80' : 'text-[#6e706a]'}`}>
                   {tab.desc}
                 </p>

@@ -347,7 +347,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 min-h-screen">
           <AdminHeader user={user} />
-          <main className="flex-1 p-3.5 sm:p-6 lg:p-8 overflow-y-auto">
+          <main className="flex-1 p-3 sm:p-5 md:p-6 lg:p-8 overflow-y-auto w-full max-w-[1600px] 2xl:max-w-[1800px] mx-auto">
             {children}
           </main>
         </div>
