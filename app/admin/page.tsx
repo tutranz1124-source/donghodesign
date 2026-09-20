@@ -60,18 +60,18 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-4 sm:space-y-5 max-w-[1440px] mx-auto pb-8 text-[12.5px]">
+    <div className="space-y-3.5 sm:space-y-4 max-w-[1440px] mx-auto pb-8 text-[12px]">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#04092b] via-[#0b1340] to-[#04092b] text-white p-4 sm:p-6 rounded-2xl border border-[#c5a26c]/30 shadow-md">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#c5a26c]/20 border border-[#c5a26c]/40 text-[#c5a26c] text-[10.5px] font-bold uppercase tracking-wider font-accent">
-              <Sparkles className="w-3 h-3" /> Trung Tâm Quản Trị Đông Hòa Design
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#04092b] via-[#0b1340] to-[#04092b] text-white p-3.5 sm:p-4.5 rounded-xl border border-[#c5a26c]/30 shadow-xs">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="space-y-0.5 max-w-xl">
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[#c5a26c]/20 border border-[#c5a26c]/40 text-[#c5a26c] text-[9.5px] font-bold uppercase tracking-wider font-accent">
+              <Sparkles className="w-2.5 h-2.5" /> Trung Tâm Quản Trị Đông Hòa Design
             </div>
-            <h1 className="text-[18px] sm:text-[22px] font-bold text-white font-display leading-tight">
+            <h1 className="text-[16px] sm:text-[18px] font-bold text-white font-display leading-tight">
               Bảng Điều Khiển Hệ Thống
             </h1>
-            <p className="text-[12px] text-white/80 leading-relaxed font-light">
+            <p className="text-[11.5px] text-white/80 leading-relaxed font-light">
               Tùy biến nội dung 10 Frame Trang chủ, quản lý bài viết blog và thư viện hình ảnh.
             </p>
           </div>
@@ -80,14 +80,14 @@ export default function AdminDashboardPage() {
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Link
               href="/admin/pages"
-              className="px-3.5 py-2 bg-[#c5a26c] hover:bg-[#b5915a] text-[#04092b] font-bold text-[12px] rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-[#c5a26c] hover:bg-[#b5915a] text-[#04092b] font-bold text-[11.5px] rounded-lg transition-all shadow-xs flex items-center gap-1.5"
             >
               <Layers className="w-3.5 h-3.5" />
               <span>Chỉnh Sửa Trang Chủ</span>
             </Link>
             <Link
               href="/admin/blog"
-              className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[12px] rounded-xl transition-all border border-white/20 flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[11.5px] rounded-lg transition-all border border-white/20 flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Viết Bài Mới</span>
@@ -97,19 +97,19 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* 4 Core Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
         <Link
           href="/admin/pages"
-          className="bg-white p-3.5 sm:p-4 rounded-xl border border-[#e2ddd3] hover:border-[#c5a26c] shadow-2xs hover:shadow-xs transition-all group block"
+          className="bg-white p-3 sm:p-3.5 rounded-xl border border-[#e2ddd3] hover:border-[#c5a26c] shadow-2xs hover:shadow-xs transition-all group block"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[10.5px] font-bold text-[#6e706a] uppercase">Giao diện Trang chủ</span>
-            <div className="w-7 h-7 rounded-lg bg-[#faf8f5] border border-[#e2ddd3] flex items-center justify-center text-[#c5a26c]">
-              <Layers className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold text-[#6e706a] uppercase">Giao diện Trang chủ</span>
+            <div className="w-6 h-6 rounded-lg bg-[#faf8f5] border border-[#e2ddd3] flex items-center justify-center text-[#c5a26c]">
+              <Layers className="w-3 h-3" />
             </div>
           </div>
-          <p className="text-[18px] sm:text-[20px] font-bold text-[#04092b] font-display mt-1">10 Khối Frame</p>
-          <p className="text-[11px] text-[#c5a26c] font-bold flex items-center gap-0.5 mt-0.5 group-hover:underline">
+          <p className="text-[16px] sm:text-[18px] font-bold text-[#04092b] font-display mt-1">10 Khối Frame</p>
+          <p className="text-[10.5px] text-[#c5a26c] font-bold flex items-center gap-0.5 mt-0.5 group-hover:underline">
             Tùy chỉnh trực tiếp →
           </p>
         </Link>

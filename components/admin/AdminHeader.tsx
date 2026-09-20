@@ -47,15 +47,15 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <header className="hidden md:flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 bg-white border-b border-[#e2ddd3] sticky top-0 z-30 shadow-2xs">
+    <header className="hidden md:flex items-center justify-between px-4 sm:px-6 lg:px-7 py-2 bg-white border-b border-[#e2ddd3] sticky top-0 z-30 shadow-2xs">
       {/* Breadcrumb / Page Title */}
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className="w-8 h-8 rounded-lg bg-[#faf8f5] border border-[#e2ddd3] flex items-center justify-center text-[#c5a26c] shrink-0">
-          <Icon className="w-4 h-4" />
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-7 h-7 rounded-lg bg-[#faf8f5] border border-[#e2ddd3] flex items-center justify-center text-[#c5a26c] shrink-0">
+          <Icon className="w-3.5 h-3.5" />
         </div>
-        <div className="flex items-center gap-1.5 text-[13px] min-w-0">
+        <div className="flex items-center gap-1.5 text-[12px] min-w-0">
           <span className="text-[#6e706a] font-medium hidden lg:inline">{meta.category}</span>
-          <ChevronRight className="w-3.5 h-3.5 text-gray-400 hidden lg:inline" />
+          <ChevronRight className="w-3 h-3 text-gray-400 hidden lg:inline" />
           <span className="font-bold text-[#04092b] truncate">
             <span className="hidden sm:inline">{meta.title}</span>
             <span className="sm:hidden">{meta.shortTitle}</span>
@@ -64,53 +64,53 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
       </div>
 
       {/* Right Utility Bar */}
-      <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
         {/* Live Sync Status Pill */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-[11px] font-bold">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shrink-0" />
           <span className="hidden xl:inline">Live Sync Active</span>
           <span className="xl:hidden">Live</span>
         </div>
 
         {/* Quick Public View Links */}
-        <div className="flex items-center gap-1 bg-[#faf8f5] p-1 rounded-xl border border-[#e2ddd3]">
+        <div className="flex items-center gap-0.5 bg-[#faf8f5] p-0.5 rounded-lg border border-[#e2ddd3]">
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2.5 sm:px-3 py-1 text-[12px] font-bold text-[#04092b] hover:bg-white hover:text-[#c5a26c] rounded-lg transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-[#04092b] hover:bg-white hover:text-[#c5a26c] rounded-md transition-all"
             title="Xem giao diện trang chủ đang chạy"
           >
-            <Eye className="w-3.5 h-3.5 text-[#c5a26c]" />
+            <Eye className="w-3 h-3 text-[#c5a26c]" />
             <span className="hidden sm:inline">Trang Chủ</span>
           </a>
           <Link
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2.5 sm:px-3 py-1 text-[12px] font-bold text-[#04092b] hover:bg-white hover:text-[#c5a26c] rounded-lg transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-[#04092b] hover:bg-white hover:text-[#c5a26c] rounded-md transition-all"
             title="Xem trang blog công khai"
           >
-            <BookOpen className="w-3.5 h-3.5 text-[#c5a26c]" />
+            <BookOpen className="w-3 h-3 text-[#c5a26c]" />
             <span className="hidden sm:inline">Blog</span>
           </Link>
         </div>
 
         {/* User Role Tag */}
         {user && (
-          <div className="flex items-center gap-2 pl-2 border-l border-[#e2ddd3]">
+          <div className="flex items-center gap-1.5 pl-2 border-l border-[#e2ddd3]">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px] shadow-xs shrink-0 ${
+              className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-[11px] shadow-xs shrink-0 ${
                 isAdmin ? 'bg-[#04092b] text-[#c5a26c] border border-[#c5a26c]/40' : 'bg-blue-600 text-white'
               }`}
             >
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <div className="text-left hidden xl:block">
-              <span className="block text-[12px] font-bold text-[#04092b] leading-tight truncate max-w-[110px]">
+              <span className="block text-[11.5px] font-bold text-[#04092b] leading-tight truncate max-w-[100px]">
                 {user.name}
               </span>
-              <span className="block text-[9.5px] text-[#6e706a] uppercase font-semibold">
+              <span className="block text-[8.5px] text-[#6e706a] uppercase font-semibold">
                 {isAdmin ? 'Quản trị' : 'Biên tập'}
               </span>
             </div>
