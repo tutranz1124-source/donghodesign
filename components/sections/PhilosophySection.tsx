@@ -48,8 +48,9 @@ export default function PhilosophySection({ data }: PhilosophySectionProps) {
   return (
     <section
       id="philosophy"
-      className="w-full py-20 lg:py-28 bg-[#f4f1ea] border-b border-[#e2ddd3] overflow-hidden"
+      className="w-full py-20 lg:py-28 bg-[#f4f1ea] border-b border-[#e2ddd3] overflow-hidden relative"
     >
+      <div id="about" className="absolute -top-20 left-0" />
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-20">
         <div className="max-w-[1280px] mx-auto">
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">

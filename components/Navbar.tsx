@@ -29,30 +29,63 @@ export default function Navbar({ settings }: NavbarProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Auto-scroll when navigating to hash from external pages
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const targetId = window.location.hash.replace('#', '');
+      const timer = setTimeout(() => {
+        let el = document.getElementById(targetId);
+        if (!el && targetId === 'about') el = document.getElementById('philosophy');
+        if (!el && (targetId === 'services' || targetId === 'projects')) el = document.getElementById('office');
+        if (el) {
+          const headerOffset = 85;
+          const elementPosition = el.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [pathname]);
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
     if (url.startsWith('#')) {
+      e.preventDefault();
+      const targetId = url.replace('#', '');
       if (isHome) {
-        e.preventDefault();
-        const targetId = url.replace('#', '');
-        const el = document.getElementById(targetId);
+        let el = document.getElementById(targetId);
+        if (!el && targetId === 'about') el = document.getElementById('philosophy');
+        if (!el && (targetId === 'services' || targetId === 'projects')) el = document.getElementById('office');
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
+          const headerOffset = 85;
+          const elementPosition = el.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
         }
       } else {
-        e.preventDefault();
         router.push(`/${url}`);
       }
+      setMobileMenuOpen(false);
+    } else if (url.startsWith('/')) {
       setMobileMenuOpen(false);
     }
   };
 
-  const navLinks = settings.navLinks || [
-    { label: 'Giới thiệu', url: '#about' },
-    { label: 'Phong cách thiết kế', url: '#styles' },
-    { label: 'Thi công', url: '#about' },
-    { label: 'Tin tức', url: '/blog' },
-    { label: 'Liên hệ', url: '#contact' },
-  ];
+  const navLinks = settings?.navLinks?.length
+    ? settings.navLinks
+    : [
+        { label: 'Giới thiệu', url: '#philosophy' },
+        { label: 'Phong cách thiết kế', url: '#styles' },
+        { label: 'Không gian văn phòng', url: '#office' },
+        { label: 'Tin tức', url: '/blog' },
+        { label: 'Liên hệ', url: '#contact' },
+      ];
 
   return (
     <header
@@ -67,8 +100,8 @@ export default function Navbar({ settings }: NavbarProps) {
         <Link href="/" className="relative flex items-center group">
           <div className="relative h-[42px] w-[170px] sm:h-[48px] sm:w-[195px] lg:h-[52px] lg:w-[215px] transition-transform duration-300 group-hover:scale-105">
             <Image
-              src={settings.logo || '/uploads/logo-dong-hoa-property.png'}
-              alt={settings.siteName || 'Đông Hòa Design'}
+              src={settings?.logo || '/uploads/logo-dong-hoa-property.png'}
+              alt={settings?.siteName || 'Đông Hòa Design'}
               fill
               className="object-contain object-left"
               priority
@@ -78,16 +111,30 @@ export default function Navbar({ settings }: NavbarProps) {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden lg:flex items-center gap-6 xl:gap-10 text-[14px] lg:text-[15px] font-medium text-white">
-          {navLinks.map((item, idx) => (
-            <a
-              key={idx}
-              href={item.url}
-              onClick={(e) => handleNavClick(e, item.url)}
-              className="relative py-1 cursor-pointer hover:text-[#c5a26c] transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#c5a26c] hover:after:w-full after:transition-all after:duration-300"
-            >
-              {item.label}
-            </a>
-          ))}
+          {navLinks.map((item, idx) => {
+            const isInternalPage = item.url.startsWith('/') && !item.url.startsWith('/#');
+            if (isInternalPage) {
+              return (
+                <Link
+                  key={idx}
+                  href={item.url}
+                  className="relative py-1 cursor-pointer hover:text-[#c5a26c] transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#c5a26c] hover:after:w-full after:transition-all after:duration-300"
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+            return (
+              <a
+                key={idx}
+                href={item.url}
+                onClick={(e) => handleNavClick(e, item.url)}
+                className="relative py-1 cursor-pointer hover:text-[#c5a26c] transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#c5a26c] hover:after:w-full after:transition-all after:duration-300"
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Action Button: Search Bar, Consultation CTA & Phone */}
@@ -95,11 +142,11 @@ export default function Navbar({ settings }: NavbarProps) {
           <HeaderSearchBar />
 
           <a
-            href={`tel:${(settings.hotline || '0906.499.279').replace(/\D/g, '')}`}
+            href={`tel:${(settings?.hotline || '0906.499.279').replace(/\D/g, '')}`}
             className="flex items-center gap-1.5 text-[13px] font-semibold text-[#c5a26c] hover:text-white transition-colors whitespace-nowrap"
           >
             <PhoneCall className="w-3.5 h-3.5" />
-            <span>{settings.hotline || '0906.499.279'}</span>
+            <span>{settings?.hotline || '0906.499.279'}</span>
           </a>
 
           <a
@@ -118,9 +165,9 @@ export default function Navbar({ settings }: NavbarProps) {
           <HeaderSearchBar />
 
           <a
-            href={`tel:${(settings.hotline || '0906.499.279').replace(/\D/g, '')}`}
+            href={`tel:${(settings?.hotline || '0906.499.279').replace(/\D/g, '')}`}
             className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-[#c5a26c] hover:text-white rounded-lg transition-colors"
-            title={`Gọi Hotline ${settings.hotline || '0906.499.279'}`}
+            title={`Gọi Hotline ${settings?.hotline || '0906.499.279'}`}
           >
             <PhoneCall className="w-4 h-4 sm:w-5 sm:h-5 text-[#c5a26c]" strokeWidth={2} />
           </a>
@@ -148,16 +195,31 @@ export default function Navbar({ settings }: NavbarProps) {
           </div>
 
           <nav className="flex flex-col space-y-3 font-medium text-white text-[16px]">
-            {navLinks.map((item, idx) => (
-              <a
-                key={idx}
-                href={item.url}
-                onClick={(e) => handleNavClick(e, item.url)}
-                className="py-2 border-b border-white/10 hover:text-[#c5a26c] transition-colors cursor-pointer"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navLinks.map((item, idx) => {
+              const isInternalPage = item.url.startsWith('/') && !item.url.startsWith('/#');
+              if (isInternalPage) {
+                return (
+                  <Link
+                    key={idx}
+                    href={item.url}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="py-2 border-b border-white/10 hover:text-[#c5a26c] transition-colors cursor-pointer"
+                  >
+                    {item.label}
+                  </Link>
+                );
+              }
+              return (
+                <a
+                  key={idx}
+                  href={item.url}
+                  onClick={(e) => handleNavClick(e, item.url)}
+                  className="py-2 border-b border-white/10 hover:text-[#c5a26c] transition-colors cursor-pointer"
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
           <div className="pt-2 flex flex-col gap-3">
             <a
