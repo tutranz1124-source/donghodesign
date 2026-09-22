@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { getMediaLibrary, saveMediaLibrary } from '@/lib/storage';
+import { getMediaLibrary, saveMediaLibrary, syncFileToGitHub } from '@/lib/storage';
 import { verifyAdminSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -33,7 +33,9 @@ export async function POST(request: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    fs.writeFileSync(filePath, buffer);
+    try {
+      fs.writeFileSync(filePath, buffer);
+    } catch (e) {}
 
     const mediaItem = {
       id: `med-${Date.now()}`,
@@ -50,6 +52,9 @@ export async function POST(request: Request) {
     const mediaList = getMediaLibrary();
     mediaList.unshift(mediaItem);
     saveMediaLibrary(mediaList);
+
+    // Sync image binary to GitHub repository
+    syncFileToGitHub(`public/uploads/${fileName}`, buffer, `chore(media): upload ${fileName}`).catch(() => {});
 
     return NextResponse.json(mediaItem);
   } catch (err) {

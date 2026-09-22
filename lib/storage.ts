@@ -242,6 +242,66 @@ export function getSiteContent(): SiteContentData {
   return DEFAULT_SITE_CONTENT;
 }
 
+export async function syncFileToGitHub(filePath: string, content: string | Buffer, commitMessage: string): Promise<boolean> {
+  const token = process.env.GITHUB_TOKEN || process.env.ADMIN_GITHUB_TOKEN || '';
+  const owner = process.env.GITHUB_OWNER || 'tutranz1124-source';
+  const repo = process.env.GITHUB_REPO || 'donghodesign';
+  const branch = process.env.GITHUB_BRANCH || 'main';
+
+  if (!token) return false;
+
+  try {
+    const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`;
+    const getRes = await fetch(getUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'DongHoa-CMS-Sync',
+        Accept: 'application/vnd.github.v3+json',
+      },
+      cache: 'no-store',
+    });
+
+    let sha: string | undefined;
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+
+    const base64Content = Buffer.isBuffer(content)
+      ? content.toString('base64')
+      : Buffer.from(content, 'utf8').toString('base64');
+
+    const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+    const putRes = await fetch(putUrl, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'DongHoa-CMS-Sync',
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github.v3+json',
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: base64Content,
+        branch,
+        ...(sha ? { sha } : {}),
+      }),
+    });
+
+    if (putRes.ok) {
+      console.info(`[GitHub Auto-Persistence] Successfully saved ${filePath} to GitHub repository.`);
+      return true;
+    } else {
+      const errText = await putRes.text();
+      console.warn(`[GitHub Auto-Persistence] Failed to sync ${filePath}:`, errText);
+      return false;
+    }
+  } catch (err) {
+    console.error(`[GitHub Auto-Persistence] Network error syncing ${filePath}:`, err);
+    return false;
+  }
+}
+
 export function updateSiteContent(newContent: SiteContentData): boolean {
   const merged = mergeWithDefault(newContent);
   let saved = false;
@@ -266,9 +326,11 @@ export function updateSiteContent(newContent: SiteContentData): boolean {
     fs.writeFileSync(siteContentFile, JSON.stringify(merged, null, 2), 'utf8');
     saved = true;
   } catch (err) {
-    // This is expected on Vercel serverless read-only filesystem
     console.info('Project disk is read-only (Serverless environment). Memory & tmp cache active.');
   }
+
+  // Asynchronously commit to GitHub repository for permanent serverless persistence
+  syncFileToGitHub('data/site-content.json', JSON.stringify(merged, null, 2), 'chore(cms): auto-persist site-content from admin').catch(() => {});
 
   return saved;
 }
@@ -333,6 +395,9 @@ export function saveBlogPosts(posts: BlogPost[]): boolean {
   } catch (err) {
     console.info('Blog posts written to memory & tmp cache.');
   }
+
+  // Asynchronously commit to GitHub repository for permanent serverless persistence
+  syncFileToGitHub('data/blog-posts.json', JSON.stringify(posts, null, 2), 'chore(cms): auto-persist blog-posts from admin').catch(() => {});
 
   return saved;
 }
@@ -421,6 +486,9 @@ export function saveMediaLibrary(media: MediaItem[]): boolean {
   } catch (err) {
     console.info('Media library written to memory & tmp cache.');
   }
+
+  // Asynchronously commit to GitHub repository for permanent serverless persistence
+  syncFileToGitHub('data/media.json', JSON.stringify(media, null, 2), 'chore(cms): auto-persist media list from admin').catch(() => {});
 
   return saved;
 }
