@@ -69,8 +69,9 @@ export async function POST(req: NextRequest) {
         );
       }
     } else if (type === 'proxy_url') {
-      if (!proxyUrl || !/^https?:\/\/.+/i.test(proxyUrl.trim())) {
-        return NextResponse.json({ error: 'Vui lòng nhập đường link LadiPage hợp lệ (bắt đầu bằng http:// hoặc https://)' }, { status: 400 });
+      // proxyUrl is optional during initial webhook creation
+      if (proxyUrl && !/^https?:\/\/.+/i.test(proxyUrl.trim())) {
+        return NextResponse.json({ error: 'Đường link LadiPage không hợp lệ (cần bắt đầu bằng http:// hoặc https://)' }, { status: 400 });
       }
       fileSize = 0;
     } else {
