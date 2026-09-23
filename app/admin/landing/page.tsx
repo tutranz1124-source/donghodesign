@@ -645,11 +645,11 @@ export default function AdminLandingPages() {
                         : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
                     }`}
                   >
-                    <span className="text-[20px]">🌐</span>
+                    <span className="text-[20px]">⚡</span>
                     <div>
-                      <div className="text-[12.5px] font-bold">Dán Link LadiPage</div>
+                      <div className="text-[12.5px] font-bold">Tạo URL & Webhook Cho LadiPage</div>
                       <div className={`text-[10.5px] ${modalType === 'proxy_url' ? 'text-white/70' : 'text-[#888]'}`}>
-                        Tiêu tốn 0 KB dung lượng Vercel
+                        Generate URL & Webhook tự động đồng bộ (0 KB)
                       </div>
                     </div>
                   </button>
@@ -704,23 +704,85 @@ export default function AdminLandingPages() {
                   </div>
                 )}
 
-                {/* Sub-panel: Proxy Link */}
+                {/* Sub-panel: URL Generator & Webhook Sync for LadiPage */}
                 {modalType === 'proxy_url' && (
-                  <div className="p-4 bg-[#e8f1fa]/60 rounded-2xl border border-[#c8daf0] space-y-2 mt-3 animate-in fade-in duration-200">
-                    <label className="block text-[12px] font-bold text-[#1c5f9e]">
-                      👉 Nhập đường link LadiPage của bạn:
-                    </label>
-                    <input
-                      type="url"
-                      required={modalType === 'proxy_url'}
-                      value={formProxyUrl}
-                      onChange={(e) => setFormProxyUrl(e.target.value)}
-                      placeholder="https://ladipage.me/dong-hoa-biet-thu-hien-dai"
-                      className="w-full p-3 bg-white border border-[#1c5f9e]/40 rounded-xl text-[13px] font-mono text-[#04092b] focus:border-[#1c5f9e] focus:outline-none"
-                    />
-                    <p className="text-[11px] text-[#1c5f9e]">
-                      💡 Hệ thống sẽ tự động bắt cầu hiển thị nguyên bản toàn bộ giao diện từ link LadiPage trên mà không tốn dung lượng lưu trữ.
-                    </p>
+                  <div className="p-4 bg-[#f4f8fc] rounded-2xl border border-[#c8daf0] space-y-4 mt-3 animate-in fade-in duration-200">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-[13px] font-bold text-[#1c5f9e]">
+                        <Sparkles className="w-4 h-4 text-[#c5a26c]" /> Các URL Được Tạo Tự Động Cho LadiPage:
+                      </div>
+                      <p className="text-[11.5px] text-[#555]">
+                        Bạn chỉ cần sao chép các URL bên dưới để dán vào LadiPage:
+                      </p>
+                    </div>
+
+                    {/* URL 1: Webhook Auto-Sync URL */}
+                    <div className="p-3 bg-white rounded-xl border border-[#c8daf0] space-y-1.5 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11.5px] font-bold text-[#04092b] flex items-center gap-1">
+                          ⚡ 1. Link Webhook Tự Động Đồng Bộ (Khuyên Dùng):
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
+                            const webhookUrl = `${origin}/api/landing/webhook?slug=${formSlug || 'ten-trang'}`;
+                            navigator.clipboard.writeText(webhookUrl);
+                            showToast('success', 'Đã sao chép Link Webhook LadiPage!');
+                          }}
+                          className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] rounded-lg text-[11px] font-bold transition-all inline-flex items-center gap-1"
+                        >
+                          <Copy className="w-3 h-3" /> Copy Webhook
+                        </button>
+                      </div>
+                      <div className="p-2 bg-[#faf8f5] rounded-lg border border-[#e2ddd3] font-mono text-[11.5px] text-[#1c5f9e] select-all break-all">
+                        https://donghoadesign.com/api/landing/webhook?slug={formSlug || 'ten-trang'}
+                      </div>
+                      <p className="text-[10.5px] text-[#666] leading-relaxed">
+                        👉 Dán link này vào mục <strong>LadiPage &rarr; Cài đặt &rarr; Webhook / Xuất bản Server riêng</strong>. Mỗi lần bạn bấm Xuất bản trên LadiPage, trang web sẽ tự động cập nhật ngay lập tức!
+                      </p>
+                    </div>
+
+                    {/* URL 2: Target Website Public URL */}
+                    <div className="p-3 bg-white rounded-xl border border-[#c8daf0] space-y-1.5 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11.5px] font-bold text-[#04092b]">
+                          🔗 2. Link Trang Đích Chính Thức (Tên miền của bạn):
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
+                            const fullUrl = `${origin}/lp/${formSlug || 'ten-trang'}`;
+                            navigator.clipboard.writeText(fullUrl);
+                            showToast('success', 'Đã sao chép Link Landing Page!');
+                          }}
+                          className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] rounded-lg text-[11px] font-bold transition-colors inline-flex items-center gap-1"
+                        >
+                          <Copy className="w-3 h-3 text-[#c5a26c]" /> Copy Link
+                        </button>
+                      </div>
+                      <div className="p-2 bg-[#faf8f5] rounded-lg border border-[#e2ddd3] font-mono text-[11.5px] text-[#04092b] font-bold select-all break-all">
+                        https://donghoadesign.com/lp/{formSlug || 'ten-trang'}
+                      </div>
+                    </div>
+
+                    {/* Fallback Option: Paste LadiPage Link if already published */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="block text-[11.5px] font-bold text-[#04092b]">
+                        👉 Hoặc Dán Đường Link LadiPage bạn đã có (Nếu không dùng Webhook):
+                      </label>
+                      <input
+                        type="url"
+                        value={formProxyUrl}
+                        onChange={(e) => setFormProxyUrl(e.target.value)}
+                        placeholder="Ví dụ: https://ladipage.me/donghoa-biet-thu hoặc https://lp.donghoadesign.com/..."
+                        className="w-full p-2.5 bg-white border border-[#1c5f9e]/40 rounded-xl text-[12.5px] font-mono text-[#04092b] focus:border-[#1c5f9e] focus:outline-none"
+                      />
+                      <p className="text-[10.5px] text-[#888]">
+                        Nếu bạn dán link trên, hệ thống sẽ tự động bắt cầu hiển thị nguyên bản toàn bộ giao diện từ link LadiPage đó.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -844,3 +906,4 @@ export default function AdminLandingPages() {
     </div>
   );
 }
+
