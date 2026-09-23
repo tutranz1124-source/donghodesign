@@ -87,7 +87,60 @@ export async function GET(
     }
   }
 
-  return notFoundResponse();
+  // 3. Landing page created with Webhook & waiting for initial sync
+  return waitingWebhookResponse(landingPage.slug, landingPage.title);
+}
+
+function waitingWebhookResponse(slug: string, title: string) {
+  const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title} - Đang Chờ Đồng Bộ LadiPage</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #04092b;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .card {
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(197, 162, 108, 0.4);
+      border-radius: 24px;
+      padding: 48px 32px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 22px; color: #c5a26c; margin-bottom: 12px; }
+    p { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px; }
+    .box { background: rgba(0,0,0,0.3); border: 1px dashed rgba(197, 162, 108, 0.4); border-radius: 12px; padding: 16px; font-family: monospace; font-size: 12.5px; color: #38bdf8; word-break: break-all; margin-bottom: 24px; }
+    .btn { display: inline-block; background: #c5a26c; color: #04092b; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 28px; border-radius: 12px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">⚡</div>
+    <h1>Webhook Đã Kết Nối & Sẵn Sàng</h1>
+    <p>Trang <strong>${title}</strong> (<code>/lp/${slug}</code>) đã được khởi tạo thành công trên hệ thống Đông Hòa Design. Vui lòng dán Webhook URL bên dưới vào LadiPage và bấm <strong>"Xuất bản"</strong>:</p>
+    <div class="box">https://donghoadesign.com/api/landing/webhook?slug=${slug}</div>
+    <a href="https://donghoadesign.com" class="btn">Về Trang Chủ Đông Hòa</a>
+  </div>
+</body>
+</html>`;
+
+  return new NextResponse(html, {
+    status: 200,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
 }
 
 function notFoundResponse() {
