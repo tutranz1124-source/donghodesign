@@ -5,13 +5,14 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Send, ArrowRight, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import FlowReveal, { FlowStaggerGroup, FlowItem } from '@/components/animations/FlowReveal';
-import { ContactData } from '@/lib/types';
+import { ContactData, SiteSettings } from '@/lib/types';
 
 interface QuoteContactSectionProps {
   data?: ContactData;
+  settings?: SiteSettings;
 }
 
-export default function QuoteContactSection({ data }: QuoteContactSectionProps) {
+export default function QuoteContactSection({ data, settings }: QuoteContactSectionProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -167,7 +168,7 @@ export default function QuoteContactSection({ data }: QuoteContactSectionProps) 
                       Gửi yêu cầu thành công!
                     </h3>
                     <p className="text-[13.5px] text-[#5f6361] font-light leading-relaxed">
-                      Thông tin đã được gửi trực tiếp đến hộp thư Kiến trúc sư (<strong className="font-semibold text-[#2d302e]">nhatdong1511@gmail.com</strong>). Đội ngũ Đông Hòa Design sẽ liên hệ tư vấn và gửi báo giá chi tiết trong vòng 15 phút.
+                      Thông tin đã được gửi trực tiếp đến hộp thư Kiến trúc sư (<strong className="font-semibold text-[#2d302e]">{settings?.email || 'Donghoadesign@gmail.com'}</strong>). Đội ngũ Đông Hòa Design sẽ liên hệ tư vấn và gửi báo giá chi tiết trong vòng 15 phút.
                     </p>
                     <button
                       type="button"
