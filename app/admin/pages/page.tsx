@@ -45,7 +45,9 @@ import {
   CheckCircle2,
   Layers,
   Settings,
-  X
+  X,
+  Edit3,
+  Columns
 } from 'lucide-react';
 import { SiteContentData, MediaItem, StyleStageConfig, AnimatedStageItem } from '@/lib/types';
 
@@ -211,7 +213,7 @@ export default function AdminPageEditor() {
   const [fullscreenPreviewSection, setFullscreenPreviewSection] = useState<'hero' | 'philosophy' | 'contact' | 'styles' | 'office' | null>(null);
   const [canvasZoom, setCanvasZoom] = useState<number>(1);
   const [previewZoom, setPreviewZoom] = useState<number>(1);
-  const [previewLayout, setPreviewLayout] = useState<'split' | 'full'>('split');
+  const [previewLayout, setPreviewLayout] = useState<'form' | 'preview' | 'split'>('form');
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const importFileRef = useRef<HTMLInputElement>(null);
 
@@ -2338,1746 +2340,1931 @@ export default function AdminPageEditor() {
         </div>
       )}
 
-      {/* Tab 2: Hero Slideshow */}
+      {/* ========================================================================= */}
+      {/* TAB 2: HERO BANNER (SLIDESHOW)                                            */}
+      {/* ========================================================================= */}
       {activeTab === 'hero' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-          {/* Left Form Column */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
-            <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-3">
-              <h3 className="font-bold text-[16px] text-[#04092b] flex items-center gap-2">
-                <Layout className="w-4 h-4 text-[#c5a26c]" /> Banner Đầu Trang (Hero)
+        <div className="space-y-6">
+          {/* Top Section Header & View Mode Switcher */}
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-[18px] sm:text-[20px] text-[#04092b] flex items-center gap-2.5">
+                <Layout className="w-5 h-5 text-[#c5a26c]" /> Banner Đầu Trang (Hero Slideshow)
               </h3>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded-full font-bold">
-                  Slide {heroSlideIndex + 1}/{hero?.slides?.length || 3}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newSlide = {
-                      tag: 'ĐÔNG HÒA DESIGN',
-                      monogram: 'Đ',
-                      line1: 'Không gian sống',
-                      line2: 'Đẳng cấp & Tinh tế',
-                      description: 'Giải pháp thiết kế & thi công nội thất cao cấp mang dấu ấn riêng.',
-                      backgroundImage: '/uploads/hero_slide_1.png',
-                      buttonText: 'Xem thêm',
-                      buttonTarget: '#contact',
-                      secondaryText: 'Tìm hiểu về chúng tôi →',
-                      secondaryTarget: '#philosophy'
-                    };
-                    const updated = [...(hero?.slides || []), newSlide];
-                    setData({ ...data, hero: { ...hero, slides: updated } });
-                    setHeroSlideIndex(updated.length - 1);
-                  }}
-                  className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <Plus className="w-3 h-3" /> + Thêm Slide
-                </button>
-              </div>
+              <p className="text-[13px] text-[#707070] mt-1">
+                Tùy chỉnh các trang trình chiếu chính, thông điệp thương hiệu, ảnh nền và nút kêu gọi hành động.
+              </p>
             </div>
-
-            {/* Slide Selector Pills */}
-            <div className="flex flex-wrap gap-1.5">
-              {hero?.slides?.map((slide, idx) => (
-                <div key={idx} className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setHeroSlideIndex(idx)}
-                    className={`px-3 py-1.5 rounded-xl font-bold text-[12px] border transition-all ${
-                      idx === heroSlideIndex
-                        ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-xs ring-2 ring-[#c5a26c]/30'
-                        : 'bg-[#f4f1ea] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
-                    }`}
-                  >
-                    Slide {idx + 1} ({slide.monogram})
-                  </button>
-                  {hero.slides.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = hero.slides.filter((_, i) => i !== idx);
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                        if (heroSlideIndex >= updated.length) {
-                          setHeroSlideIndex(Math.max(0, updated.length - 1));
-                        }
-                      }}
-                      className="p-1 text-red-400 hover:text-red-600 rounded"
-                      title="Xóa slide này"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Current Slide Editor */}
-            {hero?.slides?.[heroSlideIndex] && (
-              <div className="space-y-3.5 pt-1">
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Nhãn Tag Nhỏ (Eyebrow)</label>
-                  <input
-                    type="text"
-                    value={hero.slides[heroSlideIndex].tag || ''}
-                    onChange={(e) => {
-                      const updated = [...hero.slides];
-                      updated[heroSlideIndex].tag = e.target.value;
-                      setData({ ...data, hero: { ...hero, slides: updated } });
-                    }}
-                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                    placeholder="VD: ĐÔNG HÒA DESIGN"
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-2.5">
-                  <div>
-                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Monogram</label>
-                    <input
-                      type="text"
-                      maxLength={2}
-                      value={hero.slides[heroSlideIndex].monogram}
-                      onChange={(e) => {
-                        const updated = [...hero.slides];
-                        updated[heroSlideIndex].monogram = e.target.value;
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                      }}
-                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[16px] font-bold font-serif text-[#04092b] text-center focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Dòng Tiêu Đề 1</label>
-                    <input
-                      type="text"
-                      value={hero.slides[heroSlideIndex].line1}
-                      onChange={(e) => {
-                        const updated = [...hero.slides];
-                        updated[heroSlideIndex].line1 = e.target.value;
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                      }}
-                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Dòng Tiêu Đề 2</label>
-                  <input
-                    type="text"
-                    value={hero.slides[heroSlideIndex].line2}
-                    onChange={(e) => {
-                      const updated = [...hero.slides];
-                      updated[heroSlideIndex].line2 = e.target.value;
-                      setData({ ...data, hero: { ...hero, slides: updated } });
-                    }}
-                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Slide</label>
-                  <textarea
-                    rows={2}
-                    value={hero.slides[heroSlideIndex].description}
-                    onChange={(e) => {
-                      const updated = [...hero.slides];
-                      updated[heroSlideIndex].description = e.target.value;
-                      setData({ ...data, hero: { ...hero, slides: updated } });
-                    }}
-                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-                  />
-                </div>
-
-                {/* Background Image with 1-Click Picker */}
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">
-                    Ảnh Nền Slide {heroSlideIndex + 1}
-                  </label>
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
-                      {hero.slides[heroSlideIndex].backgroundImage && (
-                        <Image
-                          src={hero.slides[heroSlideIndex].backgroundImage!}
-                          alt="Slide BG"
-                          fill
-                          className="object-cover"
-                        />
-                      )}
-                    </div>
-                    <input
-                      type="text"
-                      value={hero.slides[heroSlideIndex].backgroundImage || ''}
-                      onChange={(e) => {
-                        const updated = [...hero.slides];
-                        updated[heroSlideIndex].backgroundImage = e.target.value;
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                      }}
-                      className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openMediaPicker(`Chọn ảnh nền cho Slide ${heroSlideIndex + 1}`, (url) => {
-                          const updated = [...hero.slides];
-                          updated[heroSlideIndex].backgroundImage = url;
-                          setData({ ...data, hero: { ...hero, slides: updated } });
-                        })
-                      }
-                      className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
-                    >
-                      <ImageIcon className="w-3.5 h-3.5" /> Chọn Ảnh
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5 pt-1">
-                  <div>
-                    <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Chữ trên nút bấm</label>
-                    <input
-                      type="text"
-                      value={hero.slides[heroSlideIndex].buttonText || 'Xem thêm'}
-                      onChange={(e) => {
-                        const updated = [...hero.slides];
-                        updated[heroSlideIndex].buttonText = e.target.value;
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                      }}
-                      className="w-full p-2 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Mục tiêu cuộn</label>
-                    <select
-                      value={hero.slides[heroSlideIndex].buttonTarget || '#contact'}
-                      onChange={(e) => {
-                        const updated = [...hero.slides];
-                        updated[heroSlideIndex].buttonTarget = e.target.value;
-                        setData({ ...data, hero: { ...hero, slides: updated } });
-                      }}
-                      className="w-full p-2 border border-[#e2ddd3] rounded-xl text-[12.5px] bg-white focus:border-[#c5a26c] focus:outline-none"
-                    >
-                      <option value="#contact">Liên hệ (#contact)</option>
-                      <option value="#philosophy">Giới thiệu (#philosophy)</option>
-                      <option value="#styles">Phong cách (#styles)</option>
-                      <option value="#office">Văn phòng (#office)</option>
-                      <option value="/blog">Tin tức (/blog)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
-            {/* Viewport Switcher Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
-              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Hero Banner
-              </span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {/* Layout Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
-                >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
-                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
-                </button>
-
-                {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
-                    {Math.round(previewZoom * 100)}%
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Monitor className="w-3 h-3" /> Desktop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Smartphone className="w-3 h-3" /> Mobile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFullscreenPreviewSection('hero')}
-                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
-                >
-                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Desktop Mode Live Preview */}
-            {previewDevice === 'desktop' ? (
-              <div
-                style={{
-                  transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                  transformOrigin: 'top center',
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="relative w-full aspect-[16/10] min-h-[380px] max-h-[500px] rounded-2xl overflow-hidden shadow-xl border border-[#c5a26c]/40 bg-[#04092b] text-white p-6 sm:p-8 flex flex-col justify-between"
+            <div className="flex items-center gap-1.5 bg-[#f4f1ea] p-1.5 rounded-2xl border border-[#e2ddd3] self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('form')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'form' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
               >
-                {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
-                  <Image
-                    src={hero.slides[heroSlideIndex].backgroundImage!}
-                    alt="Slide preview"
-                    fill
-                    className="object-cover opacity-50"
-                  />
-                )}
-                <div className="relative z-10 space-y-2">
-                  <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider bg-black/60 px-2.5 py-0.5 rounded border border-[#c5a26c]/30 inline-block font-accent">
-                    {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT CAO CẤP'}
-                  </span>
-                  <div className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#c5a26c] leading-tight mt-1">
-                    <span className="text-3xl sm:text-4xl font-serif italic mr-1.5 text-[#c5a26c]">
-                      {hero?.slides?.[heroSlideIndex]?.monogram}
-                    </span>
-                    <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
-                  </div>
-                  {hero?.slides?.[heroSlideIndex]?.line2 && (
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-white/90 font-display">
-                      {hero?.slides?.[heroSlideIndex]?.line2}
-                    </p>
-                  )}
-                </div>
-
-                <div className="relative z-10 space-y-3 pt-4">
-                  <p className="text-[12.5px] sm:text-[13.5px] text-white/80 max-w-lg line-clamp-3 leading-relaxed">
-                    {hero?.slides?.[heroSlideIndex]?.description}
-                  </p>
-                  <div className="flex items-center justify-between pt-1">
-                    <button className="bg-[#c5a26c] text-[#04092b] font-bold text-[12px] px-5 py-2 rounded-xl uppercase tracking-wider shadow-md flex items-center gap-1.5">
-                      <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá Dự Án'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                    <div className="flex items-center gap-1.5">
-                      {hero?.slides?.map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-2 rounded-full transition-all ${
-                            i === heroSlideIndex ? 'w-7 bg-[#c5a26c]' : 'w-2 bg-white/40'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Mobile Mode Live Preview */
-              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
-                <div
-                  style={{
-                    transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                    transformOrigin: 'top center',
-                    transition: 'transform 0.15s ease-out'
-                  }}
-                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#04092b] text-white rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
-                >
-                  {/* Speaker Notch */}
-                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
-                  </div>
-
-                  {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
-                    <Image
-                      src={hero.slides[heroSlideIndex].backgroundImage!}
-                      alt="Slide preview"
-                      fill
-                      className="object-cover opacity-50 pointer-events-none"
-                    />
-                  )}
-
-                  <div className="relative z-10 space-y-1.5 mt-2">
-                    <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-widest bg-black/60 px-2 py-0.5 rounded border border-[#c5a26c]/30 inline-block font-accent">
-                      {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT'}
-                    </span>
-                    <div className="text-[22px] font-serif font-bold text-[#c5a26c] leading-tight">
-                      <span className="text-[32px] font-serif italic mr-1 text-[#c5a26c]">
-                        {hero?.slides?.[heroSlideIndex]?.monogram}
-                      </span>
-                      <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
-                    </div>
-                    {hero?.slides?.[heroSlideIndex]?.line2 && (
-                      <p className="text-[17px] font-bold text-white/90 font-display">
-                        {hero?.slides?.[heroSlideIndex]?.line2}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="relative z-10 space-y-3 mb-2">
-                    <p className="text-[12px] text-white/85 line-clamp-3 leading-relaxed">
-                      {hero?.slides?.[heroSlideIndex]?.description}
-                    </p>
-                    <button className="w-full bg-[#c5a26c] text-[#04092b] font-bold text-[11.5px] py-2.5 rounded-xl uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5">
-                      <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá'}</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+                <Edit3 className="w-4 h-4" /> <span>Biểu Mẫu</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('preview')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'preview' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Eye className="w-4 h-4" /> <span>Xem Trước</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('split')}
+                className={`hidden 2xl:flex px-3.5 py-2 rounded-xl text-[12.5px] font-bold items-center gap-1.5 transition-all ${
+                  previewLayout === 'split' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Columns className="w-4 h-4" /> <span>Song Song</span>
+              </button>
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Tab 3: Tầm Nhìn & Sứ Mệnh (Philosophy) */}
-      {activeTab === 'philosophy' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-          {/* Left Form Column */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
-            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
-              <Compass className="w-4 h-4 text-[#c5a26c]" /> Tầm Nhìn &amp; Sứ Mệnh
-            </h3>
-
-            {/* Left Visual Photo */}
-            <div className="space-y-1.5">
-              <label className="block text-[12px] font-bold text-[#04092b]">Ảnh Đại Diện Khối Triết Lý</label>
-              <div className="flex items-center gap-2.5">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
-                  <Image
-                    src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
-                    alt="Philosophy Preview"
-                    fill
-                    className="object-cover"
-                  />
+          <div className={previewLayout === 'split' ? 'grid grid-cols-1 2xl:grid-cols-12 gap-6 items-start' : 'w-full'}>
+            {/* Form Column */}
+            {(previewLayout === 'form' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-5' : 'max-w-5xl mx-auto'} bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6`}>
+                <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-4">
+                  <div>
+                    <h4 className="font-bold text-[16px] text-[#04092b]">Quản Lý Danh Sách Slides</h4>
+                    <p className="text-[12px] text-[#707070]">Chọn slide để chỉnh sửa hoặc thêm slide mới vào banner.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newSlide = {
+                        tag: 'ĐÔNG HÒA DESIGN',
+                        monogram: 'Đ',
+                        line1: 'Không gian sống',
+                        line2: 'Đẳng cấp & Tinh tế',
+                        description: 'Giải pháp thiết kế & thi công nội thất cao cấp mang dấu ấn riêng.',
+                        backgroundImage: '/uploads/hero_slide_1.png',
+                        buttonText: 'Xem thêm',
+                        buttonTarget: '#contact',
+                        secondaryText: 'Tìm hiểu về chúng tôi →',
+                        secondaryTarget: '#philosophy'
+                      };
+                      const updated = [...(hero?.slides || []), newSlide];
+                      setData({ ...data, hero: { ...hero, slides: updated } });
+                      setHeroSlideIndex(updated.length - 1);
+                    }}
+                    className="px-3.5 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Thêm Slide Mới
+                  </button>
                 </div>
-                <input
-                  type="text"
-                  value={philosophy?.image || ''}
-                  onChange={(e) => setData({ ...data, philosophy: { ...philosophy, image: e.target.value } })}
-                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    openMediaPicker('Chọn ảnh cho phần Tầm Nhìn & Sứ Mệnh', (url) => {
-                      setData({ ...data, philosophy: { ...philosophy, image: url } });
-                    })
-                  }
-                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
-                >
-                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
-                </button>
-              </div>
-            </div>
 
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tagline Nhỏ (Eyebrow)</label>
-              <input
-                type="text"
-                value={philosophy?.tag || ''}
-                onChange={(e) => setData({ ...data, philosophy: { ...philosophy, tag: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                placeholder="VD: VỀ CHÚNG TÔI"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
-              <input
-                type="text"
-                value={philosophy?.heading || ''}
-                onChange={(e) => setData({ ...data, philosophy: { ...philosophy, heading: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                placeholder="VD: TẦM NHÌN VÀ SỨ MỆNH"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Đoạn Văn Triết Lý</label>
-              <textarea
-                rows={3}
-                value={philosophy?.description || ''}
-                onChange={(e) => setData({ ...data, philosophy: { ...philosophy, description: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-              />
-            </div>
-
-            {/* 3 Philosophy Features / Pillars */}
-            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
-              <div className="flex items-center justify-between">
-                <label className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider">
-                  3 Trụ Cột Nổi Bật
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newFeat = { title: 'Tiêu chuẩn chất lượng', description: 'Cam kết chất lượng vật liệu và thẩm mỹ đạt chuẩn cao nhất.' };
-                    const feats = [...(philosophy?.features || []), newFeat];
-                    setData({ ...data, philosophy: { ...philosophy, features: feats } });
-                  }}
-                  className="px-2 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
-                >
-                  <Plus className="w-3 h-3" /> + Thêm Trụ Cột
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {philosophy?.features?.map((feat, fIdx) => (
-                  <div key={fIdx} className="p-2.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-[#c5a26c]">Trụ cột #{fIdx + 1}</span>
-                      {philosophy.features.length > 1 && (
+                {/* Slide Selector Pills */}
+                <div className="flex flex-wrap gap-2">
+                  {hero?.slides?.map((slide, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setHeroSlideIndex(idx)}
+                        className={`px-4 py-2 rounded-xl font-bold text-[13px] border transition-all ${
+                          idx === heroSlideIndex
+                            ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-sm ring-2 ring-[#c5a26c]/30'
+                            : 'bg-[#faf8f5] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
+                        }`}
+                      >
+                        Slide {idx + 1} ({slide.monogram})
+                      </button>
+                      {hero.slides.length > 1 && (
                         <button
                           type="button"
                           onClick={() => {
-                            const updated = philosophy.features.filter((_, i) => i !== fIdx);
-                            setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                            const updated = hero.slides.filter((_, i) => i !== idx);
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                            if (heroSlideIndex >= updated.length) {
+                              setHeroSlideIndex(Math.max(0, updated.length - 1));
+                            }
                           }}
-                          className="text-red-400 hover:text-red-600 p-1"
-                          title="Xóa trụ cột này"
+                          className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Xóa slide này"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
-                    <input
-                      type="text"
-                      placeholder="Tiêu đề (VD: Thiết kế độc bản)"
-                      value={feat.title}
-                      onChange={(e) => {
-                        const updated = [...philosophy.features];
-                        updated[fIdx] = { ...updated[fIdx], title: e.target.value };
-                        setData({ ...data, philosophy: { ...philosophy, features: updated } });
-                      }}
-                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                    />
-                    <textarea
-                      rows={2}
-                      placeholder="Mô tả chi tiết"
-                      value={feat.description}
-                      onChange={(e) => {
-                        const updated = [...philosophy.features];
-                        updated[fIdx] = { ...updated[fIdx], description: e.target.value };
-                        setData({ ...data, philosophy: { ...philosophy, features: updated } });
-                      }}
-                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[11.5px] focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
-            {/* Viewport Switcher Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
-              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Tầm Nhìn &amp; Sứ Mệnh
-              </span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {/* Layout Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
-                >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
-                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
-                </button>
-
-                {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
-                    {Math.round(previewZoom * 100)}%
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Monitor className="w-3 h-3" /> Desktop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Smartphone className="w-3 h-3" /> Mobile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFullscreenPreviewSection('philosophy')}
-                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
-                >
-                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
-                </button>
-              </div>
-            </div>
-
-            {previewDevice === 'desktop' ? (
-              <div
-                style={{
-                  transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                  transformOrigin: 'top center',
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="bg-[#faf8f5] p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-5 flex flex-col justify-between"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                  <div className="md:col-span-5 relative h-[180px] sm:h-[220px] rounded-xl overflow-hidden border border-[#e2ddd3] shadow-xs">
-                    <Image
-                      src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
-                      alt="Philosophy Live Preview"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="md:col-span-7 space-y-2">
-                    <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider font-accent">
-                      {philosophy?.tag || 'VỀ CHÚNG TÔI'}
-                    </span>
-                    <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display leading-tight">
-                      {philosophy?.heading || 'TẦM NHÌN VÀ SỨ MỆNH'}
-                    </h4>
-                    <p className="text-[12.5px] sm:text-[13px] text-[#5f6361] leading-relaxed line-clamp-4">
-                      {philosophy?.description || 'Mang lại những giải pháp thiết kế nội thất hoàn mỹ...'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* 3 Pillar Mockup */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 border-t border-[#e2ddd3]">
-                  {(philosophy?.features || [
-                    { title: 'Thiết kế độc bản', description: 'Cá nhân hóa 100% theo phong cách & phong thủy' },
-                    { title: 'Thi công trọn gói', description: 'Chuẩn xác 99% so với bản vẽ phối cảnh 3D' },
-                    { title: 'Xưởng trực tiếp', description: 'Tối ưu 20–30% chi phí thị trường' },
-                  ]).slice(0, 3).map((p, idx) => (
-                    <div key={idx} className="bg-white p-3 rounded-xl border border-[#e2ddd3] shadow-2xs">
-                      <span className="text-[11.5px] font-mono font-bold text-[#c5a26c] block">0{idx + 1}</span>
-                      <h5 className="text-[12.5px] font-bold text-[#04092b] mt-0.5 line-clamp-1">{p.title}</h5>
-                      <p className="text-[11px] text-[#6e706a] mt-1 leading-relaxed line-clamp-2">{p.description}</p>
-                    </div>
                   ))}
                 </div>
-              </div>
-            ) : (
-              /* Mobile Viewport */
-              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
-                <div
-                  style={{
-                    transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                    transformOrigin: 'top center',
-                    transition: 'transform 0.15s ease-out'
-                  }}
-                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#faf8f5] text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
-                >
-                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
-                  </div>
 
-                  <div className="space-y-3">
-                    <div className="relative w-full h-[150px] rounded-xl overflow-hidden shadow-xs border border-[#e2ddd3]">
-                      <Image
-                        src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
-                        alt="Philosophy Preview Mobile"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                        {philosophy?.tag}
-                      </span>
-                      <h4 className="text-[17px] font-bold text-[#04092b] font-display leading-tight">{philosophy?.heading}</h4>
-                      <p className="text-[11.5px] text-[#6e706a] leading-relaxed line-clamp-3">
-                        {philosophy?.description}
-                      </p>
-                    </div>
-
-                    <div className="space-y-1.5 pt-2 border-t border-[#e2ddd3]">
-                      {(philosophy?.features || [
-                        { title: 'Thiết kế độc bản' },
-                        { title: 'Thi công trọn gói' },
-                        { title: 'Xưởng trực tiếp' },
-                      ]).slice(0, 3).map((p, idx) => (
-                        <div key={idx} className="bg-white p-2 rounded-lg border border-[#e2ddd3] flex items-center gap-2">
-                          <span className="text-[11px] font-mono font-bold text-[#c5a26c]">0{idx + 1}</span>
-                          <span className="text-[11.5px] font-bold text-[#04092b] truncate">{p.title}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 4: Kết Nối & Báo Giá (Contact) */}
-      {activeTab === 'contact' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-          {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
-            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
-              <MessageSquare className="w-4 h-4 text-[#c5a26c]" /> Khối Kết Nối &amp; Báo Giá
-            </h3>
-
-            {/* Left Photo */}
-            <div className="space-y-1.5">
-              <label className="block text-[12px] font-bold text-[#04092b]">
-                Ảnh Đại Diện Bên Trái
-              </label>
-              <div className="flex items-center gap-2.5">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
-                  <Image
-                    src={contact?.image || '/uploads/clean_contact_photo.png'}
-                    alt="Contact Preview"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <input
-                  type="text"
-                  value={contact?.image || ''}
-                  onChange={(e) => setData({ ...data, contact: { ...contact, image: e.target.value } })}
-                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    openMediaPicker('Chọn ảnh cho Khối Kết Nối & Tư Vấn', (url) => {
-                      setData({ ...data, contact: { ...contact, image: url } });
-                    })
-                  }
-                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
-                >
-                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
-                </button>
-              </div>
-            </div>
-
-            {/* Tag & Heading */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Thẻ Tiêu Đề Nhỏ</label>
-                <input
-                  type="text"
-                  value={contact?.tag || ''}
-                  onChange={(e) => setData({ ...data, contact: { ...contact, tag: e.target.value } })}
-                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Chính</label>
-                <input
-                  type="text"
-                  value={contact?.heading || ''}
-                  onChange={(e) => setData({ ...data, contact: { ...contact, heading: e.target.value } })}
-                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Lời Nhắn / Cam Kết Báo Giá</label>
-              <textarea
-                rows={3}
-                value={contact?.quote || ''}
-                onChange={(e) => setData({ ...data, contact: { ...contact, quote: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-                placeholder="Để lại thông tin, đội ngũ Kiến trúc sư..."
-              />
-            </div>
-          </div>
-
-          {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
-              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Kết Nối &amp; Báo Giá
-              </span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {/* Layout Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
-                >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
-                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
-                </button>
-
-                {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
-                    {Math.round(previewZoom * 100)}%
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Monitor className="w-3 h-3" /> Desktop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFullscreenPreviewSection('contact')}
-                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
-                >
-                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
-                </button>
-              </div>
-            </div>
-
-            {previewDevice === 'desktop' ? (
-              <div
-                style={{
-                  transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                  transformOrigin: 'top center',
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="bg-[#04092b] text-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl flex items-center"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center w-full">
-                  {/* Left Column Visual Info */}
-                  <div className="md:col-span-6 space-y-3">
-                    <div className="relative w-full h-[160px] sm:h-[180px] rounded-xl overflow-hidden border border-[#c5a26c]/30 shadow-xs">
-                      <Image
-                        src={contact?.image || '/uploads/clean_contact_photo.png'}
-                        alt="Contact Live Preview"
-                        fill
-                        className="object-cover opacity-80"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
-                        {contact?.tag || 'LIÊN HỆ'}
-                      </span>
-                      <h4 className="text-lg sm:text-xl font-bold font-display whitespace-pre-line leading-tight text-white mt-0.5">
-                        {contact?.heading}
-                      </h4>
-                      <p className="text-[12px] text-white/75 mt-1 leading-relaxed line-clamp-3">{contact?.quote}</p>
-                    </div>
-                  </div>
-
-                  {/* Right Column Inquiry Form Mockup */}
-                  <div className="md:col-span-6 bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl border border-white/15 space-y-2.5">
-                    <h5 className="text-[13px] font-bold text-[#c5a26c] uppercase tracking-wider">
-                      Nhận Báo Giá Thiết Kế
-                    </h5>
-                    <div className="space-y-2 text-[12px]">
-                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
-                        Họ và tên của bạn
-                      </div>
-                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
-                        Số điện thoại liên hệ
-                      </div>
-                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
-                        Diện tích căn hộ (m²)
-                      </div>
-                    </div>
-                    {/* Minimalist Swipe Pill */}
-                    <div className="pt-1">
-                      <div className="bg-[#2D302E] text-white p-2.5 rounded-full flex items-center justify-between border border-[#c5a26c]/40 shadow-xs">
-                        <span className="text-[11.5px] font-bold pl-3">Yêu cầu tư vấn</span>
-                        <div className="w-6 h-6 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold text-xs">
-                          →
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Mobile Viewport */
-              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
-                <div
-                  style={{
-                    transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                    transformOrigin: 'top center',
-                    transition: 'transform 0.15s ease-out'
-                  }}
-                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#04092b] text-white rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
-                >
-                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
-                  </div>
-
-                  <div className="space-y-3 flex-1">
-                    <div className="relative w-full h-[140px] rounded-xl overflow-hidden shadow-xs">
-                      <Image
-                        src={contact?.image || '/uploads/clean_contact_photo.png'}
-                        alt="Contact Preview Mobile"
-                        fill
-                        className="object-cover opacity-80"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                        {contact?.tag}
-                      </span>
-                      <h4 className="text-[17px] font-bold font-display mt-0.5">{contact?.heading}</h4>
-                      <p className="text-[11.5px] text-white/75 mt-1 leading-relaxed line-clamp-2">{contact?.quote}</p>
-                    </div>
-
-                    <div className="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/15 space-y-1.5 text-[11.5px]">
-                      <div className="p-2 rounded-md bg-white/10 border border-white/15 text-white/60">
-                        Họ và tên của bạn
-                      </div>
-                      <div className="p-2 rounded-md bg-white/10 border border-white/15 text-white/60">
-                        Số điện thoại liên hệ
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mobile minimalist pill */}
-                  <div className="bg-[#2D302E] text-white p-2.5 rounded-full flex items-center justify-between border border-[#c5a26c]/40 mt-3">
-                    <span className="text-[11.5px] font-bold pl-3">Yêu cầu tư vấn</span>
-                    <div className="w-6 h-6 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold text-xs">
-                      →
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 5: Phong Cách Thiết Kế (Styles Overview) */}
-      {activeTab === 'styles' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-          {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
-            <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-3">
-              <h3 className="font-bold text-[16px] text-[#04092b] flex items-center gap-2">
-                <Palette className="w-4 h-4 text-[#c5a26c]" /> 4 Thẻ Phong Cách Thiết Kế
-              </h3>
-              <span className="text-[11px] font-mono bg-[#f4f1ea] px-2.5 py-0.5 rounded-full text-[#04092b] font-bold">
-                Thẻ {selectedStyleIndex + 1}/{stylesOverview?.styles?.length || 4}
-              </span>
-            </div>
-
-            {/* Style Selector Pills */}
-            <div className="grid grid-cols-2 gap-2">
-              {stylesOverview?.styles?.map((st, idx) => (
-                <button
-                  key={st.id || idx}
-                  type="button"
-                  onClick={() => setSelectedStyleIndex(idx)}
-                  className={`p-2 rounded-xl text-[12px] font-bold transition-all text-center border truncate ${
-                    selectedStyleIndex === idx
-                      ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-xs ring-2 ring-[#c5a26c]/30'
-                      : 'bg-[#f4f1ea] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
-                  }`}
-                >
-                  {st.name}
-                </button>
-              ))}
-            </div>
-
-            {/* Section Level Settings */}
-            <div className="space-y-2.5 p-3 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
-              <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                Tiêu Đề Khối Phong Cách
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Tag Nhỏ</label>
-                  <input
-                    type="text"
-                    value={stylesOverview?.tag || ''}
-                    onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, tag: e.target.value } })}
-                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
-                  <input
-                    type="text"
-                    value={stylesOverview?.heading || ''}
-                    onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, heading: e.target.value } })}
-                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Đoạn Văn Giới Thiệu</label>
-                <textarea
-                  rows={2}
-                  value={stylesOverview?.description || ''}
-                  onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, description: e.target.value } })}
-                  className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-                />
-              </div>
-            </div>
-
-            {/* Current Style Card Editor */}
-            {stylesOverview?.styles?.[selectedStyleIndex] && (
-              <div className="space-y-3 pt-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div>
-                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tên Phong Cách</label>
-                    <input
-                      type="text"
-                      value={stylesOverview.styles[selectedStyleIndex].name}
-                      onChange={(e) => {
-                        const updated = [...stylesOverview.styles];
-                        updated[selectedStyleIndex].name = e.target.value;
-                        setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
-                      }}
-                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Phụ Đề / Đặc Trưng</label>
-                    <input
-                      type="text"
-                      value={stylesOverview.styles[selectedStyleIndex].subtitle}
-                      onChange={(e) => {
-                        const updated = [...stylesOverview.styles];
-                        updated[selectedStyleIndex].subtitle = e.target.value;
-                        setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
-                      }}
-                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Chi Tiết Thẻ</label>
-                  <textarea
-                    rows={2}
-                    value={stylesOverview.styles[selectedStyleIndex].description || ''}
-                    onChange={(e) => {
-                      const updated = [...stylesOverview.styles];
-                      updated[selectedStyleIndex].description = e.target.value;
-                      setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
-                    }}
-                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-                    placeholder="Mô tả phong cách thiết kế..."
-                  />
-                </div>
-
-                {/* Card Thumbnail Image */}
-                <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">
-                    Ảnh Thẻ Lưới (Card Image)
-                  </label>
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
-                      <Image
-                        src={stylesOverview.styles[selectedStyleIndex].cardImage}
-                        alt="Card preview"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      value={stylesOverview.styles[selectedStyleIndex].cardImage}
-                      onChange={(e) => {
-                        const updated = [...stylesOverview.styles];
-                        updated[selectedStyleIndex].cardImage = e.target.value;
-                        setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
-                      }}
-                      className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        openMediaPicker(`Chọn ảnh thẻ cho ${stylesOverview.styles[selectedStyleIndex].name}`, (url) => {
-                          const updated = [...stylesOverview.styles];
-                          updated[selectedStyleIndex].cardImage = url;
-                          setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
-                        })
-                      }
-                      className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
-                    >
-                      <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
-              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Phong Cách Thiết Kế
-              </span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {/* Layout Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
-                >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
-                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
-                </button>
-
-                {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
-                    {Math.round(previewZoom * 100)}%
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomIn className="w-3 h-3" />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Monitor className="w-3 h-3" /> Desktop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFullscreenPreviewSection('styles')}
-                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
-                >
-                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
-                </button>
-              </div>
-            </div>
-
-            {previewDevice === 'desktop' ? (
-              <div
-                style={{
-                  transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                  transformOrigin: 'top center',
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="bg-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-4 flex flex-col justify-between"
-              >
-                <div>
-                  <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
-                    {stylesOverview?.tag || 'CÁC BỘ SƯU TẬP'}
-                  </span>
-                  <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display mt-0.5">
-                    {stylesOverview?.heading || 'PHONG CÁCH THIẾT KẾ ĐẶC TRƯNG'}
-                  </h4>
-                </div>
-
-                {/* 4 Cards Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-                  {stylesOverview?.styles?.map((st, idx) => {
-                    const isCurrent = selectedStyleIndex === idx;
-                    return (
-                      <div
-                        key={st.id || idx}
-                        onClick={() => setSelectedStyleIndex(idx)}
-                        className={`group cursor-pointer rounded-xl overflow-hidden border transition-all p-2 bg-[#faf8f5] flex flex-col ${
-                          isCurrent
-                            ? 'border-[#c5a26c] shadow-sm ring-2 ring-[#c5a26c]/30 bg-white'
-                            : 'border-[#e2ddd3] hover:border-[#c5a26c]'
-                        }`}
-                      >
-                        <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-2xs">
-                          <Image
-                            src={st.cardImage || '/uploads/clean_style_modern.png'}
-                            alt={st.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          {isCurrent && (
-                            <span className="absolute top-1.5 right-1.5 bg-[#04092b] text-[#c5a26c] text-[9.5px] font-bold px-2 py-0.5 rounded-full border border-[#c5a26c]/40">
-                              Đang chọn
-                            </span>
-                          )}
-                        </div>
-                        <div className="pt-2 pb-0.5 space-y-0.5">
-                          <h5 className="text-[12.5px] font-bold text-[#04092b] truncate">{st.name}</h5>
-                          <p className="text-[11px] text-[#6e706a] truncate">{st.subtitle}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              /* Mobile Viewport */
-              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
-                <div
-                  style={{
-                    transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                    transformOrigin: 'top center',
-                    transition: 'transform 0.15s ease-out'
-                  }}
-                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-white text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
-                >
-                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
-                  </div>
-
-                  <div className="space-y-3 flex-1">
-                    <div className="space-y-0.5">
-                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                        {stylesOverview?.tag}
-                      </span>
-                      <h4 className="text-[17px] font-bold font-display">{stylesOverview?.heading}</h4>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      {stylesOverview?.styles?.slice(0, 4).map((st, idx) => (
-                        <div key={idx} className="rounded-xl overflow-hidden border border-[#e2ddd3] p-1.5 bg-[#faf8f5] shadow-2xs">
-                          <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
-                            <Image src={st.cardImage} alt={st.name} fill className="object-cover" />
-                          </div>
-                          <p className="text-[11.5px] font-bold text-[#04092b] mt-1 truncate">{st.name}</p>
-                          <p className="text-[10px] text-[#6e706a] truncate">{st.subtitle}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Tab 6: Nội Thất Văn Phòng (Office) */}
-      {activeTab === 'office' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-          {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
-            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[#c5a26c]" /> Khối Nội Thất Văn Phòng
-            </h3>
-
-            {/* Hero Main Photo */}
-            <div className="space-y-1.5">
-              <label className="block text-[12px] font-bold text-[#04092b]">
-                Ảnh Phòng Làm Việc Giám Đốc
-              </label>
-              <div className="flex items-center gap-2.5">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
-                  <Image
-                    src={office?.heroImage || '/uploads/office_hero_main.png'}
-                    alt="Office Preview"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <input
-                  type="text"
-                  value={office?.heroImage || ''}
-                  onChange={(e) => setData({ ...data, office: { ...office, heroImage: e.target.value } })}
-                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() =>
-                    openMediaPicker('Chọn ảnh văn phòng giám đốc', (url) => {
-                      setData({ ...data, office: { ...office, heroImage: url } });
-                    })
-                  }
-                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
-                >
-                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
-                </button>
-              </div>
-            </div>
-
-            {/* Headings */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Dòng 1</label>
-                <input
-                  type="text"
-                  value={office?.headingLine1 || ''}
-                  onChange={(e) => setData({ ...data, office: { ...office, headingLine1: e.target.value } })}
-                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Dòng 2</label>
-                <input
-                  type="text"
-                  value={office?.headingLine2 || ''}
-                  onChange={(e) => setData({ ...data, office: { ...office, headingLine2: e.target.value } })}
-                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Tagline / Subtitle */}
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tagline / Tiêu Đề Phụ</label>
-              <input
-                type="text"
-                value={office?.tag || ''}
-                onChange={(e) => setData({ ...data, office: { ...office, tag: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
-              />
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Không Gian Văn Phòng</label>
-              <textarea
-                rows={3}
-                value={office?.description || ''}
-                onChange={(e) => setData({ ...data, office: { ...office, description: e.target.value } })}
-                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
-              />
-            </div>
-
-            {/* Color Swatches Editor */}
-            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
-              <div className="flex items-center justify-between">
-                <label className="block text-[12px] font-bold text-[#04092b]">
-                  Bảng Màu Thiết Kế (Color Swatches)
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const current = office?.colorSwatches || [
-                      { color: '#e5dfd7', label: 'Sand Cream' },
-                      { color: '#8c7b6c', label: 'Earthy Taupe' },
-                      { color: '#395224', label: 'Forest Sage' },
-                      { color: '#d2a679', label: 'Warm Caramel' }
-                    ];
-                    setData({
-                      ...data,
-                      office: {
-                        ...office,
-                        colorSwatches: [...current, { color: '#c5a26c', label: 'Tông màu mới' }]
-                      }
-                    });
-                  }}
-                  className="px-2 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[11px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
-                >
-                  + Thêm Màu
-                </button>
-              </div>
-              <div className="space-y-1.5">
-                {(office?.colorSwatches || [
-                  { color: '#e5dfd7', label: 'Sand Cream' },
-                  { color: '#8c7b6c', label: 'Earthy Taupe' },
-                  { color: '#395224', label: 'Forest Sage' },
-                  { color: '#d2a679', label: 'Warm Caramel' }
-                ]).map((swatch, sIdx) => (
-                  <div key={sIdx} className="flex items-center gap-2 p-1.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
-                    <input
-                      type="color"
-                      value={swatch.color}
-                      onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [])];
-                        next[sIdx] = { ...next[sIdx], color: e.target.value };
-                        setData({ ...data, office: { ...office, colorSwatches: next } });
-                      }}
-                      className="w-7 h-7 rounded cursor-pointer border border-[#e2ddd3] p-0.5 bg-white shrink-0"
-                    />
-                    <input
-                      type="text"
-                      value={swatch.color}
-                      onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [])];
-                        next[sIdx] = { ...next[sIdx], color: e.target.value };
-                        setData({ ...data, office: { ...office, colorSwatches: next } });
-                      }}
-                      className="w-20 p-1 border border-[#e2ddd3] rounded-lg text-[11.5px] font-mono"
-                      placeholder="#hex"
-                    />
-                    <input
-                      type="text"
-                      value={swatch.label}
-                      onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [])];
-                        next[sIdx] = { ...next[sIdx], label: e.target.value };
-                        setData({ ...data, office: { ...office, colorSwatches: next } });
-                      }}
-                      className="flex-1 p-1 border border-[#e2ddd3] rounded-lg text-[11.5px]"
-                      placeholder="Tên màu"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const next = (office?.colorSwatches || []).filter((_, i) => i !== sIdx);
-                        setData({ ...data, office: { ...office, colorSwatches: next } });
-                      }}
-                      className="p-1 text-red-500 hover:bg-red-50 rounded-lg"
-                      title="Xóa màu"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Gallery Cards (3 Cards) */}
-            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
-              <label className="block text-[12px] font-bold text-[#04092b]">
-                Bộ Sưu Tập Ảnh Dưới Khối Văn Phòng (3 Thẻ)
-              </label>
-              {(office?.galleryCards || [
-                { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
-              ]).map((card, cIdx) => (
-                <div key={cIdx} className="p-2.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-1.5">
-                  <div className="flex items-center gap-2.5">
-                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0">
-                      <Image
-                        src={card.image || '/uploads/office_card_1.png'}
-                        alt={card.alt || `Card ${cIdx + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center gap-1.5">
+                {/* Current Slide Editor */}
+                {hero?.slides?.[heroSlideIndex] && (
+                  <div className="p-5 sm:p-6 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3] space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                      <div className="md:col-span-8">
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Nhãn Tag Nhỏ (Eyebrow)</label>
                         <input
                           type="text"
-                          value={card.image || ''}
+                          value={hero.slides[heroSlideIndex].tag || ''}
                           onChange={(e) => {
-                            const next = [...(office?.galleryCards || [])];
-                            next[cIdx] = { ...next[cIdx], image: e.target.value };
-                            setData({ ...data, office: { ...office, galleryCards: next } });
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].tag = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
                           }}
-                          className="flex-1 p-1.5 border border-[#e2ddd3] rounded-lg text-[11px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                          placeholder="Đường dẫn ảnh"
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-white"
+                          placeholder="VD: ĐÔNG HÒA DESIGN"
+                        />
+                      </div>
+                      <div className="md:col-span-4">
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Monogram (Ký tự hoa lớn)</label>
+                        <input
+                          type="text"
+                          maxLength={2}
+                          value={hero.slides[heroSlideIndex].monogram}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].monogram = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[18px] font-bold font-serif text-[#04092b] text-center focus:border-[#c5a26c] focus:outline-none bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Dòng Tiêu Đề 1</label>
+                        <input
+                          type="text"
+                          value={hero.slides[heroSlideIndex].line1}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].line1 = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-white"
+                          placeholder="VD: hiết kế không gian"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Dòng Tiêu Đề 2 (Tùy chọn)</label>
+                        <input
+                          type="text"
+                          value={hero.slides[heroSlideIndex].line2}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].line2 = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-white"
+                          placeholder="VD: ruyền cảm hứng sống"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Mô Tả Chi Tiết Slide</label>
+                      <textarea
+                        rows={3}
+                        value={hero.slides[heroSlideIndex].description}
+                        onChange={(e) => {
+                          const updated = [...hero.slides];
+                          updated[heroSlideIndex].description = e.target.value;
+                          setData({ ...data, hero: { ...hero, slides: updated } });
+                        }}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-white"
+                        placeholder="Nội dung giới thiệu ngắn gọn..."
+                      />
+                    </div>
+
+                    {/* Background Image with 1-Click Picker */}
+                    <div className="space-y-2">
+                      <label className="block text-[13px] font-bold text-[#04092b]">
+                        Ảnh Nền Slide {heroSlideIndex + 1}
+                      </label>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div className="relative w-28 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                          {hero.slides[heroSlideIndex].backgroundImage && (
+                            <Image
+                              src={hero.slides[heroSlideIndex].backgroundImage!}
+                              alt="Slide BG"
+                              fill
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={hero.slides[heroSlideIndex].backgroundImage || ''}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].backgroundImage = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none bg-white"
+                          placeholder="Đường dẫn ảnh nền..."
                         />
                         <button
                           type="button"
                           onClick={() =>
-                            openMediaPicker(`Chọn ảnh thẻ #${cIdx + 1}`, (url) => {
-                              const next = [...(office?.galleryCards || [])];
-                              next[cIdx] = { ...next[cIdx], image: url };
-                              setData({ ...data, office: { ...office, galleryCards: next } });
+                            openMediaPicker(`Chọn ảnh nền cho Slide ${heroSlideIndex + 1}`, (url) => {
+                              const updated = [...hero.slides];
+                              updated[heroSlideIndex].backgroundImage = url;
+                              setData({ ...data, hero: { ...hero, slides: updated } });
                             })
                           }
-                          className="px-2.5 py-1.5 bg-white hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[11px] font-bold rounded-lg transition-colors shrink-0 border border-[#e2ddd3]"
+                          className="px-4 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
                         >
-                          <ImageIcon className="w-3 h-3 inline mr-0.5" /> Chọn
+                          <ImageIcon className="w-4 h-4" /> Đổi Ảnh Nền
                         </button>
                       </div>
-                      <input
-                        type="text"
-                        value={card.alt || ''}
-                        onChange={(e) => {
-                          const next = [...(office?.galleryCards || [])];
-                          next[cIdx] = { ...next[cIdx], alt: e.target.value };
-                          setData({ ...data, office: { ...office, galleryCards: next } });
-                        }}
-                        className="w-full p-1.5 border border-[#e2ddd3] rounded-lg text-[11px] focus:border-[#c5a26c] focus:outline-none"
-                        placeholder="Mô tả cho ảnh"
-                      />
+                    </div>
+
+                    {/* Button Actions */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                      <div>
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Chữ trên nút bấm</label>
+                        <input
+                          type="text"
+                          value={hero.slides[heroSlideIndex].buttonText || 'Xem thêm'}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].buttonText = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none bg-white font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Mục tiêu cuộn khi bấm</label>
+                        <select
+                          value={hero.slides[heroSlideIndex].buttonTarget || '#contact'}
+                          onChange={(e) => {
+                            const updated = [...hero.slides];
+                            updated[heroSlideIndex].buttonTarget = e.target.value;
+                            setData({ ...data, hero: { ...hero, slides: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] bg-white focus:border-[#c5a26c] focus:outline-none font-medium cursor-pointer"
+                        >
+                          <option value="#contact">🎯 Cuộn đến: Liên hệ & Báo giá (#contact)</option>
+                          <option value="#philosophy">🎯 Cuộn đến: Tầm nhìn & Sứ mệnh (#philosophy)</option>
+                          <option value="#styles">🎯 Cuộn đến: 4 Phong cách (#styles)</option>
+                          <option value="#office">🎯 Cuộn đến: Không gian văn phòng (#office)</option>
+                          <option value="/blog">📄 Mở trang: Tin tức & Cẩm nang (/blog)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
+                )}
+              </div>
+            )}
+
+            {/* Live Preview Column */}
+            {(previewLayout === 'preview' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-7 static 2xl:sticky 2xl:top-4' : 'max-w-6xl mx-auto w-full'} space-y-4`}>
+                {/* Viewport Controls Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2ddd3] shadow-xs">
+                  <span className="text-[13px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-[#c5a26c]" /> Xem Trước Thực Tế
+                  </span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomOut className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-mono font-bold text-[#04092b] px-1.5">
+                        {Math.round(previewZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('desktop')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'desktop'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Monitor className="w-3.5 h-3.5" /> Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('mobile')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'mobile'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" /> Mobile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenPreviewSection('hero')}
+                      className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                    </button>
+                  </div>
                 </div>
-              ))}
+
+                {/* Desktop Mode Live Preview */}
+                {previewDevice === 'desktop' ? (
+                  <div
+                    style={{
+                      transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="relative w-full min-h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-[#c5a26c]/40 bg-[#04092b] text-white p-8 sm:p-12 flex flex-col justify-between"
+                  >
+                    {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
+                      <Image
+                        src={hero.slides[heroSlideIndex].backgroundImage!}
+                        alt="Slide preview"
+                        fill
+                        className="object-cover opacity-50"
+                      />
+                    )}
+                    <div className="relative z-10 space-y-3 max-w-2xl">
+                      <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-wider bg-black/60 px-3 py-1 rounded-md border border-[#c5a26c]/30 inline-block font-accent">
+                        {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT CAO CẤP'}
+                      </span>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-[#c5a26c] leading-tight mt-2">
+                        <span className="text-4xl sm:text-5xl font-serif italic mr-2 text-[#c5a26c]">
+                          {hero?.slides?.[heroSlideIndex]?.monogram}
+                        </span>
+                        <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
+                      </div>
+                      {hero?.slides?.[heroSlideIndex]?.line2 && (
+                        <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white/90 font-display">
+                          {hero?.slides?.[heroSlideIndex]?.line2}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="relative z-10 space-y-4 pt-6">
+                      <p className="text-[14px] sm:text-[15px] text-white/85 max-w-xl leading-relaxed">
+                        {hero?.slides?.[heroSlideIndex]?.description}
+                      </p>
+                      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+                        <button className="bg-[#c5a26c] text-[#04092b] font-bold text-[13px] px-6 py-3 rounded-xl uppercase tracking-wider shadow-md flex items-center gap-2">
+                          <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá Dự Án'}</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                        <div className="flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-full border border-white/10">
+                          {hero?.slides?.map((_, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => setHeroSlideIndex(i)}
+                              className={`h-2.5 rounded-full transition-all ${
+                                i === heroSlideIndex ? 'w-8 bg-[#c5a26c]' : 'w-2.5 bg-white/40 hover:bg-white/70'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Mobile Mode Live Preview */
+                  <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+                    <div
+                      style={{
+                        transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                        transformOrigin: 'top center',
+                        transition: 'transform 0.15s ease-out'
+                      }}
+                      className="w-[340px] sm:w-[360px] min-h-[600px] bg-[#04092b] text-white rounded-[44px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
+                    >
+                      <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                        <div className="w-8 h-1 bg-[#252525] rounded-full" />
+                      </div>
+
+                      {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
+                        <Image
+                          src={hero.slides[heroSlideIndex].backgroundImage!}
+                          alt="Slide preview"
+                          fill
+                          className="object-cover opacity-50 pointer-events-none"
+                        />
+                      )}
+
+                      <div className="relative z-10 space-y-2 mt-3">
+                        <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-widest bg-black/60 px-2.5 py-0.5 rounded border border-[#c5a26c]/30 inline-block font-accent">
+                          {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT'}
+                        </span>
+                        <div className="text-[24px] font-serif font-bold text-[#c5a26c] leading-tight">
+                          <span className="text-[34px] font-serif italic mr-1 text-[#c5a26c]">
+                            {hero?.slides?.[heroSlideIndex]?.monogram}
+                          </span>
+                          <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
+                        </div>
+                        {hero?.slides?.[heroSlideIndex]?.line2 && (
+                          <p className="text-[18px] font-bold text-white/90 font-display">
+                            {hero?.slides?.[heroSlideIndex]?.line2}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="relative z-10 space-y-3.5 mb-2">
+                        <p className="text-[12.5px] text-white/85 leading-relaxed">
+                          {hero?.slides?.[heroSlideIndex]?.description}
+                        </p>
+                        <button className="w-full bg-[#c5a26c] text-[#04092b] font-bold text-[12px] py-3 rounded-xl uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5">
+                          <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá'}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 3: TẦM NHÌN & SỨ MỆNH (PHILOSOPHY)                                     */}
+      {/* ========================================================================= */}
+      {activeTab === 'philosophy' && (
+        <div className="space-y-6">
+          {/* Top Section Header & View Mode Switcher */}
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-[18px] sm:text-[20px] text-[#04092b] flex items-center gap-2.5">
+                <Compass className="w-5 h-5 text-[#c5a26c]" /> Tầm Nhìn &amp; Sứ Mệnh (Philosophy)
+              </h3>
+              <p className="text-[13px] text-[#707070] mt-1">
+                Giới thiệu triết lý kinh doanh, hình ảnh đại diện và 3 trụ cột giá trị cốt lõi của công ty.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 bg-[#f4f1ea] p-1.5 rounded-2xl border border-[#e2ddd3] self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('form')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'form' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Edit3 className="w-4 h-4" /> <span>Biểu Mẫu</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('preview')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'preview' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Eye className="w-4 h-4" /> <span>Xem Trước</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('split')}
+                className={`hidden 2xl:flex px-3.5 py-2 rounded-xl text-[12.5px] font-bold items-center gap-1.5 transition-all ${
+                  previewLayout === 'split' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Columns className="w-4 h-4" /> <span>Song Song</span>
+              </button>
             </div>
           </div>
 
-          {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
-              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Nội Thất Văn Phòng
-              </span>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {/* Layout Toggle */}
-                <button
-                  type="button"
-                  onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
-                >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
-                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
-                </button>
-
-                {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomOut className="w-3 h-3" />
-                  </button>
-                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
-                    {Math.round(previewZoom * 100)}%
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
-                    className="p-1 hover:bg-white rounded text-[#04092b]"
-                  >
-                    <ZoomIn className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('desktop')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Monitor className="w-3 h-3" /> Desktop
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPreviewDevice('mobile')}
-                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
-                    previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
-                      : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
-                  }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFullscreenPreviewSection('office')}
-                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
-                >
-                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
-                </button>
-              </div>
-            </div>
-
-            {previewDevice === 'desktop' ? (
-              <div
-                style={{
-                  transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                  transformOrigin: 'top center',
-                  transition: 'transform 0.15s ease-out'
-                }}
-                className="bg-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-4 flex flex-col justify-between"
-              >
-                <div className="relative w-full h-[180px] sm:h-[220px] rounded-xl overflow-hidden border border-[#e2ddd3] shadow-xs">
-                  <Image
-                    src={office?.heroImage || '/uploads/office_hero_main.png'}
-                    alt="Office Hero Live Preview"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
-                    <span className="text-white text-[12px] font-bold bg-[#04092b]/80 px-2.5 py-1 rounded-md border border-[#c5a26c]/40">
-                      Không Gian Giám Đốc Cao Cấp
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
-                    {office?.tag || 'VĂN PHÒNG DOANH NGHIỆP'}
-                  </span>
-                  <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display">
-                    {office?.headingLine1} {office?.headingLine2}
+          <div className={previewLayout === 'split' ? 'grid grid-cols-1 2xl:grid-cols-12 gap-6 items-start' : 'w-full'}>
+            {/* Form Column */}
+            {(previewLayout === 'form' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-5' : 'max-w-5xl mx-auto'} bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6`}>
+                {/* General Philosophy Info */}
+                <div className="space-y-5">
+                  <h4 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3">
+                    Thông Tin Khối Triết Lý
                   </h4>
-                  <p className="text-[12.5px] text-[#5f6361] leading-relaxed line-clamp-2">{office?.description}</p>
-                </div>
 
-                {/* Color Swatches Preview */}
-                <div className="flex items-center gap-2 pt-0.5">
-                  {(office?.colorSwatches || [
-                    { color: '#e5dfd7', label: 'Sand Cream' },
-                    { color: '#8c7b6c', label: 'Earthy Taupe' },
-                    { color: '#395224', label: 'Forest Sage' },
-                    { color: '#d2a679', label: 'Warm Caramel' }
-                  ]).map((swatch, i) => (
-                    <div
-                      key={i}
-                      className="w-5 h-5 rounded-full border border-[#e2ddd3] shadow-2xs"
-                      style={{ backgroundColor: swatch.color }}
-                      title={swatch.label}
-                    />
-                  ))}
-                </div>
-
-                {/* 3 Gallery Cards Preview */}
-                <div className="grid grid-cols-3 gap-2.5 pt-3 border-t border-[#e2ddd3]">
-                  {(office?.galleryCards || [
-                    { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                    { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                    { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
-                  ]).map((card, i) => (
-                    <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2 shadow-2xs">
-                      <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-black/10">
-                        <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
-                      </div>
-                      <p className="text-[11.5px] font-bold text-[#04092b] mt-1.5 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              /* Mobile Viewport */
-              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
-                <div
-                  style={{
-                    transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
-                    transformOrigin: 'top center',
-                    transition: 'transform 0.15s ease-out'
-                  }}
-                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-white text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
-                >
-                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
-                  </div>
-
-                  <div className="space-y-3 flex-1">
-                    <div className="relative w-full h-[140px] rounded-xl overflow-hidden shadow-xs border border-[#e2ddd3]">
-                      <Image
-                        src={office?.heroImage || '/uploads/office_hero_main.png'}
-                        alt="Office Mobile Preview"
-                        fill
-                        className="object-cover"
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tagline Nhỏ (Eyebrow)</label>
+                      <input
+                        type="text"
+                        value={philosophy?.tag || ''}
+                        onChange={(e) => setData({ ...data, philosophy: { ...philosophy, tag: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: VỀ CHÚNG TÔI"
                       />
                     </div>
-                    <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                      {office?.tag || 'CÁC SẢN PHẨM ĐẶC BIỆT'}
-                    </span>
-                    <h4 className="text-[17px] font-bold font-display">
-                      {office?.headingLine1} {office?.headingLine2}
-                    </h4>
-                    <p className="text-[11.5px] text-[#6e706a] line-clamp-2 leading-relaxed">{office?.description}</p>
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Lớn</label>
+                      <input
+                        type="text"
+                        value={philosophy?.heading || ''}
+                        onChange={(e) => setData({ ...data, philosophy: { ...philosophy, heading: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: TẦM NHÌN VÀ SỨ MỆNH"
+                      />
+                    </div>
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#e2ddd3]">
-                      {(office?.galleryCards || [
-                        { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                        { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                      ]).slice(0, 2).map((card, i) => (
-                        <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-1.5">
-                          <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
-                            <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
-                          </div>
-                          <p className="text-[10.5px] font-bold text-[#04092b] mt-1 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
+                  <div>
+                    <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Đoạn Văn Triết Lý Doanh Nghiệp</label>
+                    <textarea
+                      rows={3}
+                      value={philosophy?.description || ''}
+                      onChange={(e) => setData({ ...data, philosophy: { ...philosophy, description: e.target.value } })}
+                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-[#faf8f5]"
+                      placeholder="Mô tả về tầm nhìn và sứ mệnh của công ty..."
+                    />
+                  </div>
+
+                  {/* Visual Photo */}
+                  <div className="space-y-2">
+                    <label className="block text-[13px] font-bold text-[#04092b]">
+                      Ảnh Đại Diện Khối Triết Lý
+                    </label>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="relative w-28 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                        <Image
+                          src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
+                          alt="Philosophy Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={philosophy?.image || ''}
+                        onChange={(e) => setData({ ...data, philosophy: { ...philosophy, image: e.target.value } })}
+                        className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openMediaPicker('Chọn ảnh cho phần Tầm Nhìn & Sứ Mệnh', (url) => {
+                            setData({ ...data, philosophy: { ...philosophy, image: url } });
+                          })
+                        }
+                        className="px-4 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3 Pillars Editor */}
+                <div className="space-y-4 pt-4 border-t border-[#e2ddd3]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-[16px] text-[#04092b]">3 Trụ Cột Giá Trị Cốt Lõi</h4>
+                      <p className="text-[12px] text-[#707070]">Hiển thị 3 giá trị nổi bật dưới dạng thẻ đánh số #01, #02, #03.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newFeat = { title: 'Tiêu chuẩn chất lượng', description: 'Cam kết chất lượng vật liệu và thẩm mỹ đạt chuẩn cao nhất.' };
+                        const feats = [...(philosophy?.features || []), newFeat];
+                        setData({ ...data, philosophy: { ...philosophy, features: feats } });
+                      }}
+                      className="px-3.5 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Thêm Trụ Cột
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {philosophy?.features?.map((feat, fIdx) => (
+                      <div key={fIdx} className="p-4 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3] space-y-3">
+                        <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-2">
+                          <span className="text-[12px] font-mono font-bold text-[#c5a26c]">Trụ Cột #0{fIdx + 1}</span>
+                          {philosophy.features.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = philosophy.features.filter((_, i) => i !== fIdx);
+                                setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                              }}
+                              className="text-red-400 hover:text-red-600 p-1"
+                              title="Xóa trụ cột này"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Tiêu đề</label>
+                          <input
+                            type="text"
+                            placeholder="VD: Thiết kế độc bản"
+                            value={feat.title}
+                            onChange={(e) => {
+                              const updated = [...philosophy.features];
+                              updated[fIdx] = { ...updated[fIdx], title: e.target.value };
+                              setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                            }}
+                            className="w-full p-2.5 bg-white border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Mô tả</label>
+                          <textarea
+                            rows={3}
+                            placeholder="Mô tả chi tiết..."
+                            value={feat.description}
+                            onChange={(e) => {
+                              const updated = [...philosophy.features];
+                              updated[fIdx] = { ...updated[fIdx], description: e.target.value };
+                              setData({ ...data, philosophy: { ...philosophy, features: updated } });
+                            }}
+                            className="w-full p-2.5 bg-white border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Live Preview Column */}
+            {(previewLayout === 'preview' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-7 static 2xl:sticky 2xl:top-4' : 'max-w-6xl mx-auto w-full'} space-y-4`}>
+                {/* Viewport Switcher Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2ddd3] shadow-xs">
+                  <span className="text-[13px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-[#c5a26c]" /> Xem Trước Thực Tế
+                  </span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomOut className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-mono font-bold text-[#04092b] px-1.5">
+                        {Math.round(previewZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('desktop')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'desktop'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Monitor className="w-3.5 h-3.5" /> Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('mobile')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'mobile'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" /> Mobile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenPreviewSection('philosophy')}
+                      className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                    </button>
+                  </div>
+                </div>
+
+                {previewDevice === 'desktop' ? (
+                  <div
+                    style={{
+                      transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="bg-[#faf8f5] p-8 sm:p-10 rounded-3xl border border-[#c5a26c]/40 shadow-xl space-y-8"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                      <div className="md:col-span-5 relative h-[240px] sm:h-[280px] rounded-2xl overflow-hidden border border-[#e2ddd3] shadow-md">
+                        <Image
+                          src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
+                          alt="Philosophy Live Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="md:col-span-7 space-y-3">
+                        <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                          {philosophy?.tag || 'VỀ CHÚNG TÔI'}
+                        </span>
+                        <h4 className="text-2xl sm:text-3xl font-bold text-[#04092b] font-display leading-tight">
+                          {philosophy?.heading || 'TẦM NHÌN VÀ SỨ MỆNH'}
+                        </h4>
+                        <p className="text-[14px] sm:text-[15px] text-[#5f6361] leading-relaxed">
+                          {philosophy?.description || 'Mang lại những giải pháp thiết kế nội thất hoàn mỹ...'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 3 Pillar Mockup */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[#e2ddd3]">
+                      {(philosophy?.features || [
+                        { title: 'Thiết kế độc bản', description: 'Cá nhân hóa 100% theo phong cách & phong thủy' },
+                        { title: 'Thi công trọn gói', description: 'Chuẩn xác 99% so với bản vẽ phối cảnh 3D' },
+                        { title: 'Xưởng trực tiếp', description: 'Tối ưu 20–30% chi phí thị trường' },
+                      ]).slice(0, 3).map((p, idx) => (
+                        <div key={idx} className="bg-white p-5 rounded-2xl border border-[#e2ddd3] shadow-sm space-y-1.5">
+                          <span className="text-[13px] font-mono font-bold text-[#c5a26c] block">0{idx + 1}</span>
+                          <h5 className="text-[14px] font-bold text-[#04092b]">{p.title}</h5>
+                          <p className="text-[12px] text-[#6e706a] leading-relaxed">{p.description}</p>
                         </div>
                       ))}
                     </div>
                   </div>
+                ) : (
+                  /* Mobile Viewport */
+                  <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+                    <div
+                      style={{
+                        transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                        transformOrigin: 'top center',
+                        transition: 'transform 0.15s ease-out'
+                      }}
+                      className="w-[340px] sm:w-[360px] min-h-[600px] bg-[#faf8f5] text-[#04092b] rounded-[44px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
+                    >
+                      <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                        <div className="w-8 h-1 bg-[#252525] rounded-full" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-xs border border-[#e2ddd3]">
+                          <Image
+                            src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
+                            alt="Philosophy Preview Mobile"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                            {philosophy?.tag}
+                          </span>
+                          <h4 className="text-[19px] font-bold text-[#04092b] font-display leading-tight">{philosophy?.heading}</h4>
+                          <p className="text-[12.5px] text-[#6e706a] leading-relaxed line-clamp-3">
+                            {philosophy?.description}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2 pt-3 border-t border-[#e2ddd3]">
+                          {(philosophy?.features || [
+                            { title: 'Thiết kế độc bản' },
+                            { title: 'Thi công trọn gói' },
+                            { title: 'Xưởng trực tiếp' },
+                          ]).slice(0, 3).map((p, idx) => (
+                            <div key={idx} className="bg-white p-2.5 rounded-xl border border-[#e2ddd3] flex items-center gap-2.5">
+                              <span className="text-[12px] font-mono font-bold text-[#c5a26c]">0{idx + 1}</span>
+                              <span className="text-[12.5px] font-bold text-[#04092b] truncate">{p.title}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: KẾT NỐI & BÁO GIÁ (CONTACT)                                         */}
+      {/* ========================================================================= */}
+      {activeTab === 'contact' && (
+        <div className="space-y-6">
+          {/* Top Section Header & View Mode Switcher */}
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-[18px] sm:text-[20px] text-[#04092b] flex items-center gap-2.5">
+                <MessageSquare className="w-5 h-5 text-[#c5a26c]" /> Kết Nối &amp; Báo Giá (Contact Section)
+              </h3>
+              <p className="text-[13px] text-[#707070] mt-1">
+                Quản lý ảnh đại diện, tiêu đề cam kết báo giá và cơ chế nhận thông tin khách hàng.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 bg-[#f4f1ea] p-1.5 rounded-2xl border border-[#e2ddd3] self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('form')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'form' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Edit3 className="w-4 h-4" /> <span>Biểu Mẫu</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('preview')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'preview' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Eye className="w-4 h-4" /> <span>Xem Trước</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('split')}
+                className={`hidden 2xl:flex px-3.5 py-2 rounded-xl text-[12.5px] font-bold items-center gap-1.5 transition-all ${
+                  previewLayout === 'split' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Columns className="w-4 h-4" /> <span>Song Song</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={previewLayout === 'split' ? 'grid grid-cols-1 2xl:grid-cols-12 gap-6 items-start' : 'w-full'}>
+            {/* Form Column */}
+            {(previewLayout === 'form' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-5' : 'max-w-5xl mx-auto'} bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6`}>
+                <div className="space-y-5">
+                  <h4 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3">
+                    Nội Dung &amp; Hình Ảnh Khối Liên Hệ
+                  </h4>
+
+                  {/* Left Photo */}
+                  <div className="space-y-2">
+                    <label className="block text-[13px] font-bold text-[#04092b]">
+                      Ảnh Đại Diện Bên Trái (Khung Bo Góc)
+                    </label>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="relative w-28 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                        <Image
+                          src={contact?.image || '/uploads/clean_contact_photo.png'}
+                          alt="Contact Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={contact?.image || ''}
+                        onChange={(e) => setData({ ...data, contact: { ...contact, image: e.target.value } })}
+                        className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openMediaPicker('Chọn ảnh cho Khối Kết Nối & Tư Vấn', (url) => {
+                            setData({ ...data, contact: { ...contact, image: url } });
+                          })
+                        }
+                        className="px-4 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Tag & Heading */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Thẻ Tiêu Đề Nhỏ</label>
+                      <input
+                        type="text"
+                        value={contact?.tag || ''}
+                        onChange={(e) => setData({ ...data, contact: { ...contact, tag: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: LIÊN HỆ NGAY VỚI CHÚNG TÔI"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Chính</label>
+                      <input
+                        type="text"
+                        value={contact?.heading || ''}
+                        onChange={(e) => setData({ ...data, contact: { ...contact, heading: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: KẾT NỐI CÙNG ĐÔNG HÒA DESIGN"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Lời Nhắn / Cam Kết Báo Giá</label>
+                    <textarea
+                      rows={3}
+                      value={contact?.quote || ''}
+                      onChange={(e) => setData({ ...data, contact: { ...contact, quote: e.target.value } })}
+                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-[#faf8f5]"
+                      placeholder="Để lại thông tin, đội ngũ Kiến trúc sư Đông Hòa Design sẽ liên hệ tư vấn trực tiếp..."
+                    />
+                  </div>
+
+                  {/* Contact Sync Notice Card */}
+                  <div className="p-4 bg-[#f4f1ea] rounded-2xl border border-[#c5a26c]/30 flex items-start gap-3 text-[12.5px] text-[#04092b]">
+                    <Sparkles className="w-5 h-5 text-[#c5a26c] shrink-0 mt-0.5" />
+                    <div>
+                      <strong>Đồng bộ tự động:</strong> Khi khách hàng gửi yêu cầu qua form này, hệ thống sẽ tự động gửi email thông báo về địa chỉ <code className="bg-white px-1.5 py-0.5 rounded font-mono font-bold text-[#04092b]">{settings?.email || 'Donghoadesign@gmail.com'}</code> được cấu hình tại mục <strong>Thương hiệu & Cài đặt</strong>.
+                    </div>
+                  </div>
                 </div>
+              </div>
+            )}
+
+            {/* Live Preview Column */}
+            {(previewLayout === 'preview' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-7 static 2xl:sticky 2xl:top-4' : 'max-w-6xl mx-auto w-full'} space-y-4`}>
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2ddd3] shadow-xs">
+                  <span className="text-[13px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-[#c5a26c]" /> Xem Trước Thực Tế
+                  </span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomOut className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-mono font-bold text-[#04092b] px-1.5">
+                        {Math.round(previewZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('desktop')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'desktop'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Monitor className="w-3.5 h-3.5" /> Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('mobile')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'mobile'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" /> Mobile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenPreviewSection('contact')}
+                      className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                    </button>
+                  </div>
+                </div>
+
+                {previewDevice === 'desktop' ? (
+                  <div
+                    style={{
+                      transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="bg-[#04092b] text-white p-8 sm:p-12 rounded-3xl border border-[#c5a26c]/40 shadow-2xl"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                      <div className="md:col-span-6 space-y-4">
+                        <div className="relative w-full h-[220px] sm:h-[260px] rounded-2xl overflow-hidden border border-[#c5a26c]/30 shadow-md">
+                          <Image
+                            src={contact?.image || '/uploads/clean_contact_photo.png'}
+                            alt="Contact Live Preview"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                            {contact?.tag || 'LIÊN HỆ'}
+                          </span>
+                          <h4 className="text-xl sm:text-2xl font-bold font-display whitespace-pre-line leading-tight text-white mt-1">
+                            {contact?.heading}
+                          </h4>
+                          <p className="text-[13.5px] text-white/80 mt-2 leading-relaxed italic">&ldquo;{contact?.quote}&rdquo;</p>
+                        </div>
+                      </div>
+
+                      <div className="md:col-span-6 bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/20 space-y-3.5">
+                        <h5 className="text-[14px] font-bold text-[#c5a26c] uppercase tracking-wider">
+                          Đăng Ký Tư Vấn &amp; Báo Giá
+                        </h5>
+                        <div className="space-y-2.5 text-[13px]">
+                          <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 text-white/70">
+                            Họ và tên của quý khách
+                          </div>
+                          <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 text-white/70">
+                            Số điện thoại liên hệ (090x...)
+                          </div>
+                          <div className="p-2.5 rounded-xl bg-white/10 border border-white/15 text-white/70">
+                            Loại hình nhà (Căn hộ / Nhà phố / Biệt thự)
+                          </div>
+                        </div>
+                        <div className="pt-2">
+                          <div className="bg-[#c5a26c] text-[#04092b] py-3 px-5 rounded-xl font-bold text-[13px] uppercase tracking-wider text-center shadow-md">
+                            Gửi Yêu Cầu Tư Vấn →
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Mobile Viewport */
+                  <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+                    <div
+                      style={{
+                        transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                        transformOrigin: 'top center',
+                        transition: 'transform 0.15s ease-out'
+                      }}
+                      className="w-[340px] sm:w-[360px] min-h-[600px] bg-[#04092b] text-white rounded-[44px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
+                    >
+                      <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                        <div className="w-8 h-1 bg-[#252525] rounded-full" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="relative w-full h-[160px] rounded-2xl overflow-hidden shadow-xs">
+                          <Image
+                            src={contact?.image || '/uploads/clean_contact_photo.png'}
+                            alt="Contact Preview Mobile"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-widest block">
+                            {contact?.tag}
+                          </span>
+                          <h4 className="text-[18px] font-bold font-display leading-tight mt-1">{contact?.heading}</h4>
+                          <p className="text-[12px] text-white/75 mt-1 leading-relaxed line-clamp-2">{contact?.quote}</p>
+                        </div>
+                        <div className="p-3 bg-white/10 rounded-xl border border-white/15 space-y-2 text-[12px]">
+                          <div className="p-2 bg-white/10 rounded text-white/60">Họ và tên</div>
+                          <div className="p-2 bg-white/10 rounded text-white/60">Số điện thoại</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: 4 THẺ PHONG CÁCH THIẾT KẾ (STYLES OVERVIEW)                          */}
+      {/* ========================================================================= */}
+      {activeTab === 'styles' && (
+        <div className="space-y-6">
+          {/* Top Section Header & View Mode Switcher */}
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-[18px] sm:text-[20px] text-[#04092b] flex items-center gap-2.5">
+                <Palette className="w-5 h-5 text-[#c5a26c]" /> 4 Phong Cách Thiết Kế (Styles Overview)
+              </h3>
+              <p className="text-[13px] text-[#707070] mt-1">
+                Quản lý 4 thẻ phong cách đại diện tại trang chủ dẫn tới các phân đoạn hoạt họa Canva.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 bg-[#f4f1ea] p-1.5 rounded-2xl border border-[#e2ddd3] self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('form')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'form' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Edit3 className="w-4 h-4" /> <span>Biểu Mẫu</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('preview')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'preview' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Eye className="w-4 h-4" /> <span>Xem Trước</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('split')}
+                className={`hidden 2xl:flex px-3.5 py-2 rounded-xl text-[12.5px] font-bold items-center gap-1.5 transition-all ${
+                  previewLayout === 'split' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Columns className="w-4 h-4" /> <span>Song Song</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={previewLayout === 'split' ? 'grid grid-cols-1 2xl:grid-cols-12 gap-6 items-start' : 'w-full'}>
+            {/* Form Column */}
+            {(previewLayout === 'form' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-5' : 'max-w-5xl mx-auto'} bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6`}>
+                {/* General Header Text */}
+                <div className="space-y-4">
+                  <h4 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3">
+                    Tiêu Đề &amp; Giới Thiệu Khối
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Thẻ Tiêu Đề Nhỏ</label>
+                      <input
+                        type="text"
+                        value={stylesOverview?.tag || ''}
+                        onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, tag: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: CÁC BỘ SƯU TẬP"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Lớn</label>
+                      <input
+                        type="text"
+                        value={stylesOverview?.heading || ''}
+                        onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, heading: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: PHONG CÁCH THIẾT KẾ ĐẶC TRƯNG"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Đoạn Văn Giới Thiệu</label>
+                    <textarea
+                      rows={2}
+                      value={stylesOverview?.description || ''}
+                      onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, description: e.target.value } })}
+                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-[#faf8f5]"
+                      placeholder="Mô tả tổng quan về các phong cách thiết kế..."
+                    />
+                  </div>
+                </div>
+
+                {/* 4 Styles Tab Editor */}
+                <div className="space-y-4 pt-4 border-t border-[#e2ddd3]">
+                  <div>
+                    <h4 className="font-bold text-[16px] text-[#04092b]">Chọn Phong Cách Để Chỉnh Sửa</h4>
+                    <p className="text-[12px] text-[#707070]">Bấm vào từng phong cách để chỉnh sửa tên, phụ đề và ảnh thẻ lưới.</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {stylesOverview?.styles?.map((style, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedStyleIndex(idx)}
+                        className={`p-3 rounded-2xl border text-left transition-all ${
+                          idx === selectedStyleIndex
+                            ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-sm ring-2 ring-[#c5a26c]/30 font-bold'
+                            : 'bg-[#faf8f5] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
+                        }`}
+                      >
+                        <span className="text-[11px] font-mono opacity-70 block">Phong cách #{idx + 1}</span>
+                        <span className="text-[13px] font-bold truncate block">{style.name}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {stylesOverview?.styles?.[selectedStyleIndex] && (
+                    <div className="p-5 sm:p-6 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3] space-y-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tên Phong Cách</label>
+                          <input
+                            type="text"
+                            value={stylesOverview.styles[selectedStyleIndex].name}
+                            onChange={(e) => {
+                              const updated = [...stylesOverview.styles];
+                              updated[selectedStyleIndex].name = e.target.value;
+                              setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                            }}
+                            className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Phụ Đề / Đặc Trưng</label>
+                          <input
+                            type="text"
+                            value={stylesOverview.styles[selectedStyleIndex].subtitle}
+                            onChange={(e) => {
+                              const updated = [...stylesOverview.styles];
+                              updated[selectedStyleIndex].subtitle = e.target.value;
+                              setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                            }}
+                            className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none bg-white font-medium"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Mô Tả Chi Tiết Thẻ</label>
+                        <textarea
+                          rows={3}
+                          value={stylesOverview.styles[selectedStyleIndex].description || ''}
+                          onChange={(e) => {
+                            const updated = [...stylesOverview.styles];
+                            updated[selectedStyleIndex].description = e.target.value;
+                            setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                          }}
+                          className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-white"
+                          placeholder="Mô tả phong cách thiết kế..."
+                        />
+                      </div>
+
+                      {/* Card Thumbnail Image */}
+                      <div className="space-y-2">
+                        <label className="block text-[13px] font-bold text-[#04092b]">
+                          Ảnh Thẻ Lưới (Card Image)
+                        </label>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                          <div className="relative w-28 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                            <Image
+                              src={stylesOverview.styles[selectedStyleIndex].cardImage}
+                              alt="Card preview"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            value={stylesOverview.styles[selectedStyleIndex].cardImage}
+                            onChange={(e) => {
+                              const updated = [...stylesOverview.styles];
+                              updated[selectedStyleIndex].cardImage = e.target.value;
+                              setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                            }}
+                            className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openMediaPicker(`Chọn ảnh thẻ cho ${stylesOverview.styles[selectedStyleIndex].name}`, (url) => {
+                                const updated = [...stylesOverview.styles];
+                                updated[selectedStyleIndex].cardImage = url;
+                                setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
+                              })
+                            }
+                            className="px-4 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
+                          >
+                            <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Live Preview Column */}
+            {(previewLayout === 'preview' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-7 static 2xl:sticky 2xl:top-4' : 'max-w-6xl mx-auto w-full'} space-y-4`}>
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2ddd3] shadow-xs">
+                  <span className="text-[13px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-[#c5a26c]" /> Xem Trước Thực Tế
+                  </span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomOut className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-mono font-bold text-[#04092b] px-1.5">
+                        {Math.round(previewZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('desktop')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'desktop'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Monitor className="w-3.5 h-3.5" /> Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('mobile')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'mobile'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" /> Mobile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenPreviewSection('styles')}
+                      className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                    </button>
+                  </div>
+                </div>
+
+                {previewDevice === 'desktop' ? (
+                  <div
+                    style={{
+                      transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="bg-white p-8 sm:p-12 rounded-3xl border border-[#c5a26c]/40 shadow-xl space-y-6"
+                  >
+                    <div>
+                      <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                        {stylesOverview?.tag || 'CÁC BỘ SƯU TẬP'}
+                      </span>
+                      <h4 className="text-2xl sm:text-3xl font-bold text-[#04092b] font-display mt-1">
+                        {stylesOverview?.heading || 'PHONG CÁCH THIẾT KẾ ĐẶC TRƯNG'}
+                      </h4>
+                      <p className="text-[14px] text-[#6e706a] mt-1.5 max-w-2xl">{stylesOverview?.description}</p>
+                    </div>
+
+                    {/* 4 Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                      {stylesOverview?.styles?.map((st, idx) => {
+                        const isCurrent = selectedStyleIndex === idx;
+                        return (
+                          <div
+                            key={st.id || idx}
+                            onClick={() => setSelectedStyleIndex(idx)}
+                            className={`group cursor-pointer rounded-2xl overflow-hidden border transition-all p-3 bg-[#faf8f5] flex flex-col ${
+                              isCurrent
+                                ? 'border-[#c5a26c] shadow-md ring-2 ring-[#c5a26c]/40 bg-white'
+                                : 'border-[#e2ddd3] hover:border-[#c5a26c]'
+                            }`}
+                          >
+                            <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-xs">
+                              <Image
+                                src={st.cardImage || '/uploads/clean_style_modern.png'}
+                                alt={st.name}
+                                fill
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              {isCurrent && (
+                                <span className="absolute top-2 right-2 bg-[#04092b] text-[#c5a26c] text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#c5a26c]/40">
+                                  Đang chọn
+                                </span>
+                              )}
+                            </div>
+                            <div className="pt-3 pb-1 space-y-1">
+                              <h5 className="text-[14px] font-bold text-[#04092b] truncate">{st.name}</h5>
+                              <p className="text-[12px] text-[#6e706a] truncate">{st.subtitle}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  /* Mobile Viewport */
+                  <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+                    <div
+                      style={{
+                        transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                        transformOrigin: 'top center',
+                        transition: 'transform 0.15s ease-out'
+                      }}
+                      className="w-[340px] sm:w-[360px] min-h-[600px] bg-white text-[#04092b] rounded-[44px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
+                    >
+                      <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                        <div className="w-8 h-1 bg-[#252525] rounded-full" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                            {stylesOverview?.tag}
+                          </span>
+                          <h4 className="text-[18px] font-bold font-display">{stylesOverview?.heading}</h4>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2.5">
+                          {stylesOverview?.styles?.slice(0, 4).map((st, idx) => (
+                            <div key={idx} className="rounded-2xl overflow-hidden border border-[#e2ddd3] p-2 bg-[#faf8f5] shadow-xs">
+                              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
+                                <Image src={st.cardImage} alt={st.name} fill className="object-cover" />
+                              </div>
+                              <p className="text-[12px] font-bold text-[#04092b] mt-1.5 truncate">{st.name}</p>
+                              <p className="text-[11px] text-[#6e706a] truncate">{st.subtitle}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 6: NỘI THẤT VĂN PHÒNG (OFFICE)                                        */}
+      {/* ========================================================================= */}
+      {activeTab === 'office' && (
+        <div className="space-y-6">
+          {/* Top Section Header & View Mode Switcher */}
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-[18px] sm:text-[20px] text-[#04092b] flex items-center gap-2.5">
+                <Briefcase className="w-5 h-5 text-[#c5a26c]" /> Nội Thất Văn Phòng (Office Showcase)
+              </h3>
+              <p className="text-[13px] text-[#707070] mt-1">
+                Bộ sưu tập ảnh không gian làm việc giám đốc, văn phòng hiện đại và bảng phối màu sắc vật liệu.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 bg-[#f4f1ea] p-1.5 rounded-2xl border border-[#e2ddd3] self-start sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('form')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'form' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Edit3 className="w-4 h-4" /> <span>Biểu Mẫu</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('preview')}
+                className={`px-3.5 py-2 rounded-xl text-[12.5px] font-bold flex items-center gap-1.5 transition-all ${
+                  previewLayout === 'preview' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Eye className="w-4 h-4" /> <span>Xem Trước</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewLayout('split')}
+                className={`hidden 2xl:flex px-3.5 py-2 rounded-xl text-[12.5px] font-bold items-center gap-1.5 transition-all ${
+                  previewLayout === 'split' ? 'bg-[#04092b] text-[#c5a26c] shadow-xs' : 'text-[#6e706a] hover:text-[#04092b]'
+                }`}
+              >
+                <Columns className="w-4 h-4" /> <span>Song Song</span>
+              </button>
+            </div>
+          </div>
+
+          <div className={previewLayout === 'split' ? 'grid grid-cols-1 2xl:grid-cols-12 gap-6 items-start' : 'w-full'}>
+            {/* Form Column */}
+            {(previewLayout === 'form' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-5' : 'max-w-5xl mx-auto'} bg-white p-6 sm:p-8 lg:p-10 rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6`}>
+                {/* Hero Main Photo & Headings */}
+                <div className="space-y-5">
+                  <h4 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3">
+                    Không Gian Chính &amp; Tiêu Đề
+                  </h4>
+
+                  {/* Hero Main Photo */}
+                  <div className="space-y-2">
+                    <label className="block text-[13px] font-bold text-[#04092b]">
+                      Ảnh Phòng Làm Việc Giám Đốc (Ảnh Nền Lớn)
+                    </label>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="relative w-28 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                        <Image
+                          src={office?.heroImage || '/uploads/office_hero_main.png'}
+                          alt="Office Preview"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={office?.heroImage || ''}
+                        onChange={(e) => setData({ ...data, office: { ...office, heroImage: e.target.value } })}
+                        className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openMediaPicker('Chọn ảnh văn phòng giám đốc', (url) => {
+                            setData({ ...data, office: { ...office, heroImage: url } });
+                          })
+                        }
+                        className="px-4 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs"
+                      >
+                        <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Headings */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Dòng 1</label>
+                      <input
+                        type="text"
+                        value={office?.headingLine1 || ''}
+                        onChange={(e) => setData({ ...data, office: { ...office, headingLine1: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: KHÔNG GIAN LÀM VIỆC"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Dòng 2</label>
+                      <input
+                        type="text"
+                        value={office?.headingLine2 || ''}
+                        onChange={(e) => setData({ ...data, office: { ...office, headingLine2: e.target.value } })}
+                        className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                        placeholder="VD: ĐẲNG CẤP & HIỆN ĐẠI"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tagline / Subtitle */}
+                  <div>
+                    <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Tagline / Tiêu Đề Phụ</label>
+                    <input
+                      type="text"
+                      value={office?.tag || ''}
+                      onChange={(e) => setData({ ...data, office: { ...office, tag: e.target.value } })}
+                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] font-bold focus:border-[#c5a26c] focus:outline-none bg-[#faf8f5]"
+                      placeholder="VD: CÁC SẢN PHẨM ĐẶC BIỆT"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-[13px] font-bold text-[#04092b] mb-1.5">Mô Tả Không Gian Văn Phòng</label>
+                    <textarea
+                      rows={3}
+                      value={office?.description || ''}
+                      onChange={(e) => setData({ ...data, office: { ...office, description: e.target.value } })}
+                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed bg-[#faf8f5]"
+                      placeholder="Mô tả về giải pháp nội thất văn phòng..."
+                    />
+                  </div>
+                </div>
+
+                {/* 3 Gallery Cards */}
+                <div className="space-y-4 pt-4 border-t border-[#e2ddd3]">
+                  <div>
+                    <h4 className="font-bold text-[16px] text-[#04092b]">3 Thẻ Ảnh Bộ Sưu Tập</h4>
+                    <p className="text-[12px] text-[#707070]">3 bức ảnh phối cảnh chi tiết về không gian văn phòng.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {(office?.galleryCards || [
+                      { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                      { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                      { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                    ]).map((card, cIdx) => (
+                      <div key={cIdx} className="p-4 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3] space-y-3">
+                        <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10">
+                          <Image
+                            src={card.image || '/uploads/office_card_1.png'}
+                            alt={card.alt || `Card ${cIdx + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={card.image || ''}
+                            onChange={(e) => {
+                              const next = [...(office?.galleryCards || [])];
+                              next[cIdx] = { ...next[cIdx], image: e.target.value };
+                              setData({ ...data, office: { ...office, galleryCards: next } });
+                            }}
+                            className="flex-1 p-2 bg-white border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                            placeholder="Đường dẫn ảnh"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openMediaPicker(`Chọn ảnh thẻ #${cIdx + 1}`, (url) => {
+                                const next = [...(office?.galleryCards || [])];
+                                next[cIdx] = { ...next[cIdx], image: url };
+                                setData({ ...data, office: { ...office, galleryCards: next } });
+                              })
+                            }
+                            className="px-3 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12px] font-bold rounded-xl transition-colors shrink-0 shadow-xs"
+                          >
+                            <ImageIcon className="w-3.5 h-3.5 inline mr-1" /> Chọn
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={card.alt || ''}
+                          onChange={(e) => {
+                            const next = [...(office?.galleryCards || [])];
+                            next[cIdx] = { ...next[cIdx], alt: e.target.value };
+                            setData({ ...data, office: { ...office, galleryCards: next } });
+                          }}
+                          className="w-full p-2.5 bg-white border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none"
+                          placeholder="Mô tả cho ảnh"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Color Swatches Editor */}
+                <div className="space-y-4 pt-4 border-t border-[#e2ddd3]">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-[16px] text-[#04092b]">Bảng Màu Thiết Kế (Color Swatches)</h4>
+                      <p className="text-[12px] text-[#707070]">Bảng phối màu đại diện cho phong cách nội thất văn phòng.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = office?.colorSwatches || [
+                          { color: '#e5dfd7', label: 'Sand Cream' },
+                          { color: '#8c7b6c', label: 'Earthy Taupe' },
+                          { color: '#395224', label: 'Forest Sage' },
+                          { color: '#d2a679', label: 'Warm Caramel' }
+                        ];
+                        setData({
+                          ...data,
+                          office: {
+                            ...office,
+                            colorSwatches: [...current, { color: '#c5a26c', label: 'Tông màu mới' }]
+                          }
+                        });
+                      }}
+                      className="px-3.5 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-sm"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Thêm Màu
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {(office?.colorSwatches || [
+                      { color: '#e5dfd7', label: 'Sand Cream' },
+                      { color: '#8c7b6c', label: 'Earthy Taupe' },
+                      { color: '#395224', label: 'Forest Sage' },
+                      { color: '#d2a679', label: 'Warm Caramel' }
+                    ]).map((swatch, sIdx) => (
+                      <div key={sIdx} className="flex items-center gap-2.5 p-2.5 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3]">
+                        <input
+                          type="color"
+                          value={swatch.color}
+                          onChange={(e) => {
+                            const next = [...(office?.colorSwatches || [])];
+                            next[sIdx] = { ...next[sIdx], color: e.target.value };
+                            setData({ ...data, office: { ...office, colorSwatches: next } });
+                          }}
+                          className="w-9 h-9 rounded-xl cursor-pointer border border-[#e2ddd3] p-0.5 bg-white shrink-0"
+                        />
+                        <div className="flex-1 space-y-1">
+                          <input
+                            type="text"
+                            value={swatch.color}
+                            onChange={(e) => {
+                              const next = [...(office?.colorSwatches || [])];
+                              next[sIdx] = { ...next[sIdx], color: e.target.value };
+                              setData({ ...data, office: { ...office, colorSwatches: next } });
+                            }}
+                            className="w-full p-1 bg-white border border-[#e2ddd3] rounded-lg text-[11px] font-mono"
+                          />
+                          <input
+                            type="text"
+                            value={swatch.label}
+                            onChange={(e) => {
+                              const next = [...(office?.colorSwatches || [])];
+                              next[sIdx] = { ...next[sIdx], label: e.target.value };
+                              setData({ ...data, office: { ...office, colorSwatches: next } });
+                            }}
+                            className="w-full p-1 bg-white border border-[#e2ddd3] rounded-lg text-[11px]"
+                            placeholder="Tên nhãn màu"
+                          />
+                        </div>
+                        {office.colorSwatches.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = office.colorSwatches.filter((_, i) => i !== sIdx);
+                              setData({ ...data, office: { ...office, colorSwatches: next } });
+                            }}
+                            className="text-red-400 hover:text-red-600 p-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Live Preview Column */}
+            {(previewLayout === 'preview' || previewLayout === 'split') && (
+              <div className={`${previewLayout === 'split' ? '2xl:col-span-7 static 2xl:sticky 2xl:top-4' : 'max-w-6xl mx-auto w-full'} space-y-4`}>
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2ddd3] shadow-xs">
+                  <span className="text-[13px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
+                    <Eye className="w-4 h-4 text-[#c5a26c]" /> Xem Trước Thực Tế
+                  </span>
+                  <div className="flex items-center flex-wrap gap-2">
+                    <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomOut className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="text-[11px] font-mono font-bold text-[#04092b] px-1.5">
+                        {Math.round(previewZoom * 100)}%
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
+                        className="p-1 hover:bg-white rounded-lg text-[#04092b]"
+                      >
+                        <ZoomIn className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('desktop')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'desktop'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Monitor className="w-3.5 h-3.5" /> Desktop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPreviewDevice('mobile')}
+                      className={`px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 ${
+                        previewDevice === 'mobile'
+                          ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
+                          : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" /> Mobile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenPreviewSection('office')}
+                      className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                    </button>
+                  </div>
+                </div>
+
+                {previewDevice === 'desktop' ? (
+                  <div
+                    style={{
+                      transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.15s ease-out'
+                    }}
+                    className="bg-white p-8 sm:p-12 rounded-3xl border border-[#c5a26c]/40 shadow-xl space-y-8"
+                  >
+                    <div className="relative w-full h-[280px] sm:h-[360px] rounded-3xl overflow-hidden shadow-md">
+                      <Image
+                        src={office?.heroImage || '/uploads/office_hero_main.png'}
+                        alt="Office Showcase"
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#04092b] via-[#04092b]/40 to-transparent p-6 sm:p-10 flex flex-col justify-end text-white">
+                        <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                          {office?.tag || 'CÁC SẢN PHẨM ĐẶC BIỆT'}
+                        </span>
+                        <h4 className="text-2xl sm:text-3xl font-bold font-display leading-tight mt-1">
+                          {office?.headingLine1} {office?.headingLine2}
+                        </h4>
+                        <p className="text-[14px] text-white/85 mt-2 max-w-xl line-clamp-2">{office?.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                      {(office?.galleryCards || [
+                        { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                        { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                        { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
+                      ]).map((card, i) => (
+                        <div key={i} className="rounded-2xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-3 shadow-xs">
+                          <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-black/10">
+                            <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
+                          </div>
+                          <p className="text-[13px] font-bold text-[#04092b] mt-2 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  /* Mobile Viewport */
+                  <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+                    <div
+                      style={{
+                        transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
+                        transformOrigin: 'top center',
+                        transition: 'transform 0.15s ease-out'
+                      }}
+                      className="w-[340px] sm:w-[360px] min-h-[600px] bg-white text-[#04092b] rounded-[44px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
+                    >
+                      <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                        <div className="w-8 h-1 bg-[#252525] rounded-full" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="relative w-full h-[160px] rounded-2xl overflow-hidden shadow-xs border border-[#e2ddd3]">
+                          <Image
+                            src={office?.heroImage || '/uploads/office_hero_main.png'}
+                            alt="Office Mobile Preview"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                            {office?.tag || 'CÁC SẢN PHẨM ĐẶC BIỆT'}
+                          </span>
+                          <h4 className="text-[18px] font-bold font-display leading-tight mt-0.5">
+                            {office?.headingLine1} {office?.headingLine2}
+                          </h4>
+                          <p className="text-[12px] text-[#6e706a] mt-1 line-clamp-2 leading-relaxed">{office?.description}</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#e2ddd3]">
+                          {(office?.galleryCards || [
+                            { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
+                            { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
+                          ]).slice(0, 2).map((card, i) => (
+                            <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2">
+                              <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+                                <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
+                              </div>
+                              <p className="text-[11.5px] font-bold text-[#04092b] mt-1 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
