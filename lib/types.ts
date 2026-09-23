@@ -296,3 +296,25 @@ export interface AuthSessionUser {
   email: string;
   role: UserRole;
 }
+
+export interface LandingPageItem {
+  id: string;
+  title: string;
+  slug: string;
+  type: 'html_upload' | 'proxy_url';
+  htmlContent?: string;
+  proxyUrl?: string;
+  fileSize: number; // in bytes
+  isActive: boolean;
+  viewCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LandingPageStats {
+  totalPages: number;
+  activePages: number;
+  totalStorageBytes: number;
+  storageLimitBytes: number; // e.g. 50 MB
+  storageUsagePercent: number;
+}
