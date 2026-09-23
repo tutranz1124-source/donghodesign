@@ -212,3 +212,4 @@ function generateErrorHtml(title: string, message: string) {
 </body>
 </html>`;
 }
+
