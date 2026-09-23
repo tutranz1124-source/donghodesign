@@ -58,10 +58,10 @@ export default function Footer({ settings }: FooterProps) {
             <li className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-[#c5a26c] shrink-0" />
               <a
-                href={`mailto:${settings?.email || 'info@donghoagroup.vn'}`}
+                href={`mailto:${settings?.email || 'Donghoadesign@gmail.com'}`}
                 className="hover:text-[#c5a26c] transition-colors"
               >
-                Email: {settings?.email || 'info@donghoagroup.vn'}
+                Email: {settings?.email || 'Donghoadesign@gmail.com'}
               </a>
             </li>
             <li className="flex items-center gap-3">
@@ -70,13 +70,13 @@ export default function Footer({ settings }: FooterProps) {
                 href={
                   settings?.website?.startsWith('http')
                     ? settings.website
-                    : `https://${settings?.website || 'www.DongHoaGroup.vn'}`
+                    : `https://${settings?.website || 'donghoadesign.com'}`
                 }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-[#c5a26c] transition-colors"
               >
-                Website: {settings?.website || 'www.DongHoaGroup.vn'}
+                Website: {settings?.website || 'donghoadesign.com'}
               </a>
             </li>
           </ul>
