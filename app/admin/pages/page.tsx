@@ -2340,16 +2340,16 @@ export default function AdminPageEditor() {
 
       {/* Tab 2: Hero Slideshow */}
       {activeTab === 'hero' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           {/* Left Form Column */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'lg:col-span-4'} bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6 transition-all`}>
-            <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-4">
-              <h3 className="font-bold text-[18px] text-[#04092b] flex items-center gap-2">
-                <Layout className="w-5 h-5 text-[#c5a26c]" /> Hero Banner
+          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
+            <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-3">
+              <h3 className="font-bold text-[16px] text-[#04092b] flex items-center gap-2">
+                <Layout className="w-4 h-4 text-[#c5a26c]" /> Banner Đầu Trang (Hero)
               </h3>
-              <div className="flex items-center gap-2">
-                <span className="text-[12px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded-full">
-                  Slide {heroSlideIndex + 1} / {hero?.slides?.length || 3}
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-mono text-[#6e706a] bg-[#f4f1ea] px-2 py-0.5 rounded-full font-bold">
+                  Slide {heroSlideIndex + 1}/{hero?.slides?.length || 3}
                 </span>
                 <button
                   type="button"
@@ -2377,17 +2377,17 @@ export default function AdminPageEditor() {
               </div>
             </div>
 
-            {/* Slide Selector Buttons */}
-            <div className="flex flex-wrap gap-2">
+            {/* Slide Selector Pills */}
+            <div className="flex flex-wrap gap-1.5">
               {hero?.slides?.map((slide, idx) => (
                 <div key={idx} className="flex items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setHeroSlideIndex(idx)}
-                    className={`px-3 py-2 rounded-xl font-bold text-[13px] border transition-all text-center ${
+                    className={`px-3 py-1.5 rounded-xl font-bold text-[12px] border transition-all ${
                       idx === heroSlideIndex
-                        ? 'bg-[#04092b] text-[#c5a26c] shadow-md ring-2 ring-[#c5a26c]/40'
-                        : 'bg-[#f4f1ea] text-[#04092b] hover:bg-[#e2ddd3]'
+                        ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-xs ring-2 ring-[#c5a26c]/30'
+                        : 'bg-[#f4f1ea] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
                     }`}
                   >
                     Slide {idx + 1} ({slide.monogram})
@@ -2405,7 +2405,7 @@ export default function AdminPageEditor() {
                       className="p-1 text-red-400 hover:text-red-600 rounded"
                       title="Xóa slide này"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   )}
                 </div>
@@ -2414,9 +2414,9 @@ export default function AdminPageEditor() {
 
             {/* Current Slide Editor */}
             {hero?.slides?.[heroSlideIndex] && (
-              <div className="space-y-4 pt-2">
+              <div className="space-y-3.5 pt-1">
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Nhãn Tag Nhỏ (Eyebrow)</label>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Nhãn Tag Nhỏ (Eyebrow)</label>
                   <input
                     type="text"
                     value={hero.slides[heroSlideIndex].tag || ''}
@@ -2425,13 +2425,14 @@ export default function AdminPageEditor() {
                       updated[heroSlideIndex].tag = e.target.value;
                       setData({ ...data, hero: { ...hero, slides: updated } });
                     }}
-                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                    placeholder="VD: ĐÔNG HÒA DESIGN"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2.5">
                   <div>
-                    <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Monogram</label>
+                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Monogram</label>
                     <input
                       type="text"
                       maxLength={2}
@@ -2441,11 +2442,11 @@ export default function AdminPageEditor() {
                         updated[heroSlideIndex].monogram = e.target.value;
                         setData({ ...data, hero: { ...hero, slides: updated } });
                       }}
-                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[20px] font-bold font-serif text-[#04092b] text-center focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[16px] font-bold font-serif text-[#04092b] text-center focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
-                  <div className="sm:col-span-2">
-                    <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Dòng Tiêu Đề 1</label>
+                  <div className="col-span-2">
+                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Dòng Tiêu Đề 1</label>
                     <input
                       type="text"
                       value={hero.slides[heroSlideIndex].line1}
@@ -2454,13 +2455,13 @@ export default function AdminPageEditor() {
                         updated[heroSlideIndex].line1 = e.target.value;
                         setData({ ...data, hero: { ...hero, slides: updated } });
                       }}
-                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Dòng Tiêu Đề 2</label>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Dòng Tiêu Đề 2</label>
                   <input
                     type="text"
                     value={hero.slides[heroSlideIndex].line2}
@@ -2469,30 +2470,40 @@ export default function AdminPageEditor() {
                       updated[heroSlideIndex].line2 = e.target.value;
                       setData({ ...data, hero: { ...hero, slides: updated } });
                     }}
-                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Slide</label>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Slide</label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={hero.slides[heroSlideIndex].description}
                     onChange={(e) => {
                       const updated = [...hero.slides];
                       updated[heroSlideIndex].description = e.target.value;
                       setData({ ...data, hero: { ...hero, slides: updated } });
                     }}
-                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
                   />
                 </div>
 
                 {/* Background Image with 1-Click Picker */}
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">
                     Ảnh Nền Slide {heroSlideIndex + 1}
                   </label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
+                      {hero.slides[heroSlideIndex].backgroundImage && (
+                        <Image
+                          src={hero.slides[heroSlideIndex].backgroundImage!}
+                          alt="Slide BG"
+                          fill
+                          className="object-cover"
+                        />
+                      )}
+                    </div>
                     <input
                       type="text"
                       value={hero.slides[heroSlideIndex].backgroundImage || ''}
@@ -2501,7 +2512,7 @@ export default function AdminPageEditor() {
                         updated[heroSlideIndex].backgroundImage = e.target.value;
                         setData({ ...data, hero: { ...hero, slides: updated } });
                       }}
-                      className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                      className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
                     />
                     <button
                       type="button"
@@ -2512,10 +2523,44 @@ export default function AdminPageEditor() {
                           setData({ ...data, hero: { ...hero, slides: updated } });
                         })
                       }
-                      className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+                      className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
                     >
-                      <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                      <ImageIcon className="w-3.5 h-3.5" /> Chọn Ảnh
                     </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Chữ trên nút bấm</label>
+                    <input
+                      type="text"
+                      value={hero.slides[heroSlideIndex].buttonText || 'Xem thêm'}
+                      onChange={(e) => {
+                        const updated = [...hero.slides];
+                        updated[heroSlideIndex].buttonText = e.target.value;
+                        setData({ ...data, hero: { ...hero, slides: updated } });
+                      }}
+                      className="w-full p-2 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Mục tiêu cuộn</label>
+                    <select
+                      value={hero.slides[heroSlideIndex].buttonTarget || '#contact'}
+                      onChange={(e) => {
+                        const updated = [...hero.slides];
+                        updated[heroSlideIndex].buttonTarget = e.target.value;
+                        setData({ ...data, hero: { ...hero, slides: updated } });
+                      }}
+                      className="w-full p-2 border border-[#e2ddd3] rounded-xl text-[12.5px] bg-white focus:border-[#c5a26c] focus:outline-none"
+                    >
+                      <option value="#contact">Liên hệ (#contact)</option>
+                      <option value="#philosophy">Giới thiệu (#philosophy)</option>
+                      <option value="#styles">Phong cách (#styles)</option>
+                      <option value="#office">Văn phòng (#office)</option>
+                      <option value="/blog">Tin tức (/blog)</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -2523,76 +2568,73 @@ export default function AdminPageEditor() {
           </div>
 
           {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'lg:col-span-12' : 'lg:col-span-8'} static lg:sticky lg:top-6 space-y-4 transition-all`}>
+          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
             {/* Viewport Switcher Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#e2ddd3] shadow-sm">
-              <span className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#c5a26c]" /> Live Preview: Hero Banner
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
+              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Hero Banner
               </span>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
                 {/* Layout Toggle */}
                 <button
                   type="button"
                   onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng khung xem thử toàn màn hình' : 'Thu nhỏ về chế độ 2 cột'}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
+                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
                 >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3.5 h-3.5 text-[#c5a26c]" /> : <Minimize2 className="w-3.5 h-3.5" />}
-                  <span>{previewLayout === 'split' ? '⛶ Mở Rộng' : '◫ Chia Đôi'}</span>
+                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
+                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
                 </button>
 
                 {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-1 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Thu nhỏ preview"
                   >
-                    <ZoomOut className="w-3.5 h-3.5" />
+                    <ZoomOut className="w-3 h-3" />
                   </button>
-                  <span className="text-[11px] font-mono font-bold text-[#04092b] px-1">
+                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
                     {Math.round(previewZoom * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Phóng to preview"
                   >
-                    <ZoomIn className="w-3.5 h-3.5" />
+                    <ZoomIn className="w-3 h-3" />
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('desktop')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" /> Desktop (1440px)
+                  <Monitor className="w-3 h-3" /> Desktop
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('mobile')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile (390px)
+                  <Smartphone className="w-3 h-3" /> Mobile
                 </button>
                 <button
                   type="button"
                   onClick={() => setFullscreenPreviewSection('hero')}
-                  className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-                  title="Phóng to toàn màn hình"
+                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                 >
-                  <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
                 </button>
               </div>
             </div>
@@ -2605,7 +2647,7 @@ export default function AdminPageEditor() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className="relative w-full min-h-[660px] sm:min-h-[720px] rounded-3xl overflow-hidden shadow-2xl border-2 border-[#c5a26c] bg-[#04092b] text-white p-8 sm:p-14 flex flex-col justify-between"
+                className="relative w-full aspect-[16/10] min-h-[380px] max-h-[500px] rounded-2xl overflow-hidden shadow-xl border border-[#c5a26c]/40 bg-[#04092b] text-white p-6 sm:p-8 flex flex-col justify-between"
               >
                 {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
                   <Image
@@ -2616,37 +2658,37 @@ export default function AdminPageEditor() {
                   />
                 )}
                 <div className="relative z-10 space-y-2">
-                  <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-widest bg-black/50 px-3.5 py-1 rounded-lg border border-[#c5a26c]/30 inline-block font-accent">
+                  <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider bg-black/60 px-2.5 py-0.5 rounded border border-[#c5a26c]/30 inline-block font-accent">
                     {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT CAO CẤP'}
                   </span>
-                  <div className="text-[38px] sm:text-[52px] font-serif font-bold text-[#c5a26c] leading-tight">
-                    <span className="text-[54px] sm:text-[72px] font-serif italic mr-2 text-[#c5a26c]">
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-[#c5a26c] leading-tight mt-1">
+                    <span className="text-3xl sm:text-4xl font-serif italic mr-1.5 text-[#c5a26c]">
                       {hero?.slides?.[heroSlideIndex]?.monogram}
                     </span>
                     <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
                   </div>
                   {hero?.slides?.[heroSlideIndex]?.line2 && (
-                    <p className="text-[30px] sm:text-[40px] font-bold text-white/90 font-display">
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-white/90 font-display">
                       {hero?.slides?.[heroSlideIndex]?.line2}
                     </p>
                   )}
                 </div>
 
-                <div className="relative z-10 space-y-4 pt-8">
-                  <p className="text-[15px] sm:text-[16px] text-white/80 max-w-2xl leading-relaxed">
+                <div className="relative z-10 space-y-3 pt-4">
+                  <p className="text-[12.5px] sm:text-[13.5px] text-white/80 max-w-lg line-clamp-3 leading-relaxed">
                     {hero?.slides?.[heroSlideIndex]?.description}
                   </p>
-                  <div className="flex items-center justify-between pt-2">
-                    <button className="bg-[#c5a26c] text-[#04092b] font-bold text-[13px] px-7 py-3 rounded-xl uppercase tracking-wider shadow-lg flex items-center gap-2">
+                  <div className="flex items-center justify-between pt-1">
+                    <button className="bg-[#c5a26c] text-[#04092b] font-bold text-[12px] px-5 py-2 rounded-xl uppercase tracking-wider shadow-md flex items-center gap-1.5">
                       <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá Dự Án'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       {hero?.slides?.map((_, i) => (
                         <div
                           key={i}
-                          className={`h-2.5 rounded-full transition-all ${
-                            i === heroSlideIndex ? 'w-10 bg-[#c5a26c]' : 'w-2.5 bg-white/40'
+                          className={`h-2 rounded-full transition-all ${
+                            i === heroSlideIndex ? 'w-7 bg-[#c5a26c]' : 'w-2 bg-white/40'
                           }`}
                         />
                       ))}
@@ -2655,20 +2697,20 @@ export default function AdminPageEditor() {
                 </div>
               </div>
             ) : (
-              /* Mobile Mode Live Preview — Large iPhone Frame */
-              <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+              /* Mobile Mode Live Preview */
+              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
                 <div
                   style={{
                     transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
                     transformOrigin: 'top center',
                     transition: 'transform 0.15s ease-out'
                   }}
-                  className="w-[390px] sm:w-[420px] min-h-[780px] sm:min-h-[840px] bg-[#04092b] text-white rounded-[48px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-7 sm:p-8"
+                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#04092b] text-white rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
                 >
                   {/* Speaker Notch */}
-                  <div className="w-28 h-4 bg-black rounded-full mx-auto mb-4 flex items-center justify-center shrink-0">
-                    <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-10 h-1.5 bg-[#252525] rounded-full" />
+                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
                   </div>
 
                   {hero?.slides?.[heroSlideIndex]?.backgroundImage && (
@@ -2680,30 +2722,30 @@ export default function AdminPageEditor() {
                     />
                   )}
 
-                  <div className="relative z-10 space-y-2 mt-4">
-                    <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-widest bg-black/60 px-2.5 py-1 rounded-md border border-[#c5a26c]/30 inline-block font-accent">
+                  <div className="relative z-10 space-y-1.5 mt-2">
+                    <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-widest bg-black/60 px-2 py-0.5 rounded border border-[#c5a26c]/30 inline-block font-accent">
                       {hero?.slides?.[heroSlideIndex]?.tag || 'THIẾT KẾ NỘI THẤT'}
                     </span>
-                    <div className="text-[28px] sm:text-[32px] font-serif font-bold text-[#c5a26c] leading-tight">
-                      <span className="text-[40px] sm:text-[46px] font-serif italic mr-1 text-[#c5a26c]">
+                    <div className="text-[22px] font-serif font-bold text-[#c5a26c] leading-tight">
+                      <span className="text-[32px] font-serif italic mr-1 text-[#c5a26c]">
                         {hero?.slides?.[heroSlideIndex]?.monogram}
                       </span>
                       <span className="font-display text-white">{hero?.slides?.[heroSlideIndex]?.line1}</span>
                     </div>
                     {hero?.slides?.[heroSlideIndex]?.line2 && (
-                      <p className="text-[22px] sm:text-[24px] font-bold text-white/90 font-display">
+                      <p className="text-[17px] font-bold text-white/90 font-display">
                         {hero?.slides?.[heroSlideIndex]?.line2}
                       </p>
                     )}
                   </div>
 
-                  <div className="relative z-10 space-y-4 mb-4">
-                    <p className="text-[13px] text-white/85 line-clamp-4 leading-relaxed">
+                  <div className="relative z-10 space-y-3 mb-2">
+                    <p className="text-[12px] text-white/85 line-clamp-3 leading-relaxed">
                       {hero?.slides?.[heroSlideIndex]?.description}
                     </p>
-                    <button className="w-full bg-[#c5a26c] text-[#04092b] font-bold text-[12px] py-3 rounded-xl uppercase tracking-wider shadow-lg flex items-center justify-center gap-2">
+                    <button className="w-full bg-[#c5a26c] text-[#04092b] font-bold text-[11.5px] py-2.5 rounded-xl uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5">
                       <span>{hero?.slides?.[heroSlideIndex]?.buttonText || 'Khám Phá'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
@@ -2715,18 +2757,18 @@ export default function AdminPageEditor() {
 
       {/* Tab 3: Tầm Nhìn & Sứ Mệnh (Philosophy) */}
       {activeTab === 'philosophy' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           {/* Left Form Column */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'lg:col-span-4'} bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6 transition-all`}>
-            <h3 className="font-bold text-[18px] text-[#04092b] border-b border-[#e2ddd3] pb-4 flex items-center gap-2">
-              <Compass className="w-5 h-5 text-[#c5a26c]" /> Tầm Nhìn &amp; Sứ Mệnh
+          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
+            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
+              <Compass className="w-4 h-4 text-[#c5a26c]" /> Tầm Nhìn &amp; Sứ Mệnh
             </h3>
 
             {/* Left Visual Photo */}
-            <div className="space-y-2">
-              <label className="block text-[13.5px] font-bold text-[#04092b]">Ảnh Phòng Khách Bên Trái</label>
-              <div className="flex items-center gap-3">
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0">
+            <div className="space-y-1.5">
+              <label className="block text-[12px] font-bold text-[#04092b]">Ảnh Đại Diện Khối Triết Lý</label>
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
                   <Image
                     src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
                     alt="Philosophy Preview"
@@ -2738,7 +2780,7 @@ export default function AdminPageEditor() {
                   type="text"
                   value={philosophy?.image || ''}
                   onChange={(e) => setData({ ...data, philosophy: { ...philosophy, image: e.target.value } })}
-                  className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -2747,48 +2789,50 @@ export default function AdminPageEditor() {
                       setData({ ...data, philosophy: { ...philosophy, image: url } });
                     })
                   }
-                  className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
                 >
-                  <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tagline Nhỏ</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tagline Nhỏ (Eyebrow)</label>
               <input
                 type="text"
                 value={philosophy?.tag || ''}
                 onChange={(e) => setData({ ...data, philosophy: { ...philosophy, tag: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                placeholder="VD: VỀ CHÚNG TÔI"
               />
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Lớn</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
               <input
                 type="text"
                 value={philosophy?.heading || ''}
                 onChange={(e) => setData({ ...data, philosophy: { ...philosophy, heading: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                placeholder="VD: TẦM NHÌN VÀ SỨ MỆNH"
               />
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Đoạn Văn Triết Lý</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Đoạn Văn Triết Lý</label>
               <textarea
-                rows={4}
+                rows={3}
                 value={philosophy?.description || ''}
                 onChange={(e) => setData({ ...data, philosophy: { ...philosophy, description: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
               />
             </div>
 
             {/* 3 Philosophy Features / Pillars */}
-            <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
+            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
               <div className="flex items-center justify-between">
-                <label className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider">
-                  3 Trụ Cột / Đặc Trưng Nổi Bật
+                <label className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider">
+                  3 Trụ Cột Nổi Bật
                 </label>
                 <button
                   type="button"
@@ -2797,17 +2841,17 @@ export default function AdminPageEditor() {
                     const feats = [...(philosophy?.features || []), newFeat];
                     setData({ ...data, philosophy: { ...philosophy, features: feats } });
                   }}
-                  className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                  className="px-2 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[11px] font-bold rounded-lg transition-colors flex items-center gap-1"
                 >
                   <Plus className="w-3 h-3" /> + Thêm Trụ Cột
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {philosophy?.features?.map((feat, fIdx) => (
-                  <div key={fIdx} className="p-3.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-2">
+                  <div key={fIdx} className="p-2.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11.5px] font-bold text-[#c5a26c]">Trụ cột #{fIdx + 1}</span>
+                      <span className="text-[11px] font-bold text-[#c5a26c]">Trụ cột #{fIdx + 1}</span>
                       {philosophy.features.length > 1 && (
                         <button
                           type="button"
@@ -2818,7 +2862,7 @@ export default function AdminPageEditor() {
                           className="text-red-400 hover:text-red-600 p-1"
                           title="Xóa trụ cột này"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       )}
                     </div>
@@ -2831,7 +2875,7 @@ export default function AdminPageEditor() {
                         updated[fIdx] = { ...updated[fIdx], title: e.target.value };
                         setData({ ...data, philosophy: { ...philosophy, features: updated } });
                       }}
-                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] font-bold focus:border-[#c5a26c] focus:outline-none"
                     />
                     <textarea
                       rows={2}
@@ -2842,7 +2886,7 @@ export default function AdminPageEditor() {
                         updated[fIdx] = { ...updated[fIdx], description: e.target.value };
                         setData({ ...data, philosophy: { ...philosophy, features: updated } });
                       }}
-                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[11.5px] focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
                 ))}
@@ -2851,76 +2895,73 @@ export default function AdminPageEditor() {
           </div>
 
           {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'lg:col-span-12' : 'lg:col-span-8'} static lg:sticky lg:top-6 space-y-4 transition-all`}>
+          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
             {/* Viewport Switcher Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#e2ddd3] shadow-sm">
-              <span className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#c5a26c]" /> Live Preview: Tầm Nhìn &amp; Sứ Mệnh
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
+              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Tầm Nhìn &amp; Sứ Mệnh
               </span>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
                 {/* Layout Toggle */}
                 <button
                   type="button"
                   onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng khung xem thử toàn màn hình' : 'Thu nhỏ về chế độ 2 cột'}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
+                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
                 >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3.5 h-3.5 text-[#c5a26c]" /> : <Minimize2 className="w-3.5 h-3.5" />}
-                  <span>{previewLayout === 'split' ? '⛶ Mở Rộng' : '◫ Chia Đôi'}</span>
+                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
+                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
                 </button>
 
                 {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-1 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Thu nhỏ preview"
                   >
-                    <ZoomOut className="w-3.5 h-3.5" />
+                    <ZoomOut className="w-3 h-3" />
                   </button>
-                  <span className="text-[11px] font-mono font-bold text-[#04092b] px-1">
+                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
                     {Math.round(previewZoom * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Phóng to preview"
                   >
-                    <ZoomIn className="w-3.5 h-3.5" />
+                    <ZoomIn className="w-3 h-3" />
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('desktop')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" /> Desktop (1440px)
+                  <Monitor className="w-3 h-3" /> Desktop
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('mobile')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile (390px)
+                  <Smartphone className="w-3 h-3" /> Mobile
                 </button>
                 <button
                   type="button"
                   onClick={() => setFullscreenPreviewSection('philosophy')}
-                  className="px-3 py-1.5 rounded-xl bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[12px] font-bold transition-colors flex items-center gap-1.5 shadow-sm"
-                  title="Phóng to toàn màn hình"
+                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                 >
-                  <Maximize2 className="w-3.5 h-3.5" /> <span>Toàn Màn Hình</span>
+                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
                 </button>
               </div>
             </div>
@@ -2932,10 +2973,10 @@ export default function AdminPageEditor() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className="bg-[#faf8f5] p-8 sm:p-14 rounded-3xl border-2 border-[#c5a26c] shadow-2xl space-y-8 min-h-[660px] sm:min-h-[720px] flex flex-col justify-between"
+                className="bg-[#faf8f5] p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-5 flex flex-col justify-between"
               >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-                  <div className="md:col-span-5 relative h-[360px] rounded-2xl overflow-hidden border border-[#e2ddd3] shadow-md">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                  <div className="md:col-span-5 relative h-[180px] sm:h-[220px] rounded-xl overflow-hidden border border-[#e2ddd3] shadow-xs">
                     <Image
                       src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
                       alt="Philosophy Live Preview"
@@ -2943,52 +2984,52 @@ export default function AdminPageEditor() {
                       className="object-cover"
                     />
                   </div>
-                  <div className="md:col-span-7 space-y-4">
-                    <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                  <div className="md:col-span-7 space-y-2">
+                    <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider font-accent">
                       {philosophy?.tag || 'VỀ CHÚNG TÔI'}
                     </span>
-                    <h4 className="text-[32px] sm:text-[40px] font-bold text-[#04092b] font-display leading-tight">
+                    <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display leading-tight">
                       {philosophy?.heading || 'TẦM NHÌN VÀ SỨ MỆNH'}
                     </h4>
-                    <p className="text-[15px] sm:text-[16px] text-[#5f6361] leading-relaxed">
+                    <p className="text-[12.5px] sm:text-[13px] text-[#5f6361] leading-relaxed line-clamp-4">
                       {philosophy?.description || 'Mang lại những giải pháp thiết kế nội thất hoàn mỹ...'}
                     </p>
                   </div>
                 </div>
 
                 {/* 3 Pillar Mockup */}
-                <div className="grid grid-cols-3 gap-4 pt-6 border-t border-[#e2ddd3]">
-                  {[
-                    { num: '01', title: 'Thiết kế độc bản', desc: 'Cá nhân hóa 100% theo phong cách & phong thủy' },
-                    { num: '02', title: 'Thi công trọn gói', desc: 'Chuẩn xác 99% so với bản vẽ phối cảnh 3D' },
-                    { num: '03', title: 'Xưởng trực tiếp', desc: 'Tối ưu 20–30% chi phí thị trường' },
-                  ].map((p) => (
-                    <div key={p.num} className="bg-white p-5 rounded-2xl border border-[#e2ddd3] shadow-xs">
-                      <span className="text-[14px] font-mono font-bold text-[#c5a26c] block">{p.num}</span>
-                      <h5 className="text-[14px] font-bold text-[#04092b] mt-1">{p.title}</h5>
-                      <p className="text-[12px] text-[#6e706a] mt-1.5 leading-relaxed">{p.desc}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 border-t border-[#e2ddd3]">
+                  {(philosophy?.features || [
+                    { title: 'Thiết kế độc bản', description: 'Cá nhân hóa 100% theo phong cách & phong thủy' },
+                    { title: 'Thi công trọn gói', description: 'Chuẩn xác 99% so với bản vẽ phối cảnh 3D' },
+                    { title: 'Xưởng trực tiếp', description: 'Tối ưu 20–30% chi phí thị trường' },
+                  ]).slice(0, 3).map((p, idx) => (
+                    <div key={idx} className="bg-white p-3 rounded-xl border border-[#e2ddd3] shadow-2xs">
+                      <span className="text-[11.5px] font-mono font-bold text-[#c5a26c] block">0{idx + 1}</span>
+                      <h5 className="text-[12.5px] font-bold text-[#04092b] mt-0.5 line-clamp-1">{p.title}</h5>
+                      <p className="text-[11px] text-[#6e706a] mt-1 leading-relaxed line-clamp-2">{p.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              /* Mobile Viewport — Large iPhone Frame */
-              <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+              /* Mobile Viewport */
+              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
                 <div
                   style={{
                     transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
                     transformOrigin: 'top center',
                     transition: 'transform 0.15s ease-out'
                   }}
-                  className="w-[390px] sm:w-[420px] min-h-[780px] sm:min-h-[840px] bg-[#faf8f5] text-[#04092b] rounded-[48px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-7 sm:p-8"
+                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#faf8f5] text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
                 >
-                  <div className="w-28 h-4 bg-black rounded-full mx-auto mb-4 flex items-center justify-center shrink-0">
-                    <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-10 h-1.5 bg-[#252525] rounded-full" />
+                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="relative w-full h-[240px] rounded-2xl overflow-hidden shadow-sm border border-[#e2ddd3]">
+                  <div className="space-y-3">
+                    <div className="relative w-full h-[150px] rounded-xl overflow-hidden shadow-xs border border-[#e2ddd3]">
                       <Image
                         src={philosophy?.image || '/uploads/clean_philosophy_photo.png'}
                         alt="Philosophy Preview Mobile"
@@ -2996,25 +3037,25 @@ export default function AdminPageEditor() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                    <div className="space-y-1">
+                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
                         {philosophy?.tag}
                       </span>
-                      <h4 className="text-[24px] font-bold text-[#04092b] font-display leading-tight">{philosophy?.heading}</h4>
-                      <p className="text-[13px] text-[#6e706a] leading-relaxed">
+                      <h4 className="text-[17px] font-bold text-[#04092b] font-display leading-tight">{philosophy?.heading}</h4>
+                      <p className="text-[11.5px] text-[#6e706a] leading-relaxed line-clamp-3">
                         {philosophy?.description}
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-[#e2ddd3]">
-                      {[
-                        { num: '01', title: 'Thiết kế độc bản' },
-                        { num: '02', title: 'Thi công trọn gói' },
-                        { num: '03', title: 'Xưởng trực tiếp' },
-                      ].map((p) => (
-                        <div key={p.num} className="bg-white p-3 rounded-xl border border-[#e2ddd3] flex items-center gap-3">
-                          <span className="text-[12px] font-mono font-bold text-[#c5a26c]">{p.num}</span>
-                          <span className="text-[13px] font-bold text-[#04092b]">{p.title}</span>
+                    <div className="space-y-1.5 pt-2 border-t border-[#e2ddd3]">
+                      {(philosophy?.features || [
+                        { title: 'Thiết kế độc bản' },
+                        { title: 'Thi công trọn gói' },
+                        { title: 'Xưởng trực tiếp' },
+                      ]).slice(0, 3).map((p, idx) => (
+                        <div key={idx} className="bg-white p-2 rounded-lg border border-[#e2ddd3] flex items-center gap-2">
+                          <span className="text-[11px] font-mono font-bold text-[#c5a26c]">0{idx + 1}</span>
+                          <span className="text-[11.5px] font-bold text-[#04092b] truncate">{p.title}</span>
                         </div>
                       ))}
                     </div>
@@ -3028,20 +3069,20 @@ export default function AdminPageEditor() {
 
       {/* Tab 4: Kết Nối & Báo Giá (Contact) */}
       {activeTab === 'contact' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'lg:col-span-5'} bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6 transition-all`}>
-            <h3 className="font-bold text-[19px] text-[#04092b] border-b border-[#e2ddd3] pb-4 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-[#c5a26c]" /> Khối Kết Nối &amp; Báo Giá (Contact Form)
+          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
+            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-[#c5a26c]" /> Khối Kết Nối &amp; Báo Giá
             </h3>
 
             {/* Left Photo */}
-            <div className="space-y-2">
-              <label className="block text-[13.5px] font-bold text-[#04092b]">
-                Ảnh Sảnh Tiếp Khách Bên Trái
+            <div className="space-y-1.5">
+              <label className="block text-[12px] font-bold text-[#04092b]">
+                Ảnh Đại Diện Bên Trái
               </label>
-              <div className="flex items-center gap-3">
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
                   <Image
                     src={contact?.image || '/uploads/clean_contact_photo.png'}
                     alt="Contact Preview"
@@ -3053,7 +3094,7 @@ export default function AdminPageEditor() {
                   type="text"
                   value={contact?.image || ''}
                   onChange={(e) => setData({ ...data, contact: { ...contact, image: e.target.value } })}
-                  className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -3062,117 +3103,114 @@ export default function AdminPageEditor() {
                       setData({ ...data, contact: { ...contact, image: url } });
                     })
                   }
-                  className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
                 >
-                  <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
                 </button>
               </div>
             </div>
 
             {/* Tag & Heading */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Thẻ Tiêu Đề Nhỏ</label>
+                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Thẻ Tiêu Đề Nhỏ</label>
                 <input
                   type="text"
                   value={contact?.tag || ''}
                   onChange={(e) => setData({ ...data, contact: { ...contact, tag: e.target.value } })}
-                  className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Chính</label>
+                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Chính</label>
                 <input
                   type="text"
                   value={contact?.heading || ''}
                   onChange={(e) => setData({ ...data, contact: { ...contact, heading: e.target.value } })}
-                  className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Lời Nhắn / Báo Giá (Quote)</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Lời Nhắn / Cam Kết Báo Giá</label>
               <textarea
                 rows={3}
                 value={contact?.quote || ''}
                 onChange={(e) => setData({ ...data, contact: { ...contact, quote: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
                 placeholder="Để lại thông tin, đội ngũ Kiến trúc sư..."
               />
             </div>
           </div>
 
           {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'lg:col-span-12' : 'lg:col-span-7'} static lg:sticky lg:top-6 space-y-4 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#e2ddd3] shadow-sm">
-              <span className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#c5a26c]" /> Live Preview: Kết Nối &amp; Báo Giá
+          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
+              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Kết Nối &amp; Báo Giá
               </span>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
                 {/* Layout Toggle */}
                 <button
                   type="button"
                   onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng khung xem thử toàn màn hình' : 'Thu nhỏ về chế độ 2 cột'}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
+                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
                 >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3.5 h-3.5 text-[#c5a26c]" /> : <Minimize2 className="w-3.5 h-3.5" />}
-                  <span>{previewLayout === 'split' ? '⛶ Mở Rộng' : '◫ Chia Đôi'}</span>
+                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
+                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
                 </button>
 
                 {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-1 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Thu nhỏ preview"
                   >
-                    <ZoomOut className="w-3.5 h-3.5" />
+                    <ZoomOut className="w-3 h-3" />
                   </button>
-                  <span className="text-[11px] font-mono font-bold text-[#04092b] px-1">
+                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
                     {Math.round(previewZoom * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Phóng to preview"
                   >
-                    <ZoomIn className="w-3.5 h-3.5" />
+                    <ZoomIn className="w-3 h-3" />
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('desktop')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" /> Desktop (1440px)
+                  <Monitor className="w-3 h-3" /> Desktop
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('mobile')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile (390px)
+                  <Smartphone className="w-3.5 h-3.5" /> Mobile
                 </button>
                 <button
                   type="button"
                   onClick={() => setFullscreenPreviewSection('contact')}
-                  className="p-2 rounded-xl bg-[#f4f1ea] hover:bg-[#c5a26c] text-[#04092b] transition-colors"
-                  title="Phóng to toàn màn hình"
+                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                 >
-                  <Maximize2 className="w-4 h-4" />
+                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
                 </button>
               </div>
             </div>
@@ -3184,12 +3222,12 @@ export default function AdminPageEditor() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className="bg-[#04092b] text-white p-8 sm:p-12 rounded-3xl border-2 border-[#c5a26c] shadow-2xl min-h-[660px] sm:min-h-[720px] flex items-center"
+                className="bg-[#04092b] text-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl flex items-center"
               >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center w-full">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center w-full">
                   {/* Left Column Visual Info */}
-                  <div className="md:col-span-6 space-y-4">
-                    <div className="relative w-full h-[260px] rounded-2xl overflow-hidden border border-[#c5a26c]/30 shadow-lg">
+                  <div className="md:col-span-6 space-y-3">
+                    <div className="relative w-full h-[160px] sm:h-[180px] rounded-xl overflow-hidden border border-[#c5a26c]/30 shadow-xs">
                       <Image
                         src={contact?.image || '/uploads/clean_contact_photo.png'}
                         alt="Contact Live Preview"
@@ -3198,37 +3236,37 @@ export default function AdminPageEditor() {
                       />
                     </div>
                     <div>
-                      <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                      <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
                         {contact?.tag || 'LIÊN HỆ'}
                       </span>
-                      <h4 className="text-[26px] font-bold font-display whitespace-pre-line leading-tight text-white mt-1">
+                      <h4 className="text-lg sm:text-xl font-bold font-display whitespace-pre-line leading-tight text-white mt-0.5">
                         {contact?.heading}
                       </h4>
-                      <p className="text-[13.5px] text-white/75 mt-2 leading-relaxed">{contact?.quote}</p>
+                      <p className="text-[12px] text-white/75 mt-1 leading-relaxed line-clamp-3">{contact?.quote}</p>
                     </div>
                   </div>
 
                   {/* Right Column Inquiry Form Mockup */}
-                  <div className="md:col-span-6 bg-white/10 backdrop-blur-md p-7 rounded-2xl border border-white/15 space-y-3.5">
-                    <h5 className="text-[15px] font-bold text-[#c5a26c] uppercase tracking-wider">
+                  <div className="md:col-span-6 bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-xl border border-white/15 space-y-2.5">
+                    <h5 className="text-[13px] font-bold text-[#c5a26c] uppercase tracking-wider">
                       Nhận Báo Giá Thiết Kế
                     </h5>
-                    <div className="space-y-2.5 text-[13px]">
-                      <div className="p-3 rounded-xl bg-white/10 border border-white/15 text-white/60">
+                    <div className="space-y-2 text-[12px]">
+                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
                         Họ và tên của bạn
                       </div>
-                      <div className="p-3 rounded-xl bg-white/10 border border-white/15 text-white/60">
+                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
                         Số điện thoại liên hệ
                       </div>
-                      <div className="p-3 rounded-xl bg-white/10 border border-white/15 text-white/60">
+                      <div className="p-2 rounded-lg bg-white/10 border border-white/15 text-white/60">
                         Diện tích căn hộ (m²)
                       </div>
                     </div>
                     {/* Minimalist Swipe Pill */}
-                    <div className="pt-2">
-                      <div className="bg-[#2D302E] text-white p-3.5 rounded-full flex items-center justify-between border border-[#c5a26c]/40 shadow-md">
-                        <span className="text-[13px] font-bold pl-4">Yêu cầu tư vấn</span>
-                        <div className="w-8 h-8 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold">
+                    <div className="pt-1">
+                      <div className="bg-[#2D302E] text-white p-2.5 rounded-full flex items-center justify-between border border-[#c5a26c]/40 shadow-xs">
+                        <span className="text-[11.5px] font-bold pl-3">Yêu cầu tư vấn</span>
+                        <div className="w-6 h-6 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold text-xs">
                           →
                         </div>
                       </div>
@@ -3237,23 +3275,23 @@ export default function AdminPageEditor() {
                 </div>
               </div>
             ) : (
-              /* Mobile Viewport — Large iPhone Frame */
-              <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+              /* Mobile Viewport */
+              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
                 <div
                   style={{
                     transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
                     transformOrigin: 'top center',
                     transition: 'transform 0.15s ease-out'
                   }}
-                  className="w-[390px] sm:w-[420px] min-h-[780px] sm:min-h-[840px] bg-[#04092b] text-white rounded-[48px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-7 sm:p-8"
+                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-[#04092b] text-white rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
                 >
-                  <div className="w-28 h-4 bg-black rounded-full mx-auto mb-4 flex items-center justify-center shrink-0">
-                    <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-10 h-1.5 bg-[#252525] rounded-full" />
+                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
                   </div>
 
-                  <div className="space-y-4 flex-1">
-                    <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-md">
+                  <div className="space-y-3 flex-1">
+                    <div className="relative w-full h-[140px] rounded-xl overflow-hidden shadow-xs">
                       <Image
                         src={contact?.image || '/uploads/clean_contact_photo.png'}
                         alt="Contact Preview Mobile"
@@ -3262,27 +3300,27 @@ export default function AdminPageEditor() {
                       />
                     </div>
                     <div>
-                      <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
                         {contact?.tag}
                       </span>
-                      <h4 className="text-[20px] font-bold font-display mt-0.5">{contact?.heading}</h4>
-                      <p className="text-[12px] text-white/75 mt-1 leading-relaxed">{contact?.quote}</p>
+                      <h4 className="text-[17px] font-bold font-display mt-0.5">{contact?.heading}</h4>
+                      <p className="text-[11.5px] text-white/75 mt-1 leading-relaxed line-clamp-2">{contact?.quote}</p>
                     </div>
 
-                    <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/15 space-y-2 text-[12px]">
-                      <div className="p-2.5 rounded-lg bg-white/10 border border-white/15 text-white/60">
+                    <div className="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/15 space-y-1.5 text-[11.5px]">
+                      <div className="p-2 rounded-md bg-white/10 border border-white/15 text-white/60">
                         Họ và tên của bạn
                       </div>
-                      <div className="p-2.5 rounded-lg bg-white/10 border border-white/15 text-white/60">
+                      <div className="p-2 rounded-md bg-white/10 border border-white/15 text-white/60">
                         Số điện thoại liên hệ
                       </div>
                     </div>
                   </div>
 
                   {/* Mobile minimalist pill */}
-                  <div className="bg-[#2D302E] text-white p-3 rounded-full flex items-center justify-between border border-[#c5a26c]/40 mt-4">
-                    <span className="text-[12.5px] font-bold pl-3">Yêu cầu tư vấn</span>
-                    <div className="w-8 h-8 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold text-xs">
+                  <div className="bg-[#2D302E] text-white p-2.5 rounded-full flex items-center justify-between border border-[#c5a26c]/40 mt-3">
+                    <span className="text-[11.5px] font-bold pl-3">Yêu cầu tư vấn</span>
+                    <div className="w-6 h-6 rounded-full bg-[#c5a26c] text-[#04092b] flex items-center justify-center font-bold text-xs">
                       →
                     </div>
                   </div>
@@ -3295,28 +3333,28 @@ export default function AdminPageEditor() {
 
       {/* Tab 5: Phong Cách Thiết Kế (Styles Overview) */}
       {activeTab === 'styles' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'lg:col-span-5'} bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6 transition-all`}>
-            <h3 className="font-bold text-[19px] text-[#04092b] border-b border-[#e2ddd3] pb-4 flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-[#c5a26c]" /> 4 Thẻ Phong Cách Thiết Kế
+          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
+            <div className="flex items-center justify-between border-b border-[#e2ddd3] pb-3">
+              <h3 className="font-bold text-[16px] text-[#04092b] flex items-center gap-2">
+                <Palette className="w-4 h-4 text-[#c5a26c]" /> 4 Thẻ Phong Cách Thiết Kế
+              </h3>
+              <span className="text-[11px] font-mono bg-[#f4f1ea] px-2.5 py-0.5 rounded-full text-[#04092b] font-bold">
+                Thẻ {selectedStyleIndex + 1}/{stylesOverview?.styles?.length || 4}
               </span>
-              <span className="text-[12.5px] font-mono bg-[#f4f1ea] px-3 py-1 rounded-lg text-[#04092b] font-bold">
-                Thẻ {selectedStyleIndex + 1} / {stylesOverview?.styles?.length || 4}
-              </span>
-            </h3>
+            </div>
 
-            {/* Style Selector Buttons */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {/* Style Selector Pills */}
+            <div className="grid grid-cols-2 gap-2">
               {stylesOverview?.styles?.map((st, idx) => (
                 <button
-                  key={st.id}
+                  key={st.id || idx}
                   type="button"
                   onClick={() => setSelectedStyleIndex(idx)}
-                  className={`p-3 rounded-xl text-[12.5px] font-bold transition-all text-center border ${
+                  className={`p-2 rounded-xl text-[12px] font-bold transition-all text-center border truncate ${
                     selectedStyleIndex === idx
-                      ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-md ring-2 ring-[#c5a26c]/40'
+                      ? 'bg-[#04092b] text-[#c5a26c] border-[#04092b] shadow-xs ring-2 ring-[#c5a26c]/30'
                       : 'bg-[#f4f1ea] text-[#04092b] border-[#e2ddd3] hover:bg-[#e2ddd3]'
                   }`}
                 >
@@ -3326,47 +3364,47 @@ export default function AdminPageEditor() {
             </div>
 
             {/* Section Level Settings */}
-            <div className="space-y-3 p-4 bg-[#faf8f5] rounded-2xl border border-[#e2ddd3]">
-              <span className="text-[12px] font-bold text-[#c5a26c] uppercase tracking-wider block">
-                Tiêu Đề &amp; Mô Tả Khối Phong Cách
+            <div className="space-y-2.5 p-3 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
+              <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                Tiêu Đề Khối Phong Cách
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tag Nhỏ (Eyebrow)</label>
+                  <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Tag Nhỏ</label>
                   <input
                     type="text"
                     value={stylesOverview?.tag || ''}
                     onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, tag: e.target.value } })}
-                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] focus:border-[#c5a26c] focus:outline-none"
+                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
+                  <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Tiêu Đề Lớn</label>
                   <input
                     type="text"
                     value={stylesOverview?.heading || ''}
                     onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, heading: e.target.value } })}
-                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                    className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] font-bold focus:border-[#c5a26c] focus:outline-none"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Đoạn Văn Giới Thiệu Chung</label>
+                <label className="block text-[11.5px] font-bold text-[#04092b] mb-1">Đoạn Văn Giới Thiệu</label>
                 <textarea
                   rows={2}
                   value={stylesOverview?.description || ''}
                   onChange={(e) => setData({ ...data, stylesOverview: { ...stylesOverview, description: e.target.value } })}
-                  className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                  className="w-full p-2 bg-white border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
                 />
               </div>
             </div>
 
             {/* Current Style Card Editor */}
             {stylesOverview?.styles?.[selectedStyleIndex] && (
-              <div className="space-y-4 pt-2">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-3 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tên Phong Cách</label>
+                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tên Phong Cách</label>
                     <input
                       type="text"
                       value={stylesOverview.styles[selectedStyleIndex].name}
@@ -3375,11 +3413,11 @@ export default function AdminPageEditor() {
                         updated[selectedStyleIndex].name = e.target.value;
                         setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
                       }}
-                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Phụ Đề / Đặc Trưng</label>
+                    <label className="block text-[12px] font-bold text-[#04092b] mb-1">Phụ Đề / Đặc Trưng</label>
                     <input
                       type="text"
                       value={stylesOverview.styles[selectedStyleIndex].subtitle}
@@ -3388,33 +3426,33 @@ export default function AdminPageEditor() {
                         updated[selectedStyleIndex].subtitle = e.target.value;
                         setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
                       }}
-                      className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                      className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Chi Tiết Thẻ</label>
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Chi Tiết Thẻ</label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={stylesOverview.styles[selectedStyleIndex].description || ''}
                     onChange={(e) => {
                       const updated = [...stylesOverview.styles];
                       updated[selectedStyleIndex].description = e.target.value;
                       setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
                     }}
-                    className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                    className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
                     placeholder="Mô tả phong cách thiết kế..."
                   />
                 </div>
 
                 {/* Card Thumbnail Image */}
                 <div>
-                  <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">
-                    Ảnh Thẻ Lưới (Card Thumbnail Image)
+                  <label className="block text-[12px] font-bold text-[#04092b] mb-1">
+                    Ảnh Thẻ Lưới (Card Image)
                   </label>
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-sm">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
                       <Image
                         src={stylesOverview.styles[selectedStyleIndex].cardImage}
                         alt="Card preview"
@@ -3430,7 +3468,7 @@ export default function AdminPageEditor() {
                         updated[selectedStyleIndex].cardImage = e.target.value;
                         setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
                       }}
-                      className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                      className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
                     />
                     <button
                       type="button"
@@ -3441,9 +3479,9 @@ export default function AdminPageEditor() {
                           setData({ ...data, stylesOverview: { ...stylesOverview, styles: updated } });
                         })
                       }
-                      className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+                      className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
                     >
-                      <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                      <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
                     </button>
                   </div>
                 </div>
@@ -3452,75 +3490,72 @@ export default function AdminPageEditor() {
           </div>
 
           {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'lg:col-span-12' : 'lg:col-span-7'} static lg:sticky lg:top-6 space-y-4 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#e2ddd3] shadow-sm">
-              <span className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#c5a26c]" /> Live Preview: Phong Cách Thiết Kế
+          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
+              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Phong Cách Thiết Kế
               </span>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
                 {/* Layout Toggle */}
                 <button
                   type="button"
                   onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng khung xem thử toàn màn hình' : 'Thu nhỏ về chế độ 2 cột'}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
+                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
                 >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3.5 h-3.5 text-[#c5a26c]" /> : <Minimize2 className="w-3.5 h-3.5" />}
-                  <span>{previewLayout === 'split' ? '⛶ Mở Rộng' : '◫ Chia Đôi'}</span>
+                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
+                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
                 </button>
 
                 {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-1 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Thu nhỏ preview"
                   >
-                    <ZoomOut className="w-3.5 h-3.5" />
+                    <ZoomOut className="w-3 h-3" />
                   </button>
-                  <span className="text-[11px] font-mono font-bold text-[#04092b] px-1">
+                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
                     {Math.round(previewZoom * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Phóng to preview"
                   >
-                    <ZoomIn className="w-3.5 h-3.5" />
+                    <ZoomIn className="w-3 h-3" />
                   </button>
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('desktop')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" /> Desktop (1440px)
+                  <Monitor className="w-3 h-3" /> Desktop
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('mobile')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile (390px)
+                  <Smartphone className="w-3.5 h-3.5" /> Mobile
                 </button>
                 <button
                   type="button"
                   onClick={() => setFullscreenPreviewSection('styles')}
-                  className="p-2 rounded-xl bg-[#f4f1ea] hover:bg-[#c5a26c] text-[#04092b] transition-colors"
-                  title="Phóng to toàn màn hình"
+                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                 >
-                  <Maximize2 className="w-4 h-4" />
+                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
                 </button>
               </div>
             </div>
@@ -3532,32 +3567,32 @@ export default function AdminPageEditor() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className="bg-white p-8 sm:p-12 rounded-3xl border-2 border-[#c5a26c] shadow-2xl min-h-[660px] sm:min-h-[720px] space-y-8 flex flex-col justify-center"
+                className="bg-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-4 flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                  <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
                     {stylesOverview?.tag || 'CÁC BỘ SƯU TẬP'}
                   </span>
-                  <h4 className="text-[28px] font-bold text-[#04092b] font-display mt-1">
+                  <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display mt-0.5">
                     {stylesOverview?.heading || 'PHONG CÁCH THIẾT KẾ ĐẶC TRƯNG'}
                   </h4>
                 </div>
 
                 {/* 4 Cards Grid */}
-                <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
                   {stylesOverview?.styles?.map((st, idx) => {
                     const isCurrent = selectedStyleIndex === idx;
                     return (
                       <div
                         key={st.id || idx}
                         onClick={() => setSelectedStyleIndex(idx)}
-                        className={`group cursor-pointer rounded-2xl overflow-hidden border-2 transition-all p-3 bg-[#faf8f5] flex flex-col ${
+                        className={`group cursor-pointer rounded-xl overflow-hidden border transition-all p-2 bg-[#faf8f5] flex flex-col ${
                           isCurrent
-                            ? 'border-[#c5a26c] shadow-lg ring-2 ring-[#c5a26c]/40 bg-white'
-                            : 'border-[#e2ddd3] hover:border-[#c5a26c] hover:shadow-md'
+                            ? 'border-[#c5a26c] shadow-sm ring-2 ring-[#c5a26c]/30 bg-white'
+                            : 'border-[#e2ddd3] hover:border-[#c5a26c]'
                         }`}
                       >
-                        <div className="relative w-full h-[180px] rounded-xl overflow-hidden shadow-xs">
+                        <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden shadow-2xs">
                           <Image
                             src={st.cardImage || '/uploads/clean_style_modern.png'}
                             alt={st.name}
@@ -3565,14 +3600,14 @@ export default function AdminPageEditor() {
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {isCurrent && (
-                            <span className="absolute top-2.5 right-2.5 bg-[#04092b] text-[#c5a26c] text-[10.5px] font-bold px-2.5 py-0.5 rounded-full border border-[#c5a26c]/40 shadow-sm">
+                            <span className="absolute top-1.5 right-1.5 bg-[#04092b] text-[#c5a26c] text-[9.5px] font-bold px-2 py-0.5 rounded-full border border-[#c5a26c]/40">
                               Đang chọn
                             </span>
                           )}
                         </div>
-                        <div className="pt-3 pb-1 space-y-1">
-                          <h5 className="text-[15px] font-bold text-[#04092b] line-clamp-1">{st.name}</h5>
-                          <p className="text-[12px] text-[#6e706a] line-clamp-1">{st.subtitle}</p>
+                        <div className="pt-2 pb-0.5 space-y-0.5">
+                          <h5 className="text-[12.5px] font-bold text-[#04092b] truncate">{st.name}</h5>
+                          <p className="text-[11px] text-[#6e706a] truncate">{st.subtitle}</p>
                         </div>
                       </div>
                     );
@@ -3580,37 +3615,37 @@ export default function AdminPageEditor() {
                 </div>
               </div>
             ) : (
-              /* Mobile Viewport — Large iPhone Frame */
-              <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+              /* Mobile Viewport */
+              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
                 <div
                   style={{
                     transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
                     transformOrigin: 'top center',
                     transition: 'transform 0.15s ease-out'
                   }}
-                  className="w-[390px] sm:w-[420px] min-h-[780px] sm:min-h-[840px] bg-white text-[#04092b] rounded-[48px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-7 sm:p-8"
+                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-white text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
                 >
-                  <div className="w-28 h-4 bg-black rounded-full mx-auto mb-4 flex items-center justify-center shrink-0">
-                    <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-10 h-1.5 bg-[#252525] rounded-full" />
+                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
                   </div>
 
-                  <div className="space-y-4 flex-1">
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                  <div className="space-y-3 flex-1">
+                    <div className="space-y-0.5">
+                      <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
                         {stylesOverview?.tag}
                       </span>
-                      <h4 className="text-[20px] font-bold font-display">{stylesOverview?.heading}</h4>
+                      <h4 className="text-[17px] font-bold font-display">{stylesOverview?.heading}</h4>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2.5">
+                    <div className="grid grid-cols-2 gap-2">
                       {stylesOverview?.styles?.slice(0, 4).map((st, idx) => (
-                        <div key={idx} className="rounded-2xl overflow-hidden border border-[#e2ddd3] p-2 bg-[#faf8f5] shadow-xs">
-                          <div className="relative w-full h-[110px] rounded-xl overflow-hidden">
+                        <div key={idx} className="rounded-xl overflow-hidden border border-[#e2ddd3] p-1.5 bg-[#faf8f5] shadow-2xs">
+                          <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
                             <Image src={st.cardImage} alt={st.name} fill className="object-cover" />
                           </div>
-                          <p className="text-[12px] font-bold text-[#04092b] mt-1.5 truncate">{st.name}</p>
-                          <p className="text-[10.5px] text-[#6e706a] truncate">{st.subtitle}</p>
+                          <p className="text-[11.5px] font-bold text-[#04092b] mt-1 truncate">{st.name}</p>
+                          <p className="text-[10px] text-[#6e706a] truncate">{st.subtitle}</p>
                         </div>
                       ))}
                     </div>
@@ -3624,20 +3659,20 @@ export default function AdminPageEditor() {
 
       {/* Tab 6: Nội Thất Văn Phòng (Office) */}
       {activeTab === 'office' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
           {/* Left Form */}
-          <div className={`${previewLayout === 'full' ? 'hidden' : 'lg:col-span-5'} bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#e2ddd3] shadow-sm space-y-6 transition-all`}>
-            <h3 className="font-bold text-[19px] text-[#04092b] border-b border-[#e2ddd3] pb-4 flex items-center gap-2">
-              <Briefcase className="w-5 h-5 text-[#c5a26c]" /> Khối Nội Thất Văn Phòng (Office)
+          <div className={`${previewLayout === 'full' ? 'hidden' : 'xl:col-span-5'} bg-white p-4 sm:p-5 rounded-2xl border border-[#e2ddd3] shadow-xs space-y-4 transition-all`}>
+            <h3 className="font-bold text-[16px] text-[#04092b] border-b border-[#e2ddd3] pb-3 flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-[#c5a26c]" /> Khối Nội Thất Văn Phòng
             </h3>
 
             {/* Hero Main Photo */}
-            <div className="space-y-2">
-              <label className="block text-[13.5px] font-bold text-[#04092b]">
+            <div className="space-y-1.5">
+              <label className="block text-[12px] font-bold text-[#04092b]">
                 Ảnh Phòng Làm Việc Giám Đốc
               </label>
-              <div className="flex items-center gap-3">
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0 shadow-xs">
                   <Image
                     src={office?.heroImage || '/uploads/office_hero_main.png'}
                     alt="Office Preview"
@@ -3649,7 +3684,7 @@ export default function AdminPageEditor() {
                   type="text"
                   value={office?.heroImage || ''}
                   onChange={(e) => setData({ ...data, office: { ...office, heroImage: e.target.value } })}
-                  className="flex-1 p-3 border border-[#e2ddd3] rounded-xl text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                  className="flex-1 p-2 border border-[#e2ddd3] rounded-xl text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
                 />
                 <button
                   type="button"
@@ -3658,61 +3693,61 @@ export default function AdminPageEditor() {
                       setData({ ...data, office: { ...office, heroImage: url } });
                     })
                   }
-                  className="px-4 py-3 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[13px] font-bold rounded-xl transition-colors flex items-center gap-1.5 shrink-0 border border-[#e2ddd3]"
+                  className="px-3 py-2 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-xl transition-colors flex items-center gap-1 shrink-0 border border-[#e2ddd3]"
                 >
-                  <ImageIcon className="w-4 h-4" /> Đổi Ảnh
+                  <ImageIcon className="w-3.5 h-3.5" /> Đổi Ảnh
                 </button>
               </div>
             </div>
 
             {/* Headings */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Dòng 1</label>
+                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Dòng 1</label>
                 <input
                   type="text"
                   value={office?.headingLine1 || ''}
                   onChange={(e) => setData({ ...data, office: { ...office, headingLine1: e.target.value } })}
-                  className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tiêu Đề Dòng 2</label>
+                <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tiêu Đề Dòng 2</label>
                 <input
                   type="text"
                   value={office?.headingLine2 || ''}
                   onChange={(e) => setData({ ...data, office: { ...office, headingLine2: e.target.value } })}
-                  className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] font-bold focus:border-[#c5a26c] focus:outline-none"
+                  className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] font-bold focus:border-[#c5a26c] focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Tagline / Subtitle */}
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Tagline / Tiêu Đề Phụ</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Tagline / Tiêu Đề Phụ</label>
               <input
                 type="text"
                 value={office?.tag || ''}
                 onChange={(e) => setData({ ...data, office: { ...office, tag: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Mô Tả Không Gian Văn Phòng</label>
+              <label className="block text-[12px] font-bold text-[#04092b] mb-1">Mô Tả Không Gian Văn Phòng</label>
               <textarea
-                rows={4}
+                rows={3}
                 value={office?.description || ''}
                 onChange={(e) => setData({ ...data, office: { ...office, description: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
+                className="w-full p-2.5 border border-[#e2ddd3] rounded-xl text-[12.5px] focus:border-[#c5a26c] focus:outline-none leading-relaxed"
               />
             </div>
 
             {/* Color Swatches Editor */}
-            <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
+            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
               <div className="flex items-center justify-between">
-                <label className="block text-[13.5px] font-bold text-[#04092b]">
+                <label className="block text-[12px] font-bold text-[#04092b]">
                   Bảng Màu Thiết Kế (Color Swatches)
                 </label>
                 <button
@@ -3732,81 +3767,61 @@ export default function AdminPageEditor() {
                       }
                     });
                   }}
-                  className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
+                  className="px-2 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[11px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
                 >
                   + Thêm Màu
                 </button>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {(office?.colorSwatches || [
                   { color: '#e5dfd7', label: 'Sand Cream' },
                   { color: '#8c7b6c', label: 'Earthy Taupe' },
                   { color: '#395224', label: 'Forest Sage' },
                   { color: '#d2a679', label: 'Warm Caramel' }
                 ]).map((swatch, sIdx) => (
-                  <div key={sIdx} className="flex items-center gap-2 p-2 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
+                  <div key={sIdx} className="flex items-center gap-2 p-1.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
                     <input
                       type="color"
                       value={swatch.color}
                       onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [
-                          { color: '#e5dfd7', label: 'Sand Cream' },
-                          { color: '#8c7b6c', label: 'Earthy Taupe' },
-                          { color: '#395224', label: 'Forest Sage' },
-                          { color: '#d2a679', label: 'Warm Caramel' }
-                        ])];
+                        const next = [...(office?.colorSwatches || [])];
                         next[sIdx] = { ...next[sIdx], color: e.target.value };
                         setData({ ...data, office: { ...office, colorSwatches: next } });
                       }}
-                      className="w-8 h-8 rounded cursor-pointer border border-[#e2ddd3] p-0.5 bg-white shrink-0"
+                      className="w-7 h-7 rounded cursor-pointer border border-[#e2ddd3] p-0.5 bg-white shrink-0"
                     />
                     <input
                       type="text"
                       value={swatch.color}
                       onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [
-                          { color: '#e5dfd7', label: 'Sand Cream' },
-                          { color: '#8c7b6c', label: 'Earthy Taupe' },
-                          { color: '#395224', label: 'Forest Sage' },
-                          { color: '#d2a679', label: 'Warm Caramel' }
-                        ])];
+                        const next = [...(office?.colorSwatches || [])];
                         next[sIdx] = { ...next[sIdx], color: e.target.value };
                         setData({ ...data, office: { ...office, colorSwatches: next } });
                       }}
-                      className="w-24 p-1.5 border border-[#e2ddd3] rounded-lg text-[12px] font-mono"
+                      className="w-20 p-1 border border-[#e2ddd3] rounded-lg text-[11.5px] font-mono"
                       placeholder="#hex"
                     />
                     <input
                       type="text"
                       value={swatch.label}
                       onChange={(e) => {
-                        const next = [...(office?.colorSwatches || [
-                          { color: '#e5dfd7', label: 'Sand Cream' },
-                          { color: '#8c7b6c', label: 'Earthy Taupe' },
-                          { color: '#395224', label: 'Forest Sage' },
-                          { color: '#d2a679', label: 'Warm Caramel' }
-                        ])];
+                        const next = [...(office?.colorSwatches || [])];
                         next[sIdx] = { ...next[sIdx], label: e.target.value };
                         setData({ ...data, office: { ...office, colorSwatches: next } });
                       }}
-                      className="flex-1 p-1.5 border border-[#e2ddd3] rounded-lg text-[12px]"
+                      className="flex-1 p-1 border border-[#e2ddd3] rounded-lg text-[11.5px]"
                       placeholder="Tên màu"
                     />
                     <button
                       type="button"
                       onClick={() => {
-                        const next = (office?.colorSwatches || [
-                          { color: '#e5dfd7', label: 'Sand Cream' },
-                          { color: '#8c7b6c', label: 'Earthy Taupe' },
-                          { color: '#395224', label: 'Forest Sage' },
-                          { color: '#d2a679', label: 'Warm Caramel' }
-                        ]).filter((_, i) => i !== sIdx);
+                        const next = (office?.colorSwatches || []).filter((_, i) => i !== sIdx);
                         setData({ ...data, office: { ...office, colorSwatches: next } });
                       }}
-                      className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"
+                      className="p-1 text-red-500 hover:bg-red-50 rounded-lg"
                       title="Xóa màu"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
                 ))}
@@ -3814,8 +3829,8 @@ export default function AdminPageEditor() {
             </div>
 
             {/* Gallery Cards (3 Cards) */}
-            <div className="space-y-4 pt-3 border-t border-[#e2ddd3]">
-              <label className="block text-[13.5px] font-bold text-[#04092b]">
+            <div className="space-y-2.5 pt-3 border-t border-[#e2ddd3]">
+              <label className="block text-[12px] font-bold text-[#04092b]">
                 Bộ Sưu Tập Ảnh Dưới Khối Văn Phòng (3 Thẻ)
               </label>
               {(office?.galleryCards || [
@@ -3823,9 +3838,9 @@ export default function AdminPageEditor() {
                 { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
                 { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
               ]).map((card, cIdx) => (
-                <div key={cIdx} className="p-3 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0">
+                <div key={cIdx} className="p-2.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3] space-y-1.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-[#e2ddd3] bg-black/10 shrink-0">
                       <Image
                         src={card.image || '/uploads/office_card_1.png'}
                         alt={card.alt || `Card ${cIdx + 1}`}
@@ -3833,55 +3848,43 @@ export default function AdminPageEditor() {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 space-y-1.5">
-                      <div className="flex items-center gap-2">
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-1.5">
                         <input
                           type="text"
                           value={card.image || ''}
                           onChange={(e) => {
-                            const next = [...(office?.galleryCards || [
-                              { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                              { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                              { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
-                            ])];
+                            const next = [...(office?.galleryCards || [])];
                             next[cIdx] = { ...next[cIdx], image: e.target.value };
                             setData({ ...data, office: { ...office, galleryCards: next } });
                           }}
-                          className="flex-1 p-2 border border-[#e2ddd3] rounded-lg text-[12px] font-mono focus:border-[#c5a26c] focus:outline-none"
+                          className="flex-1 p-1.5 border border-[#e2ddd3] rounded-lg text-[11px] font-mono focus:border-[#c5a26c] focus:outline-none"
                           placeholder="Đường dẫn ảnh"
                         />
                         <button
                           type="button"
                           onClick={() =>
                             openMediaPicker(`Chọn ảnh thẻ #${cIdx + 1}`, (url) => {
-                              const next = [...(office?.galleryCards || [
-                                { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                                { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                                { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
-                              ])];
+                              const next = [...(office?.galleryCards || [])];
                               next[cIdx] = { ...next[cIdx], image: url };
                               setData({ ...data, office: { ...office, galleryCards: next } });
                             })
                           }
-                          className="px-3 py-2 bg-white hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg transition-colors shrink-0 border border-[#e2ddd3]"
+                          className="px-2.5 py-1.5 bg-white hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[11px] font-bold rounded-lg transition-colors shrink-0 border border-[#e2ddd3]"
                         >
-                          <ImageIcon className="w-3.5 h-3.5 inline mr-1" /> Chọn
+                          <ImageIcon className="w-3 h-3 inline mr-0.5" /> Chọn
                         </button>
                       </div>
                       <input
                         type="text"
                         value={card.alt || ''}
                         onChange={(e) => {
-                          const next = [...(office?.galleryCards || [
-                            { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
-                            { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
-                            { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
-                          ])];
+                          const next = [...(office?.galleryCards || [])];
                           next[cIdx] = { ...next[cIdx], alt: e.target.value };
                           setData({ ...data, office: { ...office, galleryCards: next } });
                         }}
-                        className="w-full p-2 border border-[#e2ddd3] rounded-lg text-[12px] focus:border-[#c5a26c] focus:outline-none"
-                        placeholder="Mô tả / Alt text cho ảnh"
+                        className="w-full p-1.5 border border-[#e2ddd3] rounded-lg text-[11px] focus:border-[#c5a26c] focus:outline-none"
+                        placeholder="Mô tả cho ảnh"
                       />
                     </div>
                   </div>
@@ -3891,41 +3894,39 @@ export default function AdminPageEditor() {
           </div>
 
           {/* Right Live Preview Workstation */}
-          <div className={`${previewLayout === 'full' ? 'lg:col-span-12' : 'lg:col-span-7'} static lg:sticky lg:top-6 space-y-4 transition-all`}>
-            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#e2ddd3] shadow-sm">
-              <span className="text-[13.5px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#c5a26c]" /> Live Preview: Nội Thất Văn Phòng
+          <div className={`${previewLayout === 'full' ? 'xl:col-span-12' : 'xl:col-span-7'} static xl:sticky xl:top-4 space-y-3 transition-all`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 bg-white p-2.5 rounded-xl border border-[#e2ddd3] shadow-xs">
+              <span className="text-[12px] font-bold text-[#04092b] uppercase tracking-wider flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-[#c5a26c]" /> Xem thử: Nội Thất Văn Phòng
               </span>
-              <div className="flex items-center flex-wrap gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
                 {/* Layout Toggle */}
                 <button
                   type="button"
                   onClick={() => setPreviewLayout(previewLayout === 'split' ? 'full' : 'split')}
-                  className="px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all flex items-center gap-1.5 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
-                  title={previewLayout === 'split' ? 'Mở rộng khung xem thử toàn màn hình' : 'Thu nhỏ về chế độ 2 cột'}
+                  className="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 border border-[#e2ddd3] bg-[#faf8f5] hover:bg-[#e2ddd3] text-[#04092b]"
+                  title={previewLayout === 'split' ? 'Mở rộng toàn màn hình' : 'Thu về chế độ 2 cột'}
                 >
-                  {previewLayout === 'split' ? <Maximize2 className="w-3.5 h-3.5 text-[#c5a26c]" /> : <Minimize2 className="w-3.5 h-3.5" />}
-                  <span>{previewLayout === 'split' ? '⛶ Mở Rộng' : '◫ Chia Đôi'}</span>
+                  {previewLayout === 'split' ? <Maximize2 className="w-3 h-3 text-[#c5a26c]" /> : <Minimize2 className="w-3 h-3" />}
+                  <span>{previewLayout === 'split' ? 'Mở Rộng' : 'Chia Đôi'}</span>
                 </button>
 
                 {/* Preview Zoom Controls */}
-                <div className="flex items-center gap-1 bg-[#f4f1ea] px-2 py-1 rounded-xl border border-[#e2ddd3]">
+                <div className="flex items-center gap-0.5 bg-[#f4f1ea] px-1.5 py-0.5 rounded-lg border border-[#e2ddd3]">
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.max(0.7, parseFloat((prev - 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Thu nhỏ preview"
                   >
-                    <ZoomOut className="w-3.5 h-3.5" />
+                    <ZoomOut className="w-3 h-3" />
                   </button>
-                  <span className="text-[11px] font-mono font-bold text-[#04092b] px-1">
+                  <span className="text-[10.5px] font-mono font-bold text-[#04092b] px-1">
                     {Math.round(previewZoom * 100)}%
                   </span>
                   <button
                     type="button"
                     onClick={() => setPreviewZoom((prev) => Math.min(1.4, parseFloat((prev + 0.1).toFixed(2))))}
                     className="p-1 hover:bg-white rounded text-[#04092b]"
-                    title="Phóng to preview"
                   >
                     <ZoomIn className="w-3.5 h-3.5" />
                   </button>
@@ -3934,32 +3935,31 @@ export default function AdminPageEditor() {
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('desktop')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'desktop'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Monitor className="w-3.5 h-3.5" /> Desktop (1440px)
+                  <Monitor className="w-3 h-3" /> Desktop
                 </button>
                 <button
                   type="button"
                   onClick={() => setPreviewDevice('mobile')}
-                  className={`px-3 py-1.5 rounded-xl text-[12.5px] font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold transition-all flex items-center gap-1 ${
                     previewDevice === 'mobile'
-                      ? 'bg-[#04092b] text-[#c5a26c] shadow-sm'
+                      ? 'bg-[#04092b] text-[#c5a26c] shadow-xs'
                       : 'bg-[#f4f1ea] text-[#6e706a] hover:text-[#04092b]'
                   }`}
                 >
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile (390px)
+                  <Smartphone className="w-3.5 h-3.5" /> Mobile
                 </button>
                 <button
                   type="button"
                   onClick={() => setFullscreenPreviewSection('office')}
-                  className="p-2 rounded-xl bg-[#f4f1ea] hover:bg-[#c5a26c] text-[#04092b] transition-colors"
-                  title="Phóng to toàn màn hình"
+                  className="px-2.5 py-1 rounded-lg bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] text-[11px] font-bold transition-colors flex items-center gap-1 shadow-xs"
                 >
-                  <Maximize2 className="w-4 h-4" />
+                  <Maximize2 className="w-3 h-3" /> <span>Toàn Màn Hình</span>
                 </button>
               </div>
             </div>
@@ -3971,34 +3971,34 @@ export default function AdminPageEditor() {
                   transformOrigin: 'top center',
                   transition: 'transform 0.15s ease-out'
                 }}
-                className="bg-white p-8 sm:p-12 rounded-3xl border-2 border-[#c5a26c] shadow-2xl min-h-[660px] sm:min-h-[720px] space-y-7 flex flex-col justify-center"
+                className="bg-white p-5 sm:p-7 rounded-2xl border border-[#c5a26c]/40 shadow-xl space-y-4 flex flex-col justify-between"
               >
-                <div className="relative w-full h-[280px] rounded-2xl overflow-hidden border border-[#e2ddd3] shadow-md">
+                <div className="relative w-full h-[180px] sm:h-[220px] rounded-xl overflow-hidden border border-[#e2ddd3] shadow-xs">
                   <Image
                     src={office?.heroImage || '/uploads/office_hero_main.png'}
                     alt="Office Hero Live Preview"
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
-                    <span className="text-white text-[13.5px] font-bold bg-[#04092b]/80 px-3.5 py-1.5 rounded-lg border border-[#c5a26c]/40">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-4">
+                    <span className="text-white text-[12px] font-bold bg-[#04092b]/80 px-2.5 py-1 rounded-md border border-[#c5a26c]/40">
                       Không Gian Giám Đốc Cao Cấp
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2.5">
-                  <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
+                <div className="space-y-1.5">
+                  <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-widest font-accent">
                     {office?.tag || 'VĂN PHÒNG DOANH NGHIỆP'}
                   </span>
-                  <h4 className="text-[28px] font-bold text-[#04092b] font-display">
+                  <h4 className="text-lg sm:text-xl font-bold text-[#04092b] font-display">
                     {office?.headingLine1} {office?.headingLine2}
                   </h4>
-                  <p className="text-[14.5px] text-[#5f6361] leading-relaxed line-clamp-3">{office?.description}</p>
+                  <p className="text-[12.5px] text-[#5f6361] leading-relaxed line-clamp-2">{office?.description}</p>
                 </div>
 
                 {/* Color Swatches Preview */}
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-center gap-2 pt-0.5">
                   {(office?.colorSwatches || [
                     { color: '#e5dfd7', label: 'Sand Cream' },
                     { color: '#8c7b6c', label: 'Earthy Taupe' },
@@ -4007,7 +4007,7 @@ export default function AdminPageEditor() {
                   ]).map((swatch, i) => (
                     <div
                       key={i}
-                      className="w-6 h-6 rounded-full border border-[#e2ddd3] shadow-xs"
+                      className="w-5 h-5 rounded-full border border-[#e2ddd3] shadow-2xs"
                       style={{ backgroundColor: swatch.color }}
                       title={swatch.label}
                     />
@@ -4015,39 +4015,39 @@ export default function AdminPageEditor() {
                 </div>
 
                 {/* 3 Gallery Cards Preview */}
-                <div className="grid grid-cols-3 gap-3.5 pt-3 border-t border-[#e2ddd3]">
+                <div className="grid grid-cols-3 gap-2.5 pt-3 border-t border-[#e2ddd3]">
                   {(office?.galleryCards || [
                     { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
                     { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
                     { id: 3, image: '/uploads/office_card_3.png', alt: 'Module bàn làm việc linh hoạt' }
                   ]).map((card, i) => (
-                    <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2.5 shadow-xs">
-                      <div className="relative w-full h-[105px] rounded-lg overflow-hidden bg-black/10">
+                    <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2 shadow-2xs">
+                      <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-black/10">
                         <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
                       </div>
-                      <p className="text-[12px] font-bold text-[#04092b] mt-2 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
+                      <p className="text-[11.5px] font-bold text-[#04092b] mt-1.5 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              /* Mobile Viewport — Large iPhone Frame */
-              <div className="w-full flex justify-center py-6 bg-[#1a1c29]/5 rounded-3xl border border-[#e2ddd3] overflow-x-auto">
+              /* Mobile Viewport */
+              <div className="w-full flex justify-center py-4 bg-[#1a1c29]/5 rounded-2xl border border-[#e2ddd3] overflow-x-auto">
                 <div
                   style={{
                     transform: previewZoom !== 1 ? `scale(${previewZoom})` : undefined,
                     transformOrigin: 'top center',
                     transition: 'transform 0.15s ease-out'
                   }}
-                  className="w-[390px] sm:w-[420px] min-h-[780px] sm:min-h-[840px] bg-white text-[#04092b] rounded-[48px] shadow-2xl border-[10px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-7 sm:p-8"
+                  className="w-[320px] sm:w-[350px] min-h-[580px] bg-white text-[#04092b] rounded-[40px] shadow-2xl border-[8px] border-[#222738] relative overflow-hidden flex flex-col justify-between p-6"
                 >
-                  <div className="w-28 h-4 bg-black rounded-full mx-auto mb-4 flex items-center justify-center shrink-0">
-                    <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mr-2" />
-                    <div className="w-10 h-1.5 bg-[#252525] rounded-full" />
+                  <div className="w-24 h-3.5 bg-black rounded-full mx-auto mb-3 flex items-center justify-center shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#1a1a1a] mr-2" />
+                    <div className="w-8 h-1 bg-[#252525] rounded-full" />
                   </div>
 
-                  <div className="space-y-4 flex-1">
-                    <div className="relative w-full h-[180px] rounded-2xl overflow-hidden shadow-sm border border-[#e2ddd3]">
+                  <div className="space-y-3 flex-1">
+                    <div className="relative w-full h-[140px] rounded-xl overflow-hidden shadow-xs border border-[#e2ddd3]">
                       <Image
                         src={office?.heroImage || '/uploads/office_hero_main.png'}
                         alt="Office Mobile Preview"
@@ -4055,24 +4055,24 @@ export default function AdminPageEditor() {
                         className="object-cover"
                       />
                     </div>
-                    <span className="text-[10.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
+                    <span className="text-[9.5px] font-bold text-[#c5a26c] uppercase tracking-wider block">
                       {office?.tag || 'CÁC SẢN PHẨM ĐẶC BIỆT'}
                     </span>
-                    <h4 className="text-[20px] font-bold font-display">
+                    <h4 className="text-[17px] font-bold font-display">
                       {office?.headingLine1} {office?.headingLine2}
                     </h4>
-                    <p className="text-[12.5px] text-[#6e706a] line-clamp-3 leading-relaxed">{office?.description}</p>
+                    <p className="text-[11.5px] text-[#6e706a] line-clamp-2 leading-relaxed">{office?.description}</p>
 
                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#e2ddd3]">
                       {(office?.galleryCards || [
                         { id: 1, image: '/uploads/office_card_1.png', alt: 'Không gian làm việc văn phòng hiện đại' },
                         { id: 2, image: '/uploads/office_card_2.png', alt: 'Khu vực làm việc cá nhân & tiếp khách' },
                       ]).slice(0, 2).map((card, i) => (
-                        <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-2">
-                          <div className="relative w-full h-[75px] rounded-lg overflow-hidden">
+                        <div key={i} className="rounded-xl overflow-hidden border border-[#e2ddd3] bg-[#faf8f5] p-1.5">
+                          <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
                             <Image src={card.image || '/uploads/office_card_1.png'} alt={card.alt || `Card ${i + 1}`} fill className="object-cover" />
                           </div>
-                          <p className="text-[11px] font-bold text-[#04092b] mt-1 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
+                          <p className="text-[10.5px] font-bold text-[#04092b] mt-1 truncate">{card.alt || `Ảnh #${i + 1}`}</p>
                         </div>
                       ))}
                     </div>
@@ -4157,21 +4157,29 @@ export default function AdminPageEditor() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Hotline Liên Hệ</label>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1">Hotline Liên Hệ</label>
+              <p className="text-[11.5px] text-[#707070] mb-1.5">
+                Tự động đồng bộ nút bấm gọi <code className="text-[#04092b] bg-[#f0ece1] px-1 py-0.5 rounded">tel:</code> và link Zalo trên Header, Footer, Nút nổi &amp; Bài viết.
+              </p>
               <input
                 type="text"
                 value={settings?.hotline || ''}
                 onChange={(e) => setData({ ...data, settings: { ...settings, hotline: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none font-medium"
+                placeholder="0906.499.279"
               />
             </div>
             <div>
-              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1.5">Email Công Ty</label>
+              <label className="block text-[13.5px] font-bold text-[#04092b] mb-1">Email Công Ty / Nhận Yêu Cầu</label>
+              <p className="text-[11.5px] text-[#707070] mb-1.5">
+                Tự động đồng bộ link <code className="text-[#04092b] bg-[#f0ece1] px-1 py-0.5 rounded">mailto:</code> và là hòm thư nhận thông báo khi khách gửi form tư vấn.
+              </p>
               <input
                 type="email"
                 value={settings?.email || ''}
                 onChange={(e) => setData({ ...data, settings: { ...settings, email: e.target.value } })}
-                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none font-medium"
+                placeholder="Donghoadesign@gmail.com"
               />
             </div>
           </div>
@@ -4184,6 +4192,7 @@ export default function AdminPageEditor() {
                 value={settings?.website || ''}
                 onChange={(e) => setData({ ...data, settings: { ...settings, website: e.target.value } })}
                 className="w-full p-3 border border-[#e2ddd3] rounded-xl text-[14px] focus:border-[#c5a26c] focus:outline-none"
+                placeholder="donghoadesign.com"
               />
             </div>
             <div>
@@ -4217,19 +4226,24 @@ export default function AdminPageEditor() {
             />
           </div>
 
-          {/* Navigation Links Editor */}
-          <div className="space-y-3 pt-3 border-t border-[#e2ddd3]">
-            <div className="flex items-center justify-between">
-              <label className="block text-[13.5px] font-bold text-[#04092b]">
-                Menu Thanh Điều Hướng (Navbar Links)
-              </label>
+          {/* Navigation Links Editor for Non-Coders */}
+          <div className="space-y-4 pt-4 border-t border-[#e2ddd3]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <label className="block text-[13.5px] font-bold text-[#04092b]">
+                  Menu Thanh Điều Hướng (Navbar Links)
+                </label>
+                <p className="text-[12px] text-[#707070]">
+                  Cấu hình các nút bấm hiển thị trên thanh menu đầu trang (Header).
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   const current = settings?.navLinks || [
-                    { label: 'Giới thiệu', url: '#about' },
+                    { label: 'Giới thiệu', url: '#philosophy' },
                     { label: 'Phong cách thiết kế', url: '#styles' },
-                    { label: 'Thi công', url: '#about' },
+                    { label: 'Thi công', url: '#philosophy' },
                     { label: 'Tin tức', url: '/blog' },
                     { label: 'Liên hệ', url: '#contact' }
                   ];
@@ -4237,77 +4251,205 @@ export default function AdminPageEditor() {
                     ...data,
                     settings: {
                       ...settings,
-                      navLinks: [...current, { label: 'Mục mới', url: '#' }]
+                      navLinks: [...current, { label: 'Mục mới', url: '#philosophy' }]
                     }
                   });
                 }}
-                className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#c5a26c] hover:text-[#04092b] text-[#04092b] text-[12px] font-bold rounded-lg border border-[#e2ddd3] transition-colors"
+                className="px-3 py-1.5 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto shadow-sm"
               >
-                + Thêm Menu
+                <Plus className="w-3.5 h-3.5" /> Thêm Mục Menu
               </button>
             </div>
-            <div className="space-y-2">
+
+            {/* Helper Tip for Non-Coders */}
+            <div className="p-3 bg-[#faf8f5] border border-[#e2ddd3] rounded-xl flex items-start gap-2.5 text-[12px] text-[#555]">
+              <span className="text-[#c5a26c] font-bold text-[14px] leading-none mt-0.5">💡</span>
+              <div>
+                <strong className="text-[#04092b]">Hướng dẫn cho người quản trị:</strong> Bạn chỉ cần chọn vị trí muốn cuộn tới từ danh sách chọn sẵn. Hệ thống đã thiết lập sẵn cơ chế tự động cuộn mượt mà đến đúng nội dung mà không cần phải gõ mã lệnh hay ký tự <code className="bg-[#f0ece1] px-1 py-0.5 rounded text-[#04092b] font-mono">#</code>.
+              </div>
+            </div>
+
+            <div className="space-y-3">
               {(settings?.navLinks || [
-                { label: 'Giới thiệu', url: '#about' },
+                { label: 'Giới thiệu', url: '#philosophy' },
                 { label: 'Phong cách thiết kế', url: '#styles' },
-                { label: 'Thi công', url: '#about' },
+                { label: 'Thi công', url: '#philosophy' },
                 { label: 'Tin tức', url: '/blog' },
                 { label: 'Liên hệ', url: '#contact' }
-              ]).map((link, lIdx) => (
-                <div key={lIdx} className="flex items-center gap-2 p-2 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
-                  <input
-                    type="text"
-                    value={link.label}
-                    onChange={(e) => {
-                      const next = [...(settings?.navLinks || [
-                        { label: 'Giới thiệu', url: '#about' },
-                        { label: 'Phong cách thiết kế', url: '#styles' },
-                        { label: 'Thi công', url: '#about' },
-                        { label: 'Tin tức', url: '/blog' },
-                        { label: 'Liên hệ', url: '#contact' }
-                      ])];
-                      next[lIdx] = { ...next[lIdx], label: e.target.value };
-                      setData({ ...data, settings: { ...settings, navLinks: next } });
-                    }}
-                    className="w-1/2 p-2 border border-[#e2ddd3] rounded-lg text-[13px] font-medium focus:border-[#c5a26c] focus:outline-none"
-                    placeholder="Tên mục menu"
-                  />
-                  <input
-                    type="text"
-                    value={link.url}
-                    onChange={(e) => {
-                      const next = [...(settings?.navLinks || [
-                        { label: 'Giới thiệu', url: '#about' },
-                        { label: 'Phong cách thiết kế', url: '#styles' },
-                        { label: 'Thi công', url: '#about' },
-                        { label: 'Tin tức', url: '/blog' },
-                        { label: 'Liên hệ', url: '#contact' }
-                      ])];
-                      next[lIdx] = { ...next[lIdx], url: e.target.value };
-                      setData({ ...data, settings: { ...settings, navLinks: next } });
-                    }}
-                    className="flex-1 p-2 border border-[#e2ddd3] rounded-lg text-[13px] font-mono focus:border-[#c5a26c] focus:outline-none"
-                    placeholder="#anchor hoặc /duong-dan"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const next = (settings?.navLinks || [
-                        { label: 'Giới thiệu', url: '#about' },
-                        { label: 'Phong cách thiết kế', url: '#styles' },
-                        { label: 'Thi công', url: '#about' },
-                        { label: 'Tin tức', url: '/blog' },
-                        { label: 'Liên hệ', url: '#contact' }
-                      ]).filter((_, i) => i !== lIdx);
-                      setData({ ...data, settings: { ...settings, navLinks: next } });
-                    }}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
-                    title="Xóa mục"
+              ]).map((link, lIdx, arr) => {
+                const KNOWN_PRESETS = [
+                  { label: '🎯 Cuộn đến: Về chúng tôi & Giới thiệu', url: '#philosophy' },
+                  { label: '🎯 Cuộn đến: Phong cách thiết kế (Tổng quan)', url: '#styles' },
+                  { label: '🎯 Cuộn đến: Phong cách Modern & Minimalist', url: '#modern-section' },
+                  { label: '🎯 Cuộn đến: Phong cách Cozy & Warm', url: '#cozy-section' },
+                  { label: '🎯 Cuộn đến: Phong cách Luxury & Classic', url: '#luxury-section' },
+                  { label: '🎯 Cuộn đến: Phong cách Heritage & Retro', url: '#heritage-section' },
+                  { label: '🎯 Cuộn đến: Nội thất Văn phòng', url: '#office' },
+                  { label: '🎯 Cuộn đến: Liên hệ & Báo giá', url: '#contact' },
+                  { label: '📄 Mở trang: Tin tức & Cẩm nang', url: '/blog' },
+                  { label: '📄 Mở trang: Về Trang chủ', url: '/' }
+                ];
+
+                // Check if current url matches preset (normalize #about to #philosophy)
+                const normalizedUrl = link.url === '#about' ? '#philosophy' : link.url;
+                const isPreset = KNOWN_PRESETS.some((p) => p.url === normalizedUrl);
+                const isCustom = !isPreset;
+
+                return (
+                  <div
+                    key={lIdx}
+                    className="p-3.5 bg-white rounded-xl border border-[#e2ddd3] shadow-xs hover:border-[#c5a26c]/60 transition-all space-y-2.5"
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center justify-between gap-2 border-b border-[#f0ece1] pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-[#04092b] text-white text-[10px] font-bold flex items-center justify-center">
+                          {lIdx + 1}
+                        </span>
+                        <span className="text-[12.5px] font-bold text-[#04092b]">
+                          {link.label || `Mục menu #${lIdx + 1}`}
+                        </span>
+                        {link.url.startsWith('#') ? (
+                          <span className="px-2 py-0.5 rounded-md bg-[#eef7ee] text-[#2d7a36] text-[10px] font-bold">
+                            📌 Cuộn trang
+                          </span>
+                        ) : link.url.startsWith('/') ? (
+                          <span className="px-2 py-0.5 rounded-md bg-[#e8f1fa] text-[#1c5f9e] text-[10px] font-bold">
+                            📄 Mở trang
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-md bg-[#fcf2e6] text-[#9c5913] text-[10px] font-bold">
+                            🔗 Link ngoài
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Ordering and Delete controls */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          disabled={lIdx === 0}
+                          onClick={() => {
+                            if (lIdx === 0) return;
+                            const next = [...(settings?.navLinks || [])];
+                            const temp = next[lIdx];
+                            next[lIdx] = next[lIdx - 1];
+                            next[lIdx - 1] = temp;
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                          title="Di chuyển lên trên"
+                        >
+                          <ArrowUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={lIdx === arr.length - 1}
+                          onClick={() => {
+                            if (lIdx === arr.length - 1) return;
+                            const next = [...(settings?.navLinks || [])];
+                            const temp = next[lIdx];
+                            next[lIdx] = next[lIdx + 1];
+                            next[lIdx + 1] = temp;
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                          title="Di chuyển xuống dưới"
+                        >
+                          <ArrowDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = (settings?.navLinks || []).filter((_, i) => i !== lIdx);
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors ml-1"
+                          title="Xóa mục này"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11.5px] font-bold text-[#555] mb-1">
+                          Tên hiển thị trên Menu
+                        </label>
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) => {
+                            const next = [...(settings?.navLinks || [])];
+                            next[lIdx] = { ...next[lIdx], label: e.target.value };
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="w-full p-2.5 border border-[#e2ddd3] rounded-lg text-[13px] font-medium focus:border-[#c5a26c] focus:outline-none"
+                          placeholder="Ví dụ: Giới thiệu, Liên hệ..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11.5px] font-bold text-[#555] mb-1">
+                          Hành động khi khách bấm vào
+                        </label>
+                        <select
+                          value={isCustom ? '__custom__' : normalizedUrl}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const next = [...(settings?.navLinks || [])];
+                            if (val === '__custom__') {
+                              next[lIdx] = { ...next[lIdx], url: 'https://' };
+                            } else {
+                              next[lIdx] = { ...next[lIdx], url: val };
+                            }
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="w-full p-2.5 border border-[#e2ddd3] rounded-lg text-[13px] font-medium bg-white focus:border-[#c5a26c] focus:outline-none cursor-pointer"
+                        >
+                          <optgroup label="📌 Cuộn đến khu vực trên Trang Chủ">
+                            {KNOWN_PRESETS.filter((p) => p.url.startsWith('#')).map((p) => (
+                              <option key={p.url} value={p.url}>
+                                {p.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="📄 Chuyển trang">
+                            {KNOWN_PRESETS.filter((p) => p.url.startsWith('/')).map((p) => (
+                              <option key={p.url} value={p.url}>
+                                {p.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="🔗 Tuỳ chọn khác">
+                            <option value="__custom__">✍️ Tự nhập link riêng / Link ngoài website...</option>
+                          </optgroup>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Custom URL Input Field if Custom Mode Selected */}
+                    {isCustom && (
+                      <div className="pt-2 border-t border-dashed border-[#e2ddd3]">
+                        <label className="block text-[11.5px] font-bold text-[#707070] mb-1">
+                          Nhập đường dẫn tuỳ chỉnh (URL hoặc Link ngoài):
+                        </label>
+                        <input
+                          type="text"
+                          value={link.url}
+                          onChange={(e) => {
+                            const next = [...(settings?.navLinks || [])];
+                            next[lIdx] = { ...next[lIdx], url: e.target.value };
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className="w-full p-2.5 border border-[#c5a26c] bg-[#faf8f5] rounded-lg text-[12.5px] font-mono focus:outline-none"
+                          placeholder="https://facebook.com/... hoặc /duong-dan"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
