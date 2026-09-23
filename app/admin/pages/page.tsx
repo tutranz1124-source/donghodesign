@@ -4449,14 +4449,17 @@ export default function AdminPageEditor() {
             </div>
 
             {/* Helper Tip for Non-Coders */}
-            <div className="p-3 bg-[#faf8f5] border border-[#e2ddd3] rounded-xl flex items-start gap-2.5 text-[12px] text-[#555]">
-              <span className="text-[#c5a26c] font-bold text-[14px] leading-none mt-0.5">💡</span>
-              <div>
-                <strong className="text-[#04092b]">Hướng dẫn cho người quản trị:</strong> Bạn chỉ cần chọn vị trí muốn cuộn tới từ danh sách chọn sẵn. Hệ thống đã thiết lập sẵn cơ chế tự động cuộn mượt mà đến đúng nội dung mà không cần phải gõ mã lệnh hay ký tự <code className="bg-[#f0ece1] px-1 py-0.5 rounded text-[#04092b] font-mono">#</code>.
+            <div className="p-4 bg-[#faf8f5] border border-[#e2ddd3] rounded-2xl flex items-start gap-3 text-[13px] text-[#444] shadow-xs">
+              <span className="text-[#c5a26c] text-[20px] leading-none select-none">✨</span>
+              <div className="space-y-1">
+                <strong className="text-[#04092b] block text-[13.5px]">Cách hoạt động cực kỳ đơn giản:</strong>
+                <p className="text-[#666] leading-relaxed">
+                  Mỗi nút trên Menu bạn chỉ cần: <strong>1. Đặt tên nút</strong> và <strong>2. Chọn nơi muốn dẫn khách tới</strong> (Khu vực trên web, Trang Tin tức hoặc Link Facebook/Zalo). Hệ thống sẽ tự động xử lý mượt mà.
+                </p>
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               {(settings?.navLinks || [
                 { label: 'Giới thiệu', url: '#philosophy' },
                 { label: 'Phong cách thiết kế', url: '#styles' },
@@ -4464,53 +4467,60 @@ export default function AdminPageEditor() {
                 { label: 'Tin tức', url: '/blog' },
                 { label: 'Liên hệ', url: '#contact' }
               ]).map((link, lIdx, arr) => {
-                const KNOWN_PRESETS = [
-                  { label: '🎯 Cuộn đến: Về chúng tôi & Giới thiệu', url: '#philosophy' },
-                  { label: '🎯 Cuộn đến: Phong cách thiết kế (Tổng quan)', url: '#styles' },
-                  { label: '🎯 Cuộn đến: Phong cách Modern & Minimalist', url: '#modern-section' },
-                  { label: '🎯 Cuộn đến: Phong cách Cozy & Warm', url: '#cozy-section' },
-                  { label: '🎯 Cuộn đến: Phong cách Luxury & Classic', url: '#luxury-section' },
-                  { label: '🎯 Cuộn đến: Phong cách Heritage & Retro', url: '#heritage-section' },
-                  { label: '🎯 Cuộn đến: Nội thất Văn phòng', url: '#office' },
-                  { label: '🎯 Cuộn đến: Liên hệ & Báo giá', url: '#contact' },
-                  { label: '📄 Mở trang: Tin tức & Cẩm nang', url: '/blog' },
-                  { label: '📄 Mở trang: Về Trang chủ', url: '/' }
+                // Determine destination mode
+                const isSection = link.url.startsWith('#') || link.url === '';
+                const isBlog = link.url === '/blog' || link.url === '/';
+                const isCustom = !isSection && !isBlog;
+
+                // Section name lookup for badge
+                const SECTION_OPTIONS = [
+                  { url: '#philosophy', name: '🏢 Về Đông Hòa & Tầm nhìn' },
+                  { url: '#styles', name: '🎨 4 Phong cách thiết kế nội thất' },
+                  { url: '#office', name: '💼 Không gian nội thất Văn phòng' },
+                  { url: '#contact', name: '📞 Nhận tư vấn & Báo giá' },
+                  { url: '#hero', name: '🌟 Đầu trang (Banner lớn)' },
+                  { url: '#modern-section', name: '✨ Phong cách Modern & Minimalist' },
+                  { url: '#cozy-section', name: '✨ Phong cách Cozy & Warm' },
+                  { url: '#luxury-section', name: '✨ Phong cách Luxury & Classic' },
+                  { url: '#heritage-section', name: '✨ Phong cách Heritage & Retro' }
                 ];
 
-                // Check if current url matches preset (normalize #about to #philosophy)
-                const normalizedUrl = link.url === '#about' ? '#philosophy' : link.url;
-                const isPreset = KNOWN_PRESETS.some((p) => p.url === normalizedUrl);
-                const isCustom = !isPreset;
+                const currentSection = SECTION_OPTIONS.find((s) => s.url === link.url) || SECTION_OPTIONS[0];
 
                 return (
                   <div
                     key={lIdx}
-                    className="p-3.5 bg-white rounded-xl border border-[#e2ddd3] shadow-xs hover:border-[#c5a26c]/60 transition-all space-y-2.5"
+                    className="p-4 sm:p-5 bg-white rounded-2xl border border-[#e2ddd3] shadow-xs hover:border-[#c5a26c]/70 transition-all space-y-4"
                   >
-                    <div className="flex items-center justify-between gap-2 border-b border-[#f0ece1] pb-2">
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-[#04092b] text-white text-[10px] font-bold flex items-center justify-center">
+                    {/* Header Row: Index + Current Target Badge + Ordering Buttons */}
+                    <div className="flex items-center justify-between gap-2 border-b border-[#f0ece1] pb-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="w-6 h-6 rounded-full bg-[#04092b] text-[#c5a26c] text-[11px] font-bold flex items-center justify-center shadow-xs">
                           {lIdx + 1}
                         </span>
-                        <span className="text-[12.5px] font-bold text-[#04092b]">
-                          {link.label || `Mục menu #${lIdx + 1}`}
+                        <span className="text-[13.5px] font-bold text-[#04092b]">
+                          {link.label || `Nút Menu số ${lIdx + 1}`}
                         </span>
-                        {link.url.startsWith('#') ? (
-                          <span className="px-2 py-0.5 rounded-md bg-[#eef7ee] text-[#2d7a36] text-[10px] font-bold">
-                            📌 Cuộn trang
+
+                        {/* Live Destination Badge */}
+                        {isSection && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#eef7ee] text-[#2d7a36] text-[11px] font-bold border border-[#2d7a36]/20 flex items-center gap-1">
+                            📍 Dẫn tới: {currentSection.name.split(' ')[1] || 'Trang chủ'}
                           </span>
-                        ) : link.url.startsWith('/') ? (
-                          <span className="px-2 py-0.5 rounded-md bg-[#e8f1fa] text-[#1c5f9e] text-[10px] font-bold">
-                            📄 Mở trang
+                        )}
+                        {isBlog && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#e8f1fa] text-[#1c5f9e] text-[11px] font-bold border border-[#1c5f9e]/20 flex items-center gap-1">
+                            📰 Dẫn tới: Trang Tin tức
                           </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-md bg-[#fcf2e6] text-[#9c5913] text-[10px] font-bold">
-                            🔗 Link ngoài
+                        )}
+                        {isCustom && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#fcf2e6] text-[#9c5913] text-[11px] font-bold border border-[#9c5913]/20 flex items-center gap-1">
+                            🔗 Dẫn tới: Link bên ngoài
                           </span>
                         )}
                       </div>
 
-                      {/* Ordering and Delete controls */}
+                      {/* Move Up/Down & Delete */}
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
@@ -4523,10 +4533,10 @@ export default function AdminPageEditor() {
                             next[lIdx - 1] = temp;
                             setData({ ...data, settings: { ...settings, navLinks: next } });
                           }}
-                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-                          title="Di chuyển lên trên"
+                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-25 transition-colors"
+                          title="Đổi thứ tự lên trên"
                         >
-                          <ArrowUp className="w-3.5 h-3.5" />
+                          <ArrowUp className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
@@ -4539,10 +4549,10 @@ export default function AdminPageEditor() {
                             next[lIdx + 1] = temp;
                             setData({ ...data, settings: { ...settings, navLinks: next } });
                           }}
-                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-                          title="Di chuyển xuống dưới"
+                          className="p-1.5 hover:bg-[#f4f1ea] rounded-lg text-[#04092b] disabled:opacity-25 transition-colors"
+                          title="Đổi thứ tự xuống dưới"
                         >
-                          <ArrowDown className="w-3.5 h-3.5" />
+                          <ArrowDown className="w-4 h-4" />
                         </button>
                         <button
                           type="button"
@@ -4551,89 +4561,206 @@ export default function AdminPageEditor() {
                             setData({ ...data, settings: { ...settings, navLinks: next } });
                           }}
                           className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors ml-1"
-                          title="Xóa mục này"
+                          title="Xóa nút này"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[11.5px] font-bold text-[#555] mb-1">
-                          Tên hiển thị trên Menu
-                        </label>
-                        <input
-                          type="text"
-                          value={link.label}
-                          onChange={(e) => {
-                            const next = [...(settings?.navLinks || [])];
-                            next[lIdx] = { ...next[lIdx], label: e.target.value };
-                            setData({ ...data, settings: { ...settings, navLinks: next } });
-                          }}
-                          className="w-full p-2.5 border border-[#e2ddd3] rounded-lg text-[13px] font-medium focus:border-[#c5a26c] focus:outline-none"
-                          placeholder="Ví dụ: Giới thiệu, Liên hệ..."
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11.5px] font-bold text-[#555] mb-1">
-                          Hành động khi khách bấm vào
-                        </label>
-                        <select
-                          value={isCustom ? '__custom__' : normalizedUrl}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const next = [...(settings?.navLinks || [])];
-                            if (val === '__custom__') {
-                              next[lIdx] = { ...next[lIdx], url: 'https://' };
-                            } else {
-                              next[lIdx] = { ...next[lIdx], url: val };
-                            }
-                            setData({ ...data, settings: { ...settings, navLinks: next } });
-                          }}
-                          className="w-full p-2.5 border border-[#e2ddd3] rounded-lg text-[13px] font-medium bg-white focus:border-[#c5a26c] focus:outline-none cursor-pointer"
-                        >
-                          <optgroup label="📌 Cuộn đến khu vực trên Trang Chủ">
-                            {KNOWN_PRESETS.filter((p) => p.url.startsWith('#')).map((p) => (
-                              <option key={p.url} value={p.url}>
-                                {p.label}
-                              </option>
-                            ))}
-                          </optgroup>
-                          <optgroup label="📄 Chuyển trang">
-                            {KNOWN_PRESETS.filter((p) => p.url.startsWith('/')).map((p) => (
-                              <option key={p.url} value={p.url}>
-                                {p.label}
-                              </option>
-                            ))}
-                          </optgroup>
-                          <optgroup label="🔗 Tuỳ chọn khác">
-                            <option value="__custom__">✍️ Tự nhập link riêng / Link ngoài website...</option>
-                          </optgroup>
-                        </select>
+                    {/* Step 1: Button Label */}
+                    <div className="space-y-1.5">
+                      <label className="block text-[12px] font-bold text-[#04092b]">
+                        1. Tên nút bấm hiển thị trên Menu:
+                      </label>
+                      <input
+                        type="text"
+                        value={link.label}
+                        onChange={(e) => {
+                          const next = [...(settings?.navLinks || [])];
+                          next[lIdx] = { ...next[lIdx], label: e.target.value };
+                          setData({ ...data, settings: { ...settings, navLinks: next } });
+                        }}
+                        className="w-full p-2.5 bg-[#faf8f5] border border-[#e2ddd3] rounded-xl text-[13.5px] font-semibold text-[#04092b] focus:bg-white focus:border-[#c5a26c] focus:outline-none transition-all"
+                        placeholder="Ví dụ: Giới thiệu, Phong cách, Liên hệ..."
+                      />
+                      {/* Quick Name Chips */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        <span className="text-[11px] text-[#888]">Gợi ý tên nhanh:</span>
+                        {['Giới thiệu', 'Phong cách', 'Văn phòng', 'Tin tức', 'Liên hệ'].map((quickName) => (
+                          <button
+                            key={quickName}
+                            type="button"
+                            onClick={() => {
+                              const next = [...(settings?.navLinks || [])];
+                              next[lIdx] = { ...next[lIdx], label: quickName };
+                              setData({ ...data, settings: { ...settings, navLinks: next } });
+                            }}
+                            className="px-2 py-0.5 bg-[#f4f1ea] hover:bg-[#e7e2d6] text-[#04092b] rounded-md text-[11px] font-medium transition-colors"
+                          >
+                            + {quickName}
+                          </button>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Custom URL Input Field if Custom Mode Selected */}
-                    {isCustom && (
-                      <div className="pt-2 border-t border-dashed border-[#e2ddd3]">
-                        <label className="block text-[11.5px] font-bold text-[#707070] mb-1">
-                          Nhập đường dẫn tuỳ chỉnh (URL hoặc Link ngoài):
-                        </label>
-                        <input
-                          type="text"
-                          value={link.url}
-                          onChange={(e) => {
+                    {/* Step 2: Destination Type Selector (3 Clean Visual Tabs) */}
+                    <div className="space-y-2 pt-1">
+                      <label className="block text-[12px] font-bold text-[#04092b]">
+                        2. Bạn muốn nút này dẫn khách tới đâu?
+                      </label>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {/* Tab 1: Section on Website */}
+                        <button
+                          type="button"
+                          onClick={() => {
                             const next = [...(settings?.navLinks || [])];
-                            next[lIdx] = { ...next[lIdx], url: e.target.value };
+                            next[lIdx] = { ...next[lIdx], url: '#philosophy' };
                             setData({ ...data, settings: { ...settings, navLinks: next } });
                           }}
-                          className="w-full p-2.5 border border-[#c5a26c] bg-[#faf8f5] rounded-lg text-[12.5px] font-mono focus:outline-none"
-                          placeholder="https://facebook.com/... hoặc /duong-dan"
-                        />
+                          className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
+                            isSection
+                              ? 'bg-[#04092b] text-white border-[#04092b] shadow-sm'
+                              : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
+                          }`}
+                        >
+                          <span className="text-[16px]">🏠</span>
+                          <div>
+                            <div className="text-[12px] font-bold">Khu vực trên Web</div>
+                            <div className={`text-[10px] ${isSection ? 'text-white/70' : 'text-[#888]'}`}>
+                              Lướt tới mục nội dung
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Tab 2: News / Blog */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = [...(settings?.navLinks || [])];
+                            next[lIdx] = { ...next[lIdx], url: '/blog' };
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
+                            isBlog
+                              ? 'bg-[#04092b] text-white border-[#04092b] shadow-sm'
+                              : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
+                          }`}
+                        >
+                          <span className="text-[16px]">📰</span>
+                          <div>
+                            <div className="text-[12px] font-bold">Trang Tin Tức</div>
+                            <div className={`text-[10px] ${isBlog ? 'text-white/70' : 'text-[#888]'}`}>
+                              Mở trang bài viết blog
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Tab 3: Custom / Social Link */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = [...(settings?.navLinks || [])];
+                            next[lIdx] = { ...next[lIdx], url: 'https://facebook.com/donghoadesign' };
+                            setData({ ...data, settings: { ...settings, navLinks: next } });
+                          }}
+                          className={`p-2.5 rounded-xl border text-left transition-all flex items-center gap-2 ${
+                            isCustom
+                              ? 'bg-[#04092b] text-white border-[#04092b] shadow-sm'
+                              : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
+                          }`}
+                        >
+                          <span className="text-[16px]">🔗</span>
+                          <div>
+                            <div className="text-[12px] font-bold">Link Ngoài / MXH</div>
+                            <div className={`text-[10px] ${isCustom ? 'text-white/70' : 'text-[#888]'}`}>
+                              Facebook, Zalo, web khác
+                            </div>
+                          </div>
+                        </button>
                       </div>
-                    )}
+
+                      {/* Content panel based on active destination mode */}
+                      {isSection && (
+                        <div className="p-3 bg-[#f8f6f0] rounded-xl border border-[#e2ddd3] space-y-1.5 mt-2 animate-in fade-in duration-200">
+                          <label className="block text-[11.5px] font-bold text-[#04092b]">
+                            👉 Chọn phần nội dung muốn lướt tới:
+                          </label>
+                          <select
+                            value={SECTION_OPTIONS.some((s) => s.url === link.url) ? link.url : '#philosophy'}
+                            onChange={(e) => {
+                              const next = [...(settings?.navLinks || [])];
+                              next[lIdx] = { ...next[lIdx], url: e.target.value };
+                              setData({ ...data, settings: { ...settings, navLinks: next } });
+                            }}
+                            className="w-full p-2.5 bg-white border border-[#c5a26c] rounded-lg text-[13px] font-semibold text-[#04092b] focus:outline-none cursor-pointer"
+                          >
+                            {SECTION_OPTIONS.map((opt) => (
+                              <option key={opt.url} value={opt.url}>
+                                {opt.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+
+                      {isBlog && (
+                        <div className="p-3 bg-[#e8f1fa] rounded-xl border border-[#c8daf0] text-[12px] text-[#1c5f9e] flex items-center gap-2 mt-2 animate-in fade-in duration-200">
+                          <span className="text-[16px]">✅</span>
+                          <div>
+                            <strong>Nút này sẽ mở Trang Tin tức & Cẩm nang kiến thức nội thất</strong> (đường dẫn tự động: <code className="font-mono bg-white/70 px-1 py-0.5 rounded">/blog</code>).
+                          </div>
+                        </div>
+                      )}
+
+                      {isCustom && (
+                        <div className="p-3 bg-[#fcf8f2] rounded-xl border border-[#ebd8be] space-y-2 mt-2 animate-in fade-in duration-200">
+                          <div className="flex flex-wrap items-center justify-between gap-1">
+                            <label className="block text-[11.5px] font-bold text-[#04092b]">
+                              👉 Dán đường link bạn muốn mở vào đây:
+                            </label>
+                            {/* Social shortcut helpers */}
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10.5px] text-[#888]">Điền nhanh:</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = [...(settings?.navLinks || [])];
+                                  next[lIdx] = { ...next[lIdx], url: 'https://facebook.com/donghoadesign' };
+                                  setData({ ...data, settings: { ...settings, navLinks: next } });
+                                }}
+                                className="px-1.5 py-0.5 bg-white border border-[#ebd8be] rounded text-[10px] font-bold text-[#1877f2] hover:bg-[#1877f2] hover:text-white transition-colors"
+                              >
+                                Facebook
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = [...(settings?.navLinks || [])];
+                                  next[lIdx] = { ...next[lIdx], url: 'https://zalo.me/0909000000' };
+                                  setData({ ...data, settings: { ...settings, navLinks: next } });
+                                }}
+                                className="px-1.5 py-0.5 bg-white border border-[#ebd8be] rounded text-[10px] font-bold text-[#0068ff] hover:bg-[#0068ff] hover:text-white transition-colors"
+                              >
+                                Zalo
+                              </button>
+                            </div>
+                          </div>
+                          <input
+                            type="text"
+                            value={link.url}
+                            onChange={(e) => {
+                              const next = [...(settings?.navLinks || [])];
+                              next[lIdx] = { ...next[lIdx], url: e.target.value };
+                              setData({ ...data, settings: { ...settings, navLinks: next } });
+                            }}
+                            className="w-full p-2.5 bg-white border border-[#c5a26c] rounded-lg text-[13px] font-mono text-[#04092b] focus:outline-none"
+                            placeholder="https://facebook.com/... hoặc https://zalo.me/..."
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
