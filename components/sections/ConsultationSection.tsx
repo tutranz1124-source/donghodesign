@@ -3,15 +3,16 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ConsultationBlock } from '@/lib/types';
+import { ConsultationBlock, SiteSettings } from '@/lib/types';
 import { Phone, Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
 
 interface ConsultationSectionProps {
   block: ConsultationBlock;
+  settings?: SiteSettings;
   onOpenInquiry?: (defaultMsg?: string) => void;
 }
 
-export default function ConsultationSection({ block }: ConsultationSectionProps) {
+export default function ConsultationSection({ block, settings }: ConsultationSectionProps) {
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
@@ -19,6 +20,11 @@ export default function ConsultationSection({ block }: ConsultationSectionProps)
     need: 'Thiết kế & Thi công trọn gói'
   });
   const [submitted, setSubmitted] = useState(false);
+
+  const hotline = settings?.hotline || '0906.499.279';
+  const cleanPhone = hotline.replace(/\D/g, '') || '0906499279';
+  const email = settings?.email || 'Donghoadesign@gmail.com';
+  const address = settings?.address || '113-115 Ung Văn Khiêm, Phường Thạnh Mỹ Tây, TP.HCM';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,8 +66,8 @@ export default function ConsultationSection({ block }: ConsultationSectionProps)
               <Phone className="w-5 h-5 text-[#c5a26c] shrink-0 mt-0.5" />
               <div>
                 <span className="block text-[11px] font-semibold uppercase text-[#6e706a]">Hotline tư vấn</span>
-                <a href="tel:0906499279" className="text-[17px] font-bold text-[#04092b] hover:text-[#c5a26c] transition-colors">
-                  0906.499.279
+                <a href={`tel:${cleanPhone}`} className="text-[17px] font-bold text-[#04092b] hover:text-[#c5a26c] transition-colors">
+                  {hotline}
                 </a>
               </div>
             </div>
@@ -70,8 +76,8 @@ export default function ConsultationSection({ block }: ConsultationSectionProps)
               <Mail className="w-5 h-5 text-[#c5a26c] shrink-0 mt-0.5" />
               <div>
                 <span className="block text-[11px] font-semibold uppercase text-[#6e706a]">Email hỗ trợ</span>
-                <a href="mailto:info@donghoagroup.vn" className="text-[14px] font-medium text-[#04092b] hover:text-[#c5a26c]">
-                  info@donghoagroup.vn
+                <a href={`mailto:${email}`} className="text-[14px] font-medium text-[#04092b] hover:text-[#c5a26c]">
+                  {email}
                 </a>
               </div>
             </div>
@@ -81,7 +87,7 @@ export default function ConsultationSection({ block }: ConsultationSectionProps)
               <div>
                 <span className="block text-[11px] font-semibold uppercase text-[#6e706a]">Văn phòng làm việc</span>
                 <p className="text-[13.5px] text-[#04092b] font-normal leading-snug">
-                  113-115 Ung Văn Khiêm, Phường Thạnh Mỹ Tây, TP.HCM
+                  {address}
                 </p>
               </div>
             </div>
