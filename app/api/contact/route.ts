@@ -3,9 +3,22 @@ import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
 
-const TARGET_EMAIL = 'nhatdong1511@gmail.com';
+import { getSiteContent } from '@/lib/storage';
+
 const dataDir = path.join(process.cwd(), 'data');
 const requestsFile = path.join(dataDir, 'customer-requests.json');
+
+function getTargetEmail(): string {
+  try {
+    const siteContent = getSiteContent();
+    if (siteContent?.settings?.email && siteContent.settings.email.includes('@')) {
+      return siteContent.settings.email.trim();
+    }
+  } catch (err) {
+    console.warn('Could not read dynamic target email from storage:', err);
+  }
+  return process.env.TARGET_EMAIL || 'Donghoadesign@gmail.com';
+}
 
 function saveRequestLocally(record: any) {
   try {
@@ -24,19 +37,22 @@ function saveRequestLocally(record: any) {
   }
 }
 
-async function sendViaFormSubmit(data: {
-  fullName: string;
-  phone: string;
-  propertyType?: string;
-  area?: string;
-  need?: string;
-}) {
+async function sendViaFormSubmit(
+  data: {
+    fullName: string;
+    phone: string;
+    propertyType?: string;
+    area?: string;
+    need?: string;
+  },
+  recipientEmail: string
+) {
   try {
     const formattedTime = new Date().toLocaleString('vi-VN', {
       timeZone: 'Asia/Ho_Chi_Minh',
     });
 
-    const response = await fetch(`https://formsubmit.co/ajax/${TARGET_EMAIL}`, {
+    const response = await fetch(`https://formsubmit.co/ajax/${recipientEmail}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,13 +81,16 @@ async function sendViaFormSubmit(data: {
   }
 }
 
-async function sendViaSmtp(data: {
-  fullName: string;
-  phone: string;
-  propertyType?: string;
-  area?: string;
-  need?: string;
-}) {
+async function sendViaSmtp(
+  data: {
+    fullName: string;
+    phone: string;
+    propertyType?: string;
+    area?: string;
+    need?: string;
+  },
+  recipientEmail: string
+) {
   const user = process.env.GMAIL_USER || process.env.SMTP_USER;
   const pass = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASS;
 
@@ -124,14 +143,14 @@ async function sendViaSmtp(data: {
           </div>
         </div>
         <div style="background-color: #f0ebe1; padding: 14px; text-align: center; font-size: 12px; color: #777;">
-          Email tự động gửi từ hệ thống Đông Hòa Design (gửi tới ${TARGET_EMAIL})
+          Email tự động gửi từ hệ thống Đông Hòa Design (gửi tới ${recipientEmail})
         </div>
       </div>
     `;
 
     await transporter.sendMail({
       from: `"Đông Hòa Design" <${user}>`,
-      to: TARGET_EMAIL,
+      to: recipientEmail,
       subject: `[Đông Hòa Design] Yêu Cầu Tư Vấn Mới - ${data.fullName} (${data.phone})`,
       html: htmlContent,
     });
@@ -155,6 +174,8 @@ export async function POST(request: Request) {
       );
     }
 
+    const targetEmail = getTargetEmail();
+
     const newRecord = {
       id: `req-${Date.now()}`,
       fullName: fullName.trim(),
@@ -162,7 +183,7 @@ export async function POST(request: Request) {
       propertyType: propertyType?.trim() || '',
       area: area?.trim() || '',
       need: need?.trim() || '',
-      targetEmail: TARGET_EMAIL,
+      targetEmail: targetEmail,
       status: 'new',
       createdAt: new Date().toISOString(),
     };
@@ -170,27 +191,33 @@ export async function POST(request: Request) {
     // 1. Always persist locally
     saveRequestLocally(newRecord);
 
-    // 2. Dispatch via FormSubmit directly to nhatdong1511@gmail.com
-    await sendViaFormSubmit({
-      fullName: newRecord.fullName,
-      phone: newRecord.phone,
-      propertyType: newRecord.propertyType,
-      area: newRecord.area,
-      need: newRecord.need,
-    });
+    // 2. Dispatch via FormSubmit directly to configured email
+    await sendViaFormSubmit(
+      {
+        fullName: newRecord.fullName,
+        phone: newRecord.phone,
+        propertyType: newRecord.propertyType,
+        area: newRecord.area,
+        need: newRecord.need,
+      },
+      targetEmail
+    );
 
     // 3. Dispatch via SMTP if credentials are configured
-    await sendViaSmtp({
-      fullName: newRecord.fullName,
-      phone: newRecord.phone,
-      propertyType: newRecord.propertyType,
-      area: newRecord.area,
-      need: newRecord.need,
-    });
+    await sendViaSmtp(
+      {
+        fullName: newRecord.fullName,
+        phone: newRecord.phone,
+        propertyType: newRecord.propertyType,
+        area: newRecord.area,
+        need: newRecord.need,
+      },
+      targetEmail
+    );
 
     return NextResponse.json({
       success: true,
-      message: `Yêu cầu tư vấn đã được gửi thành công đến ${TARGET_EMAIL}`,
+      message: `Yêu cầu tư vấn đã được gửi thành công đến ${targetEmail}`,
       data: newRecord,
     });
   } catch (err: any) {
