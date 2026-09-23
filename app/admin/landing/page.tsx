@@ -4,22 +4,18 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Globe,
   Upload,
-  Link as LinkIcon,
   Plus,
   Trash2,
   Edit3,
   ExternalLink,
   Copy,
-  Check,
   Eye,
-  AlertCircle,
   HardDrive,
   FileCode,
   Sparkles,
   RefreshCw,
   Search,
   CheckCircle2,
-  X,
   Smartphone,
   Monitor
 } from 'lucide-react';
@@ -36,11 +32,9 @@ export default function AdminLandingPages() {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPage, setEditingPage] = useState<LandingPageItem | null>(null);
-  const [modalType, setModalType] = useState<'html_upload' | 'proxy_url'>('html_upload');
   const [formTitle, setFormTitle] = useState('');
   const [formSlug, setFormSlug] = useState('');
   const [formHtmlContent, setFormHtmlContent] = useState('');
-  const [formProxyUrl, setFormProxyUrl] = useState('');
   const [formIsActive, setFormIsActive] = useState(true);
   const [uploadFileName, setUploadFileName] = useState('');
   const [uploadFileSize, setUploadFileSize] = useState(0);
@@ -88,9 +82,7 @@ export default function AdminLandingPages() {
     setEditingPage(null);
     setFormTitle('');
     setFormSlug('');
-    setModalType('html_upload');
     setFormHtmlContent('');
-    setFormProxyUrl('');
     setFormIsActive(true);
     setUploadFileName('');
     setUploadFileSize(0);
@@ -102,9 +94,7 @@ export default function AdminLandingPages() {
     setEditingPage(page);
     setFormTitle(page.title);
     setFormSlug(page.slug);
-    setModalType(page.type);
     setFormHtmlContent(page.htmlContent || '');
-    setFormProxyUrl(page.proxyUrl || '');
     setFormIsActive(page.isActive);
     setUploadFileName(page.type === 'html_upload' ? `${page.slug}.html` : '');
     setUploadFileSize(page.fileSize || 0);
@@ -133,7 +123,7 @@ export default function AdminLandingPages() {
       setUploadFileName(file.name);
       setUploadFileSize(file.size);
 
-      // Auto-generate title & slug if empty
+      // Auto-fill title & slug if empty
       if (!formTitle) {
         const rawName = file.name.replace(/\.[^/.]+$/, '');
         setFormTitle(rawName);
@@ -158,17 +148,12 @@ export default function AdminLandingPages() {
     e.preventDefault();
 
     if (!formTitle.trim()) {
-      showToast('error', 'Vui lòng nhập tên chiến dịch Landing Page');
+      showToast('error', 'Vui lòng nhập tên chiến dịch');
       return;
     }
 
     if (!formSlug.trim()) {
       showToast('error', 'Vui lòng nhập đường dẫn (Slug)');
-      return;
-    }
-
-    if (modalType === 'html_upload' && !formHtmlContent) {
-      showToast('error', 'Vui lòng chọn tải lên file HTML của LadiPage');
       return;
     }
 
@@ -178,9 +163,9 @@ export default function AdminLandingPages() {
         id: editingPage?.id,
         title: formTitle.trim(),
         slug: formSlug.trim(),
-        type: modalType,
-        htmlContent: modalType === 'html_upload' ? formHtmlContent : '',
-        proxyUrl: modalType === 'proxy_url' ? formProxyUrl.trim() : '',
+        type: formHtmlContent ? 'html_upload' : 'proxy_url',
+        htmlContent: formHtmlContent || '',
+        proxyUrl: '',
         isActive: formIsActive
       };
 
@@ -193,7 +178,7 @@ export default function AdminLandingPages() {
       const result = await res.json();
 
       if (res.ok && result.success) {
-        showToast('success', editingPage ? 'Đã cập nhật Landing Page thành công' : 'Đã tạo Landing Page & Webhook thành công!');
+        showToast('success', editingPage ? 'Đã cập nhật Landing Page thành công' : 'Đã tạo Landing Page thành công!');
         setIsModalOpen(false);
         loadData();
       } else {
@@ -256,14 +241,6 @@ export default function AdminLandingPages() {
     showToast('success', `Đã sao chép link: ${fullUrl}`);
   };
 
-  // Copy Webhook Sync Link
-  const handleCopyWebhook = (slug: string) => {
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
-    const webhookUrl = `${origin}/api/landing/webhook?slug=${slug}`;
-    navigator.clipboard.writeText(webhookUrl);
-    showToast('success', `Đã sao chép Webhook LadiPage: ${webhookUrl}`);
-  };
-
   // Filtered pages
   const filteredPages = pages.filter(
     (p) =>
@@ -285,14 +262,26 @@ export default function AdminLandingPages() {
             </h1>
           </div>
           <p className="text-[13px] text-[#666]">
-            Tải lên file HTML hoặc liên kết LadiPage để chạy chiến dịch quảng cáo với tên miền{' '}
+            Đồng bộ và quản lý các trang đích quảng cáo chiến dịch với tên miền{' '}
             <code className="font-mono font-bold text-[#04092b] bg-[#f4f1ea] px-1.5 py-0.5 rounded">
               donghoadesign.com/lp/...
             </code>
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-stretch sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto">
+          {/* Direct LadiPage Studio shortcut */}
+          <a
+            href="https://builder.ladipage.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-3 bg-[#faf8f5] hover:bg-[#f4f1ea] border border-[#e2ddd3] text-[#04092b] rounded-2xl text-[13px] font-bold transition-all shadow-xs inline-flex items-center gap-2"
+            title="Mở trình thiết kế LadiPage trên tab mới"
+          >
+            <Sparkles className="w-4 h-4 text-[#c5a26c]" /> Mở LadiPage Studio
+            <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+          </a>
+
           <button
             type="button"
             onClick={loadData}
@@ -301,91 +290,83 @@ export default function AdminLandingPages() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
+
           <button
             type="button"
             onClick={handleOpenCreateModal}
             className="flex-1 sm:flex-initial px-5 py-3 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[13px] font-bold rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
           >
-            <Plus className="w-4 h-4" /> Tạo Landing Page Mới
+            <Plus className="w-4 h-4" /> Tạo Trang Mới
           </button>
         </div>
       </div>
 
-      {/* 2. Storage Tracker & Quota Meter (Vercel Free Protection) */}
-      <div className="bg-[#04092b] text-white p-6 rounded-3xl border border-[#c5a26c]/30 shadow-xl space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#c5a26c]">
-              <HardDrive className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-[15px] font-bold text-white">Bộ Kiểm Soát Dung Lượng (Vercel Free Safe)</h3>
-                <span className="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[11px] font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Trạng thái Tối ưu
-                </span>
-              </div>
-              <p className="text-[12px] text-white/70">
-                Đo lường dung lượng lưu trữ thực tế để đảm bảo website hoạt động mượt mà và an toàn trên gói Vercel Free.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 text-right">
-            <div className="bg-white/5 px-4 py-2 rounded-2xl border border-white/10">
-              <div className="text-[11px] text-[#c5a26c] font-bold uppercase tracking-wider">Đã Sử Dụng</div>
-              <div className="text-[18px] font-bold font-mono">
-                {formatBytes(stats?.totalStorageBytes || 0)}{' '}
-                <span className="text-[12px] text-white/60">/ 50 MB</span>
-              </div>
-            </div>
-          </div>
+      {/* 2. DNS Quick Setup Guide Box (Clean & Concise for tomorrow) */}
+      <div className="bg-gradient-to-br from-[#faf8f5] to-[#f4f1ea] border border-[#e2ddd3] p-5 sm:p-6 rounded-3xl space-y-3 shadow-xs">
+        <div className="flex items-center gap-2">
+          <span className="text-[18px]">📌</span>
+          <h3 className="text-[14.5px] font-bold text-[#04092b]">
+            Cấu Hình Tên Miền Cho LadiPage (Làm 1 Lần Duy Nhất)
+          </h3>
         </div>
+        <p className="text-[12.5px] text-[#555] leading-relaxed">
+          Hệ thống website đã được cấu hình sẵn tính năng <strong>bắc cầu tự động</strong>. Ngày mai khi bạn truy cập trang quản lý tên miền (DNS), chỉ cần làm 2 bước đơn giản sau:
+        </p>
 
-        {/* Progress Bar */}
-        <div className="space-y-1.5">
-          <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/10">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                (stats?.storageUsagePercent || 0) > 80
-                  ? 'bg-red-500'
-                  : (stats?.storageUsagePercent || 0) > 50
-                  ? 'bg-amber-500'
-                  : 'bg-gradient-to-r from-[#c5a26c] to-emerald-400'
-              }`}
-              style={{ width: `${Math.max(2, stats?.storageUsagePercent || 0)}%` }}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+          <div className="p-3.5 bg-white rounded-2xl border border-[#e2ddd3] space-y-1">
+            <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider">Bước 1: Trỏ DNS Tên Miền</span>
+            <div className="text-[13px] font-semibold text-[#04092b]">
+              Thêm bản ghi <code className="bg-[#f0ece1] px-1.5 py-0.5 rounded text-[#04092b] font-mono">CNAME</code>:{' '}
+              <strong className="text-[#04092b]">lp</strong> &rarr; <strong className="text-[#1c5f9e]">dns.ladipage.com</strong>
+            </div>
+            <p className="text-[11px] text-[#777]">Thực hiện tại trang quản lý tên miền nơi bạn mua domain.</p>
           </div>
-          <div className="flex items-center justify-between text-[11.5px] text-white/60">
-            <span>
-              Tỷ lệ chiếm dụng: <strong>{stats?.storageUsagePercent || 0}%</strong>
-            </span>
-            <span>
-              Tổng số trang: <strong>{stats?.totalPages || pages.length}</strong> ({stats?.activePages || 0} đang bật)
-            </span>
-          </div>
-        </div>
 
-        {/* Quick Tips */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-[12px] text-white/80 border-t border-white/10">
-          <div className="flex items-start gap-2">
-            <span className="text-[#c5a26c] font-bold text-[14px]">💡</span>
-            <span>
-              <strong>Mẹo tiết kiệm 100%:</strong> Chọn chế độ <em>"Dán Link LadiPage"</em> để tiêu tốn đúng{' '}
-              <strong className="text-emerald-300">0 KB</strong> dung lượng lưu trữ trên Vercel.
-            </span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-[#c5a26c] font-bold text-[14px]">⚡</span>
-            <span>
-              <strong>Tốc độ tải nhanh:</strong> File HTML xuất từ LadiPage chỉ ~100 KB, bạn có thể tạo thoải mái hơn{' '}
-              <strong>150+ Landing Page</strong>.
-            </span>
+          <div className="p-3.5 bg-white rounded-2xl border border-[#e2ddd3] space-y-1">
+            <span className="text-[11px] font-bold text-[#c5a26c] uppercase tracking-wider">Bước 2: Xuất Bản Trên LadiPage</span>
+            <div className="text-[13px] font-semibold text-[#04092b]">
+              Xuất bản trang với tên bất kỳ dạng:{' '}
+              <code className="bg-[#f0ece1] px-1.5 py-0.5 rounded text-[#04092b] font-mono">lp.donghoadesign.com/...</code>
+            </div>
+            <p className="text-[11px] text-[#777]">
+              Website sẽ tự động hiển thị tại <strong className="text-[#04092b]">donghoadesign.com/lp/...</strong> với dung lượng <strong>0 KB</strong>!
+            </p>
           </div>
         </div>
       </div>
 
-      {/* 3. Search & List Section */}
+      {/* 3. Storage Status Overview Bar */}
+      <div className="bg-[#04092b] text-white p-5 sm:p-6 rounded-3xl border border-[#c5a26c]/30 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#c5a26c] shrink-0">
+            <HardDrive className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-[14.5px] font-bold text-white">Kiểm Soát Dung Lượng (Vercel Free)</h4>
+              <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full text-[10.5px] font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Tối Ưu An Toàn
+              </span>
+            </div>
+            <p className="text-[12px] text-white/70">
+              Chế độ kết nối LadiPage tiêu tốn <strong>0 KB</strong> dung lượng lưu trữ trên Vercel.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 bg-white/5 px-4 py-2.5 rounded-2xl border border-white/10 self-start sm:self-auto">
+          <div>
+            <div className="text-[10.5px] text-[#c5a26c] font-bold uppercase tracking-wider">Dung lượng HTML Offline</div>
+            <div className="text-[16px] font-bold font-mono">
+              {formatBytes(stats?.totalStorageBytes || 0)}{' '}
+              <span className="text-[11.5px] text-white/60">/ 50 MB (An toàn)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Search & List Section */}
       <div className="bg-white rounded-3xl border border-[#e2ddd3] shadow-xs overflow-hidden">
         {/* Search Header */}
         <div className="p-4 sm:p-5 border-b border-[#e2ddd3] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#faf8f5]">
@@ -395,11 +376,11 @@ export default function AdminLandingPages() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm theo tên chiến dịch hoặc đường dẫn..."
+              placeholder="Tìm kiếm chiến dịch hoặc đường dẫn..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#e2ddd3] rounded-xl text-[13px] focus:border-[#c5a26c] focus:outline-none transition-all"
             />
           </div>
-          <div className="text-[12.5px] font-medium text-[#777] self-end sm:self-center">
+          <div className="text-[12px] font-medium text-[#777] self-end sm:self-center">
             Hiển thị <strong>{filteredPages.length}</strong> / {pages.length} Landing Page
           </div>
         </div>
@@ -412,7 +393,7 @@ export default function AdminLandingPages() {
             </div>
             <h4 className="text-[16px] font-bold text-[#04092b]">Chưa có Landing Page nào</h4>
             <p className="text-[13px] text-[#666] max-w-md mx-auto">
-              Bắt đầu tạo trang đích đầu tiên bằng cách tải file HTML từ LadiPage hoặc nhập link LadiPage.
+              Bắt đầu tạo chiến dịch đầu tiên để lấy đường link chạy quảng cáo hoặc tải file HTML offline.
             </p>
             <button
               type="button"
@@ -437,13 +418,13 @@ export default function AdminLandingPages() {
                       <span className="font-bold text-[14.5px] text-[#04092b] truncate">{page.title}</span>
 
                       {/* Type Badge */}
-                      {page.type === 'html_upload' ? (
+                      {page.type === 'html_upload' && page.fileSize > 0 ? (
                         <span className="px-2.5 py-0.5 rounded-md bg-[#eef7ee] text-[#2d7a36] text-[11px] font-bold border border-[#2d7a36]/20 inline-flex items-center gap-1">
                           📁 File HTML ({formatBytes(page.fileSize)})
                         </span>
                       ) : (
                         <span className="px-2.5 py-0.5 rounded-md bg-[#e8f1fa] text-[#1c5f9e] text-[11px] font-bold border border-[#1c5f9e]/20 inline-flex items-center gap-1">
-                          🌐 Link Proxy (0 KB)
+                          🌐 LadiPage Subdomain (0 KB)
                         </span>
                       )}
 
@@ -461,7 +442,7 @@ export default function AdminLandingPages() {
 
                     {/* URL link */}
                     <div className="flex flex-wrap items-center gap-2 text-[12.5px]">
-                      <span className="text-[#888]">Link truy cập:</span>
+                      <span className="text-[#888]">Link chạy Ads:</span>
                       <a
                         href={publicUrl}
                         target="_blank"
@@ -472,26 +453,10 @@ export default function AdminLandingPages() {
                         <ExternalLink className="w-3 h-3 opacity-70" />
                       </a>
                     </div>
-
-                    {page.type === 'proxy_url' && page.proxyUrl && (
-                      <div className="text-[11.5px] text-[#888] truncate">
-                        🔗 Nguồn LadiPage: <span className="font-mono text-[#555]">{page.proxyUrl}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Right: Actions */}
                   <div className="flex flex-wrap items-center gap-2 shrink-0">
-                    {/* Copy Webhook for LadiPage */}
-                    <button
-                      type="button"
-                      onClick={() => handleCopyWebhook(page.slug)}
-                      className="px-3 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] rounded-xl text-[12px] font-bold transition-all inline-flex items-center gap-1.5 shadow-xs"
-                      title="Sao chép đường link Webhook để dán vào LadiPage"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" /> Copy Webhook
-                    </button>
-
                     {/* Copy Link */}
                     <button
                       type="button"
@@ -553,22 +518,22 @@ export default function AdminLandingPages() {
         )}
       </div>
 
-      {/* 4. Modal: Create / Edit Landing Page */}
+      {/* 5. Clean Modal: Create / Edit Landing Page */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-2xl max-h-[94vh] sm:max-h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#e2ddd3] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            {/* Modal Header (Sticky) */}
-            <div className="p-3.5 sm:p-5 bg-[#faf8f5] border-b border-[#e2ddd3] flex items-center justify-between shrink-0">
+          <div className="bg-white w-full max-w-xl max-h-[94vh] sm:max-h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl border border-[#e2ddd3] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 bg-[#faf8f5] border-b border-[#e2ddd3] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                 <span className="p-1.5 sm:p-2 bg-[#04092b] text-[#c5a26c] rounded-xl shrink-0">
                   {editingPage ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                 </span>
                 <div className="min-w-0">
                   <h3 className="text-[14.5px] sm:text-[16px] font-bold text-[#04092b] truncate">
-                    {editingPage ? 'Chỉnh Sửa Landing Page' : 'Tạo Landing Page Mới'}
+                    {editingPage ? 'Chỉnh Sửa Chiến Dịch' : 'Tạo Chiến Dịch Landing Page'}
                   </h3>
                   <p className="text-[10.5px] sm:text-[11.5px] text-[#777] truncate">
-                    Cấu hình đường dẫn và phương thức xuất bản LadiPage.
+                    Đặt tên và đường dẫn URL cho trang đích quảng cáo.
                   </p>
                 </div>
               </div>
@@ -581,13 +546,13 @@ export default function AdminLandingPages() {
               </button>
             </div>
 
-            {/* Modal Scrollable Form Body */}
+            {/* Modal Form */}
             <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0">
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
                 {/* Field 1: Campaign Title */}
-                <div className="space-y-1 sm:space-y-1.5">
+                <div className="space-y-1.5">
                   <label className="block text-[12px] sm:text-[12.5px] font-bold text-[#04092b]">
-                    1. Tên Chiến Dịch Landing Page <span className="text-red-500">*</span>
+                    1. Tên Chiến Dịch <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -600,7 +565,7 @@ export default function AdminLandingPages() {
                 </div>
 
                 {/* Field 2: Slug */}
-                <div className="space-y-1 sm:space-y-1.5">
+                <div className="space-y-1.5">
                   <label className="block text-[12px] sm:text-[12.5px] font-bold text-[#04092b]">
                     2. Đường Dẫn Hiển Thị (Slug URL) <span className="text-red-500">*</span>
                   </label>
@@ -618,196 +583,63 @@ export default function AdminLandingPages() {
                     />
                   </div>
                   <p className="text-[10.5px] sm:text-[11px] text-[#888] break-all">
-                    👉 Khách hàng và các kênh quảng cáo sẽ truy cập tại:{' '}
+                    👉 Link truy cập chính thức:{' '}
                     <strong className="text-[#04092b]">
                       https://donghoadesign.com/lp/{formSlug || 'ten-duong-dan'}
                     </strong>
                   </p>
                 </div>
 
-                {/* Field 3: Implementation Type Selector */}
+                {/* Field 3: Optional Offline HTML File */}
                 <div className="space-y-2 pt-2 border-t border-[#f0ece1]">
                   <label className="block text-[12px] sm:text-[12.5px] font-bold text-[#04092b]">
-                    3. Chọn Phương Thức Triển Khai:
+                    3. File HTML Offline (Tùy Chọn):
                   </label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".html,.htm"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setModalType('html_upload')}
-                      className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-start gap-2.5 ${
-                        modalType === 'html_upload'
-                          ? 'bg-[#04092b] text-white border-[#04092b] shadow-md'
-                          : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
-                      }`}
-                    >
-                      <span className="text-[18px] sm:text-[20px] shrink-0">📁</span>
-                      <div className="min-w-0">
-                        <div className="text-[12px] sm:text-[12.5px] font-bold">Tải Lên File HTML</div>
-                        <div className={`text-[10px] sm:text-[10.5px] ${modalType === 'html_upload' ? 'text-white/70' : 'text-[#888]'}`}>
-                          File xuất từ LadiPage (Tải siêu tốc)
+                  {uploadFileName ? (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white rounded-xl border border-emerald-300 gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                        <div className="min-w-0">
+                          <div className="text-[12px] font-bold text-[#04092b] truncate">{uploadFileName}</div>
+                          <div className="text-[10.5px] text-[#666]">Dung lượng: {formatBytes(uploadFileSize)}</div>
                         </div>
                       </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setModalType('proxy_url')}
-                      className={`p-3 sm:p-3.5 rounded-2xl border text-left transition-all flex items-start gap-2.5 ${
-                        modalType === 'proxy_url'
-                          ? 'bg-[#04092b] text-white border-[#04092b] shadow-md'
-                          : 'bg-[#faf8f5] text-[#555] border-[#e2ddd3] hover:border-[#c5a26c]'
-                      }`}
-                    >
-                      <span className="text-[18px] sm:text-[20px] shrink-0">⚡</span>
-                      <div className="min-w-0">
-                        <div className="text-[12px] sm:text-[12.5px] font-bold">Tạo URL & Webhook LadiPage</div>
-                        <div className={`text-[10px] sm:text-[10.5px] ${modalType === 'proxy_url' ? 'text-white/70' : 'text-[#888]'}`}>
-                          Generate URL & Webhook tự đồng bộ (0 KB)
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-
-                  {/* Sub-panel: File HTML Upload */}
-                  {modalType === 'html_upload' && (
-                    <div className="p-3 sm:p-4 bg-[#faf8f5] rounded-2xl border border-dashed border-[#c5a26c] space-y-3 mt-3 animate-in fade-in duration-200">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".html,.htm"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-
-                      {uploadFileName ? (
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white rounded-xl border border-emerald-300 gap-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                            <div className="min-w-0">
-                              <div className="text-[12px] sm:text-[12.5px] font-bold text-[#04092b] truncate">
-                                {uploadFileName}
-                              </div>
-                              <div className="text-[10.5px] sm:text-[11px] text-[#666]">Dung lượng: {formatBytes(uploadFileSize)}</div>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="px-3 py-1.5 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] rounded-lg text-[11px] sm:text-[11.5px] font-bold transition-colors self-start sm:self-auto"
-                          >
-                            Chọn file khác
-                          </button>
-                        </div>
-                      ) : (
-                        <div
-                          onClick={() => fileInputRef.current?.click()}
-                          className="py-6 sm:py-8 text-center cursor-pointer hover:bg-white/80 transition-colors rounded-xl flex flex-col items-center justify-center gap-2"
-                        >
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#04092b] text-[#c5a26c] flex items-center justify-center shadow-md">
-                            <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </div>
-                          <div>
-                            <p className="text-[12.5px] sm:text-[13px] font-bold text-[#04092b]">
-                              Bấm vào đây để chọn file HTML từ máy tính
-                            </p>
-                            <p className="text-[10.5px] sm:text-[11px] text-[#888]">Chấp nhận định dạng .html (Tối đa 2 MB)</p>
-                          </div>
-                        </div>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] rounded-lg text-[11px] font-bold transition-colors self-start sm:self-auto"
+                      >
+                        Đổi file
+                      </button>
                     </div>
-                  )}
-
-                  {/* Sub-panel: URL Generator & Webhook Sync for LadiPage */}
-                  {modalType === 'proxy_url' && (
-                    <div className="p-3 sm:p-4 bg-[#f4f8fc] rounded-2xl border border-[#c8daf0] space-y-3 sm:space-y-4 mt-3 animate-in fade-in duration-200">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-1.5 text-[12.5px] sm:text-[13px] font-bold text-[#1c5f9e]">
-                          <Sparkles className="w-4 h-4 text-[#c5a26c] shrink-0" /> Các URL Được Tạo Tự Động Cho LadiPage:
-                        </div>
-                        <p className="text-[11px] sm:text-[11.5px] text-[#555]">
-                          Bạn chỉ cần sao chép các URL bên dưới để dán vào LadiPage:
-                        </p>
+                  ) : (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-3.5 bg-[#faf8f5] hover:bg-white border border-dashed border-[#c5a26c] rounded-xl cursor-pointer transition-colors flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-[#04092b] text-[#c5a26c] flex items-center justify-center shrink-0">
+                        <Upload className="w-4 h-4" />
                       </div>
-
-                      {/* URL 1: Webhook Auto-Sync URL */}
-                      <div className="p-2.5 sm:p-3 bg-white rounded-xl border border-[#c8daf0] space-y-1.5 shadow-xs">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                          <label className="text-[11px] sm:text-[11.5px] font-bold text-[#04092b] flex items-center gap-1">
-                            ⚡ 1. Link Webhook Tự Động Đồng Bộ (Khuyên Dùng):
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
-                              const webhookUrl = `${origin}/api/landing/webhook?slug=${formSlug || 'ten-trang'}`;
-                              navigator.clipboard.writeText(webhookUrl);
-                              showToast('success', 'Đã sao chép Link Webhook LadiPage!');
-                            }}
-                            className="px-2.5 py-1 bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] rounded-lg text-[10.5px] sm:text-[11px] font-bold transition-all inline-flex items-center justify-center gap-1 self-start sm:self-auto"
-                          >
-                            <Copy className="w-3 h-3" /> Copy Webhook
-                          </button>
-                        </div>
-                        <div className="p-2 bg-[#faf8f5] rounded-lg border border-[#e2ddd3] font-mono text-[10.5px] sm:text-[11.5px] text-[#1c5f9e] select-all break-all">
-                          https://donghoadesign.com/api/landing/webhook?slug={formSlug || 'ten-trang'}
-                        </div>
-                        <p className="text-[10px] sm:text-[10.5px] text-[#666] leading-relaxed">
-                          👉 Dán link này vào mục <strong>LadiPage &rarr; Cài đặt &rarr; Webhook / Xuất bản Server riêng</strong>. Mỗi lần bạn bấm Xuất bản trên LadiPage, trang web sẽ tự động cập nhật ngay lập tức!
-                        </p>
-                      </div>
-
-                      {/* URL 2: Target Website Public URL */}
-                      <div className="p-2.5 sm:p-3 bg-white rounded-xl border border-[#c8daf0] space-y-1.5 shadow-xs">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                          <label className="text-[11px] sm:text-[11.5px] font-bold text-[#04092b]">
-                            🔗 2. Link Trang Đích Chính Thức (Tên miền của bạn):
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
-                              const fullUrl = `${origin}/lp/${formSlug || 'ten-trang'}`;
-                              navigator.clipboard.writeText(fullUrl);
-                              showToast('success', 'Đã sao chép Link Landing Page!');
-                            }}
-                            className="px-2.5 py-1 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] rounded-lg text-[10.5px] sm:text-[11px] font-bold transition-colors inline-flex items-center justify-center gap-1 self-start sm:self-auto"
-                          >
-                            <Copy className="w-3 h-3 text-[#c5a26c]" /> Copy Link
-                          </button>
-                        </div>
-                        <div className="p-2 bg-[#faf8f5] rounded-lg border border-[#e2ddd3] font-mono text-[10.5px] sm:text-[11.5px] text-[#04092b] font-bold select-all break-all">
-                          https://donghoadesign.com/lp/{formSlug || 'ten-trang'}
-                        </div>
-                      </div>
-
-                      {/* Fallback Option: Paste LadiPage Link if already published */}
-                      <div className="space-y-1 pt-1">
-                        <label className="block text-[11px] sm:text-[11.5px] font-bold text-[#04092b]">
-                          👉 Hoặc Dán Đường Link LadiPage bạn đã có (Nếu không dùng Webhook):
-                        </label>
-                        <input
-                          type="url"
-                          value={formProxyUrl}
-                          onChange={(e) => setFormProxyUrl(e.target.value)}
-                          placeholder="Ví dụ: https://ladipage.me/donghoa-biet-thu hoặc https://lp.donghoadesign.com/..."
-                          className="w-full p-2.5 bg-white border border-[#1c5f9e]/40 rounded-xl text-[12px] sm:text-[12.5px] font-mono text-[#04092b] focus:border-[#1c5f9e] focus:outline-none"
-                        />
-                        <p className="text-[10px] sm:text-[10.5px] text-[#888]">
-                          Nếu bạn dán link trên, hệ thống sẽ tự động bắt cầu hiển thị nguyên bản toàn bộ giao diện từ link LadiPage đó.
-                        </p>
+                      <div className="text-[11.5px] text-[#666]">
+                        Bấm để tải file <code className="font-mono text-[#04092b]">.html</code> nếu bạn xuất file offline (Không bắt buộc).
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Field 4: Active Toggle */}
-                <div className="flex items-center justify-between p-3 sm:p-3.5 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
-                  <div className="pr-2">
-                    <div className="text-[12px] sm:text-[12.5px] font-bold text-[#04092b]">Kích hoạt Landing Page ngay</div>
-                    <div className="text-[10.5px] sm:text-[11px] text-[#777]">
-                      Cho phép khách hàng và các chiến dịch quảng cáo truy cập ngay sau khi lưu.
-                    </div>
+                <div className="flex items-center justify-between p-3 bg-[#faf8f5] rounded-xl border border-[#e2ddd3]">
+                  <div>
+                    <div className="text-[12px] font-bold text-[#04092b]">Kích hoạt trang ngay</div>
+                    <div className="text-[10.5px] text-[#777]">Sẵn sàng nhận lượt truy cập sau khi lưu.</div>
                   </div>
                   <input
                     type="checkbox"
@@ -818,28 +650,28 @@ export default function AdminLandingPages() {
                 </div>
               </div>
 
-              {/* Modal Footer Buttons (Sticky Bottom) */}
-              <div className="p-3 sm:p-4 bg-white border-t border-[#f0ece1] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 shrink-0">
+              {/* Modal Footer */}
+              <div className="p-3.5 sm:p-4 bg-white border-t border-[#f0ece1] flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] text-[12.5px] sm:text-[13px] font-bold rounded-xl transition-colors text-center"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-[#f4f1ea] hover:bg-[#e2ddd3] text-[#04092b] text-[12.5px] font-bold rounded-xl transition-colors text-center"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full sm:w-auto px-5 sm:px-6 py-2.5 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12.5px] sm:text-[13px] font-bold rounded-xl transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-[#04092b] hover:bg-[#c5a26c] text-white hover:text-[#04092b] text-[12.5px] font-bold rounded-xl transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" /> Đang lưu...
                     </>
                   ) : editingPage ? (
-                    'Cập Nhật Landing Page'
+                    'Lưu Thay Đổi'
                   ) : (
-                    'Xuất Bản Landing Page'
+                    'Tạo Trang Mới'
                   )}
                 </button>
               </div>
@@ -848,7 +680,7 @@ export default function AdminLandingPages() {
         </div>
       )}
 
-      {/* 5. Live Preview Lightbox Modal */}
+      {/* 6. Live Preview Lightbox Modal */}
       {previewSlug && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md p-2 sm:p-4 md:p-6 flex flex-col items-center justify-center animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-6xl h-[95vh] sm:h-[90vh] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-[#e2ddd3]">
@@ -923,4 +755,3 @@ export default function AdminLandingPages() {
     </div>
   );
 }
-
