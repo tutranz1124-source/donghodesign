@@ -1,24 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { BlogPost, MediaItem, SiteSettings, SiteContentData } from './types';
+import { BlogPost, MediaItem, SiteSettings, SiteContentData, LandingPageItem, LandingPageStats } from './types';
 import { DEFAULT_BLOG_POSTS } from './default-blog-posts';
 
 const dataDir = path.join(process.cwd(), 'data');
 const blogPostsFile = path.join(dataDir, 'blog-posts.json');
 const siteContentFile = path.join(dataDir, 'site-content.json');
 const mediaFile = path.join(dataDir, 'media.json');
+const landingPagesFile = path.join(dataDir, 'landing-pages.json');
 
 // Serverless writable fallback paths (e.g. /tmp on Vercel)
 const tmpDir = os.tmpdir();
 const tmpSiteContentFile = path.join(tmpDir, 'donghoa-site-content.json');
 const tmpBlogPostsFile = path.join(tmpDir, 'donghoa-blog-posts.json');
 const tmpMediaFile = path.join(tmpDir, 'donghoa-media.json');
+const tmpLandingPagesFile = path.join(tmpDir, 'donghoa-landing-pages.json');
 
 declare global {
   var __siteContentCache: SiteContentData | undefined;
   var __blogPostsCache: BlogPost[] | undefined;
   var __mediaCache: MediaItem[] | undefined;
+  var __landingPagesCache: LandingPageItem[] | undefined;
 }
 
 const DEFAULT_SITE_CONTENT: SiteContentData = {
@@ -502,5 +505,95 @@ export function saveMediaItem(item: MediaItem): MediaItem {
   media.unshift(item);
   saveMediaLibrary(media);
   return item;
+}
+
+// ==========================================
+// 🚀 LANDING PAGE / LADIPAGE STORAGE HELPERS
+// ==========================================
+
+export function getLandingPages(): LandingPageItem[] {
+  if (globalThis.__landingPagesCache && Array.isArray(globalThis.__landingPagesCache)) {
+    return globalThis.__landingPagesCache;
+  }
+
+  // 1. Try reading from /tmp on serverless
+  try {
+    if (fs.existsSync(tmpLandingPagesFile)) {
+      const raw = fs.readFileSync(tmpLandingPagesFile, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        globalThis.__landingPagesCache = parsed;
+        return parsed;
+      }
+    }
+  } catch (e) {}
+
+  // 2. Read from data/landing-pages.json
+  try {
+    if (fs.existsSync(landingPagesFile)) {
+      const raw = fs.readFileSync(landingPagesFile, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        globalThis.__landingPagesCache = parsed;
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error('Error reading landing-pages.json:', err);
+  }
+
+  return [];
+}
+
+export function saveLandingPages(pages: LandingPageItem[]): boolean {
+  globalThis.__landingPagesCache = pages;
+  let saved = false;
+
+  // 1. Write to /tmp
+  try {
+    fs.writeFileSync(tmpLandingPagesFile, JSON.stringify(pages, null, 2), 'utf8');
+    saved = true;
+  } catch (e) {}
+
+  // 2. Write to local project file
+  try {
+    const dir = path.dirname(landingPagesFile);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(landingPagesFile, JSON.stringify(pages, null, 2), 'utf8');
+    saved = true;
+  } catch (err) {
+    console.info('Landing pages written to memory & tmp cache.');
+  }
+
+  // 3. Commit to GitHub repo asynchronously
+  syncFileToGitHub('data/landing-pages.json', JSON.stringify(pages, null, 2), 'chore(cms): auto-persist landing pages from admin').catch(() => {});
+
+  return saved;
+}
+
+export function getLandingPageBySlug(slug: string): LandingPageItem | undefined {
+  const pages = getLandingPages();
+  const cleanSlug = slug.trim().toLowerCase().replace(/^\/+|\/+$/g, '');
+  return pages.find((p) => p.slug.trim().toLowerCase() === cleanSlug);
+}
+
+export function getLandingPageStats(): LandingPageStats {
+  const pages = getLandingPages();
+  const activePages = pages.filter((p) => p.isActive).length;
+  
+  // Calculate total storage bytes consumed by HTML content
+  const totalStorageBytes = pages.reduce((acc, p) => acc + (p.fileSize || (p.htmlContent ? Buffer.byteLength(p.htmlContent, 'utf8') : 0)), 0);
+  const storageLimitBytes = 50 * 1024 * 1024; // 50 MB recommended safe limit for Vercel Free
+  const storageUsagePercent = Math.min(100, Number(((totalStorageBytes / storageLimitBytes) * 100).toFixed(2)));
+
+  return {
+    totalPages: pages.length,
+    activePages,
+    totalStorageBytes,
+    storageLimitBytes,
+    storageUsagePercent
+  };
 }
 
