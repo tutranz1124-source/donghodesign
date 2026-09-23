@@ -91,7 +91,7 @@ export default function ClientHomePage({ initialContent }: { initialContent: Sit
         <PhilosophySection data={content.philosophy} />
 
         {/* 4. KẾT NỐI CÙNG ĐÔNG HÒA DESIGN */}
-        <QuoteContactSection data={content.contact} />
+        <QuoteContactSection data={content.contact} settings={settings} />
 
         {/* 5. PHONG CÁCH THIẾT KẾ (4 CARDS GRID) */}
         <StylesOverviewSection data={content.stylesOverview} />
