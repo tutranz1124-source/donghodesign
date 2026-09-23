@@ -11,6 +11,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/lp/:path*',
+        destination: 'https://lp.donghoadesign.com/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
