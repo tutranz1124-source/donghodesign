@@ -67,6 +67,28 @@ function renderFormattedInline(text: string) {
 
 export default function BlogPostClient({ post, relatedPosts }: BlogPostClientProps) {
   const [copied, setCopied] = useState(false);
+  const [hotline, setHotline] = useState('0906.499.279');
+
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem('donghoa_site_content');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.settings?.hotline) {
+          setHotline(parsed.settings.hotline);
+        }
+      }
+    } catch (e) {}
+
+    fetch('/api/content')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.settings?.hotline) {
+          setHotline(data.settings.hotline);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -233,11 +255,11 @@ export default function BlogPostClient({ post, relatedPosts }: BlogPostClientPro
                   <p className="text-[15px] text-white font-medium">{renderFormattedInline(cleanContent)}</p>
                 </div>
                 <a
-                  href="tel:0906499279"
+                  href={`tel:${(hotline || '0906.499.279').replace(/\D/g, '') || '0906499279'}`}
                   className="bg-[#c5a26c] hover:bg-white text-[#04092b] px-6 py-3 rounded-xl text-[13px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shrink-0 shadow-md"
                 >
                   <PhoneCall className="w-4 h-4" />
-                  <span>0906.499.279</span>
+                  <span>{hotline}</span>
                 </a>
               </div>
             );
