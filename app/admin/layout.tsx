@@ -20,7 +20,8 @@ import {
   Edit3,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { AuthSessionUser } from '@/lib/types';
 import { ToastProvider } from '@/components/admin/ToastContext';
@@ -92,11 +93,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ? [
         { label: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
         { label: 'Trang chủ & Canvas', href: '/admin/pages', icon: Layers },
+        { label: 'Landing Page', href: '/admin/landing', icon: Globe },
         { label: 'Bài viết Blog', href: '/admin/blog', icon: FileText },
         { label: 'Thư viện Media', href: '/admin/media', icon: ImageIcon },
         { label: 'Tài khoản & Quyền', href: '/admin/users', icon: Users }
       ]
     : [
+        { label: 'Landing Page', href: '/admin/landing', icon: Globe },
         { label: 'Bài viết Blog', href: '/admin/blog', icon: FileText },
         { label: 'Thư viện Media', href: '/admin/media', icon: ImageIcon }
       ];
