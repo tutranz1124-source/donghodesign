@@ -43,7 +43,7 @@ const defaultSlides = [
     line1: 'iên hệ ngay',
     line2: '',
     description:
-      'Hotline: 0906.499.279 | Email: info@donghoagroup.vn | Văn phòng làm việc: 113-115 Ung Văn Khiêm, Thạnh Mỹ Tây, TP.HCM',
+      'Hotline: 0906.499.279 | Email: Donghoadesign@gmail.com | Văn phòng làm việc: 113-115 Ung Văn Khiêm, Thạnh Mỹ Tây, TP.HCM',
     backgroundImage: '/uploads/hero_slide_3.png',
     buttonText: 'Gửi yêu cầu',
     buttonTarget: '#contact',
