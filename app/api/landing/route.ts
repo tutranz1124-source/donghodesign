@@ -200,3 +200,4 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Lỗi máy chủ khi xóa Landing Page', details: error.message }, { status: 500 });
   }
 }
+
