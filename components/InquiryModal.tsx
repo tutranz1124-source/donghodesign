@@ -2,18 +2,48 @@
 
 import React, { useState } from 'react';
 import { X, Phone, Mail, MapPin, Send, CheckCircle2, MessageSquare } from 'lucide-react';
+import { SiteSettings } from '@/lib/types';
 
 interface InquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultProject?: string;
+  settings?: SiteSettings;
 }
 
-export default function InquiryModal({ isOpen, onClose, defaultProject }: InquiryModalProps) {
+export default function InquiryModal({ isOpen, onClose, defaultProject, settings }: InquiryModalProps) {
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
+  const [hotline, setHotline] = useState(settings?.hotline || '0906.499.279');
+
+  React.useEffect(() => {
+    if (settings?.hotline) {
+      setHotline(settings.hotline);
+      return;
+    }
+    try {
+      const stored = localStorage.getItem('donghoa_site_content');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.settings?.hotline) {
+          setHotline(parsed.settings.hotline);
+        }
+      }
+    } catch (e) {}
+
+    fetch('/api/content')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.settings?.hotline) {
+          setHotline(data.settings.hotline);
+        }
+      })
+      .catch(() => {});
+  }, [settings?.hotline]);
+
+  const cleanPhone = (hotline || '0906.499.279').replace(/\D/g, '') || '0906499279';
 
   if (!isOpen) return null;
 
@@ -46,7 +76,7 @@ export default function InquiryModal({ isOpen, onClose, defaultProject }: Inquir
               Đăng Ký Thành Công!
             </h3>
             <p className="text-[14px] text-white/80 max-w-sm mx-auto">
-              Chuyên viên tư vấn cao cấp của Đông Hòa Property sẽ liên hệ trực tiếp với quý khách trong ít phút.
+              Chuyên viên tư vấn cao cấp của Đông Hòa Design sẽ liên hệ trực tiếp với quý khách trong ít phút.
             </p>
           </div>
         ) : (
@@ -56,25 +86,25 @@ export default function InquiryModal({ isOpen, onClose, defaultProject }: Inquir
                 KẾT NỐI TRỰC TIẾP
               </span>
               <h3 className="text-[24px] font-medium font-display text-white">
-                Tư Vấn Đầu Tư Chuyên Sâu
+                Tư Vấn Thiết Kế & Báo Giá
               </h3>
               <p className="text-[13px] text-white/70">
-                Nhận thông tin độc quyền và bảng giá ưu đãi trực tiếp từ chủ đầu tư.
+                Khảo sát hiện trạng và tư vấn miễn phí tận nơi bởi KTS chuyên nghiệp.
               </p>
             </div>
 
             {/* Direct Contact Buttons */}
             <div className="grid grid-cols-2 gap-3 pt-2">
               <a
-                href="tel:0909123456"
+                href={`tel:${cleanPhone}`}
                 className="bg-[#c5a26c] hover:bg-[#b38f57] text-[#04092b] p-3 text-center font-semibold text-[13px] flex items-center justify-center gap-2 transition-colors"
               >
-                <Phone className="w-4 h-4" /> Hotline: 0909 123 456
+                <Phone className="w-4 h-4" /> Hotline: {hotline}
               </a>
               <a
-                href="https://zalo.me"
+                href={`https://zalo.me/${cleanPhone}`}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="bg-blue-600 hover:bg-blue-700 text-white p-3 text-center font-semibold text-[13px] flex items-center justify-center gap-2 transition-colors"
               >
                 <MessageSquare className="w-4 h-4" /> Chat Zalo Ngay
