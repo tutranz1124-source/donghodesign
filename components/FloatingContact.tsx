@@ -16,6 +16,18 @@ export default function FloatingContact() {
   }
 
   useEffect(() => {
+    // 1. Initial check from localStorage
+    try {
+      const stored = localStorage.getItem('donghoa_site_content');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.settings?.hotline) {
+          setHotline(parsed.settings.hotline);
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fetch from API
     fetch('/api/content')
       .then((res) => res.json())
       .then((data) => {
@@ -24,6 +36,37 @@ export default function FloatingContact() {
         }
       })
       .catch(() => {});
+
+    // 3. BroadcastChannel sync across tabs/windows
+    let bc: BroadcastChannel | null = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        bc = new BroadcastChannel('donghoa_content_sync');
+        bc.onmessage = (ev) => {
+          if (ev.data?.settings?.hotline) {
+            setHotline(ev.data.settings.hotline);
+          }
+        };
+      }
+    } catch (e) {}
+
+    // 4. Storage event listener for multi-tab sync
+    const handleStorage = (ev: StorageEvent) => {
+      if (ev.key === 'donghoa_site_content' && ev.newValue) {
+        try {
+          const parsed = JSON.parse(ev.newValue);
+          if (parsed?.settings?.hotline) {
+            setHotline(parsed.settings.hotline);
+          }
+        } catch (e) {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      if (bc) bc.close();
+    };
   }, []);
 
   useEffect(() => {
