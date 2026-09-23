@@ -258,10 +258,10 @@
           "name": "Sofa Bouclé Trắng Dài (Curved Sofa)",
           "image": "/uploads/figma_modern_sofa.png",
           "position": {
-            "top": "69.5%",
-            "left": "5.3%",
-            "width": "66.3%",
-            "height": "19.1%",
+            "top": "69.3%",
+            "left": "5.5%",
+            "width": "62.8%",
+            "height": "25.5%",
             "zIndex": 10
           },
           "animation": {
