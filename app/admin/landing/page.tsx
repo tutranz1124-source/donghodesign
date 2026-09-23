@@ -172,11 +172,6 @@ export default function AdminLandingPages() {
       return;
     }
 
-    if (modalType === 'proxy_url' && !formProxyUrl.trim()) {
-      showToast('error', 'Vui lòng nhập đường link LadiPage (https://...)');
-      return;
-    }
-
     try {
       setIsSubmitting(true);
       const payload = {
@@ -198,7 +193,7 @@ export default function AdminLandingPages() {
       const result = await res.json();
 
       if (res.ok && result.success) {
-        showToast('success', editingPage ? 'Đã cập nhật Landing Page thành công' : 'Đã tạo Landing Page mới thành công');
+        showToast('success', editingPage ? 'Đã cập nhật Landing Page thành công' : 'Đã tạo Landing Page & Webhook thành công!');
         setIsModalOpen(false);
         loadData();
       } else {
@@ -259,6 +254,14 @@ export default function AdminLandingPages() {
     const fullUrl = `${origin}/lp/${slug}`;
     navigator.clipboard.writeText(fullUrl);
     showToast('success', `Đã sao chép link: ${fullUrl}`);
+  };
+
+  // Copy Webhook Sync Link
+  const handleCopyWebhook = (slug: string) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://donghoadesign.com';
+    const webhookUrl = `${origin}/api/landing/webhook?slug=${slug}`;
+    navigator.clipboard.writeText(webhookUrl);
+    showToast('success', `Đã sao chép Webhook LadiPage: ${webhookUrl}`);
   };
 
   // Filtered pages
@@ -479,6 +482,16 @@ export default function AdminLandingPages() {
 
                   {/* Right: Actions */}
                   <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    {/* Copy Webhook for LadiPage */}
+                    <button
+                      type="button"
+                      onClick={() => handleCopyWebhook(page.slug)}
+                      className="px-3 py-2 bg-[#04092b] hover:bg-[#c5a26c] text-[#c5a26c] hover:text-[#04092b] rounded-xl text-[12px] font-bold transition-all inline-flex items-center gap-1.5 shadow-xs"
+                      title="Sao chép đường link Webhook để dán vào LadiPage"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> Copy Webhook
+                    </button>
+
                     {/* Copy Link */}
                     <button
                       type="button"
