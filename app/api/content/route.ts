@@ -1,17 +1,22 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getSiteContent, saveSiteContent } from '@/lib/storage';
 import { verifyAdminSession, verifyEditorSession, getSessionUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const content = getSiteContent();
+  const { searchParams } = new URL(request.url);
+  const isFresh = searchParams.get('fresh') === '1' || searchParams.get('admin') === '1';
+
   return NextResponse.json(content, {
     headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      Pragma: 'no-cache',
-      Expires: '0'
+      'Cache-Control': isFresh
+        ? 'no-store, no-cache, must-revalidate'
+        : 'public, s-maxage=60, stale-while-revalidate=86400',
+      'CDN-Cache-Control': isFresh ? 'no-store' : 'public, s-maxage=60',
+      'Vercel-CDN-Cache-Control': isFresh ? 'no-store' : 'public, s-maxage=60',
     }
   });
 }
