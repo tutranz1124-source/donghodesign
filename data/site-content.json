@@ -258,10 +258,10 @@
           "name": "Sofa Bouclé Trắng Dài (Curved Sofa)",
           "image": "/uploads/figma_modern_sofa.png",
           "position": {
-            "top": "69.5%",
-            "left": "5.3%",
-            "width": "66.3%",
-            "height": "19.1%",
+            "top": "69.4%",
+            "left": "5.6%",
+            "width": "63.8%",
+            "height": "25.9%",
             "zIndex": 10
           },
           "animation": {
@@ -515,6 +515,24 @@
       "finalImage": "/uploads/figma_luxury_classic.png",
       "items": [
         {
+          "id": "luxury_palm_lamp",
+          "name": "Đèn cây Lá cọ Mạ vàng (Golden Palm Lamp)",
+          "image": "/uploads/figma_luxury_palm_lamp.png",
+          "position": {
+            "top": "36.2%",
+            "left": "39.9%",
+            "width": "13.4%",
+            "height": "46.1%",
+            "zIndex": 2
+          },
+          "animation": {
+            "direction": "fade-scale",
+            "offsetY": 60,
+            "delay": 0.2,
+            "duration": 0.85
+          }
+        },
+        {
           "id": "luxury_bed",
           "name": "Giường ngủ Bọc nệm Sang trọng (Luxury Bed)",
           "image": "/uploads/figma_luxury_bed.png",
@@ -523,31 +541,13 @@
             "left": "7.1%",
             "width": "52.1%",
             "height": "54.7%",
-            "zIndex": 10
+            "zIndex": 4
           },
           "animation": {
             "direction": "slide-left",
             "offsetX": -80,
             "delay": 0.15,
             "duration": 0.9
-          }
-        },
-        {
-          "id": "luxury_palm_lamp",
-          "name": "Đèn cây Lá cọ Mạ vàng (Golden Palm Lamp)",
-          "image": "/uploads/figma_luxury_palm_lamp.png",
-          "position": {
-            "top": "30.1%",
-            "left": "45.1%",
-            "width": "13.4%",
-            "height": "46.1%",
-            "zIndex": 12
-          },
-          "animation": {
-            "direction": "fade-scale",
-            "offsetY": 60,
-            "delay": 0.2,
-            "duration": 0.85
           }
         },
         {
@@ -559,7 +559,7 @@
             "left": "75.0%",
             "width": "15.0%",
             "height": "17.3%",
-            "zIndex": 14
+            "zIndex": 6
           },
           "animation": {
             "direction": "slide-right",
@@ -577,7 +577,7 @@
             "left": "75.0%",
             "width": "15.0%",
             "height": "17.5%",
-            "zIndex": 14
+            "zIndex": 8
           },
           "animation": {
             "direction": "slide-right",
@@ -595,7 +595,7 @@
             "left": "80.1%",
             "width": "8.0%",
             "height": "27.4%",
-            "zIndex": 16
+            "zIndex": 10
           },
           "animation": {
             "direction": "float-bottom",
@@ -759,8 +759,8 @@
           "name": "Bàn tròn Gỗ chạm khắc Cổ (Antique Table)",
           "image": "/uploads/figma_heritage_table.png",
           "position": {
-            "top": "57.5%",
-            "left": "51.0%",
+            "top": "53.4%",
+            "left": "51%",
             "width": "16.5%",
             "height": "29.0%",
             "zIndex": 12
