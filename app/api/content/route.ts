@@ -7,16 +7,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const content = getSiteContent();
-  const { searchParams } = new URL(request.url);
-  const isFresh = searchParams.get('fresh') === '1' || searchParams.get('admin') === '1';
 
   return NextResponse.json(content, {
     headers: {
-      'Cache-Control': isFresh
-        ? 'no-store, no-cache, must-revalidate'
-        : 'public, s-maxage=60, stale-while-revalidate=86400',
-      'CDN-Cache-Control': isFresh ? 'no-store' : 'public, s-maxage=60',
-      'Vercel-CDN-Cache-Control': isFresh ? 'no-store' : 'public, s-maxage=60',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      Pragma: 'no-cache',
+      Expires: '0',
+      'CDN-Cache-Control': 'no-store',
+      'Vercel-CDN-Cache-Control': 'no-store',
     }
   });
 }
@@ -53,7 +51,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Đã lưu toàn bộ cấu hình trang chủ thành công!',
+      message: 'Đã lưu và đồng bộ toàn bộ cấu hình thành công!',
       content: data,
       savedToDisk: saved
     });
