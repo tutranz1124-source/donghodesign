@@ -285,7 +285,7 @@ export async function syncFileToGitHub(filePath: string, content: string | Buffe
         Accept: 'application/vnd.github.v3+json',
       },
       body: JSON.stringify({
-        message: `${commitMessage} [skip ci]`,
+        message: commitMessage,
         content: base64Content,
         branch,
         ...(sha ? { sha } : {}),
