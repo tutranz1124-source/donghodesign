@@ -1,27 +1,35 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getBlogPosts, saveBlogPosts, getBlogPostBySlug } from '@/lib/storage';
 import { verifyEditorSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get('slug');
   const status = searchParams.get('status');
+  const isFresh = searchParams.get('fresh') === '1' || searchParams.get('admin') === '1';
+
+  const cacheHeaders = {
+    'Cache-Control': isFresh
+      ? 'no-store, no-cache, must-revalidate'
+      : 'public, s-maxage=60, stale-while-revalidate=3600',
+    'CDN-Cache-Control': isFresh ? 'no-store' : 'public, s-maxage=60',
+  };
 
   if (slug) {
     const post = getBlogPostBySlug(slug);
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }
-    return NextResponse.json(post);
+    return NextResponse.json(post, { headers: cacheHeaders });
   }
 
   let posts = getBlogPosts();
   if (status) {
     posts = posts.filter(p => p.status === status);
   }
-  return NextResponse.json(posts);
+  return NextResponse.json(posts, { headers: cacheHeaders });
 }
 
 export async function POST(request: Request) {
