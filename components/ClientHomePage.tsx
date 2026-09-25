@@ -32,7 +32,7 @@ export default function ClientHomePage({ initialContent }: { initialContent: Sit
     }
 
     // 2. Fetch fresh content from API
-    fetch('/api/content')
+    fetch(`/api/content?t=${Date.now()}`, { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => {
         if (data && typeof data === 'object' && !data.error) {
