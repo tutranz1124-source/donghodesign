@@ -318,3 +318,24 @@ export interface LandingPageStats {
   storageLimitBytes: number; // e.g. 50 MB
   storageUsagePercent: number;
 }
+
+export interface BackupSnapshotItem {
+  id: string;
+  type: 'content' | 'posts' | 'landing' | 'users' | 'full';
+  fileName: string;
+  timestamp: string;
+  sizeBytes: number;
+  description?: string;
+  author?: string;
+}
+
+export interface FullSystemBackup {
+  version: string;
+  exportedAt: string;
+  siteContent: SiteContentData;
+  blogPosts: BlogPost[];
+  media: MediaItem[];
+  landingPages: LandingPageItem[];
+  users?: Partial<UserAccount>[];
+}
+
