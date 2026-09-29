@@ -68,6 +68,11 @@ export function getUsers(): UserAccount[] {
   }
 }
 
+import crypto from 'crypto';
+import { syncFileToGitHub } from './storage';
+
+const AUTH_SECRET = process.env.ADMIN_SESSION_SECRET || 'donghoa-design-secret-session-key-2026';
+
 export function saveUsers(users: UserAccount[]): boolean {
   // GUARANTEE: Never allow writing 0 admins
   const hasAdmin = users.some((u) => u.role === 'admin');
@@ -95,6 +100,9 @@ export function saveUsers(users: UserAccount[]): boolean {
   } catch (err) {
     // Read-only on Vercel is expected
   }
+
+  // Sync to GitHub repository for permanent persistence across deployments
+  syncFileToGitHub('data/users.json', JSON.stringify(users, null, 2), 'chore(auth): auto-persist users from admin').catch(() => {});
 
   return saved;
 }
@@ -152,7 +160,9 @@ export function createSessionToken(user: AuthSessionUser): string {
     ...user,
     exp: Date.now() + 1000 * 60 * 60 * 24 * 7 // 7 days
   };
-  return Buffer.from(JSON.stringify(payload)).toString('base64');
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
+  const signature = crypto.createHmac('sha256', AUTH_SECRET).update(payloadBase64).digest('hex');
+  return `${payloadBase64}.${signature}`;
 }
 
 export function verifySessionToken(token: string): AuthSessionUser | null {
@@ -168,7 +178,18 @@ export function verifySessionToken(token: string): AuthSessionUser | null {
       };
     }
 
-    const decodedStr = Buffer.from(token, 'base64').toString('utf8');
+    const parts = token.split('.');
+    const payloadBase64 = parts[0];
+    const signature = parts[1];
+
+    if (signature) {
+      const expectedSignature = crypto.createHmac('sha256', AUTH_SECRET).update(payloadBase64).digest('hex');
+      if (signature !== expectedSignature) {
+        return null;
+      }
+    }
+
+    const decodedStr = Buffer.from(payloadBase64, 'base64').toString('utf8');
     const parsed = JSON.parse(decodedStr);
     if (!parsed || !parsed.role || (parsed.exp && parsed.exp < Date.now())) {
       return null;
