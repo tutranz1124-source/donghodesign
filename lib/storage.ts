@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { BlogPost, MediaItem, SiteSettings, SiteContentData, LandingPageItem, LandingPageStats } from './types';
+import { BlogPost, MediaItem, SiteSettings, SiteContentData, LandingPageItem, LandingPageStats, BackupSnapshotItem, FullSystemBackup } from './types';
 import { DEFAULT_BLOG_POSTS } from './default-blog-posts';
 
 const dataDir = path.join(process.cwd(), 'data');
@@ -9,6 +9,7 @@ const blogPostsFile = path.join(dataDir, 'blog-posts.json');
 const siteContentFile = path.join(dataDir, 'site-content.json');
 const mediaFile = path.join(dataDir, 'media.json');
 const landingPagesFile = path.join(dataDir, 'landing-pages.json');
+const backupsDir = path.join(dataDir, 'backups');
 
 // Serverless writable fallback paths (e.g. /tmp on Vercel)
 const tmpDir = os.tmpdir();
@@ -16,12 +17,14 @@ const tmpSiteContentFile = path.join(tmpDir, 'donghoa-site-content.json');
 const tmpBlogPostsFile = path.join(tmpDir, 'donghoa-blog-posts.json');
 const tmpMediaFile = path.join(tmpDir, 'donghoa-media.json');
 const tmpLandingPagesFile = path.join(tmpDir, 'donghoa-landing-pages.json');
+const tmpBackupsDir = path.join(tmpDir, 'donghoa-backups');
 
 declare global {
   var __siteContentCache: SiteContentData | undefined;
   var __blogPostsCache: BlogPost[] | undefined;
   var __mediaCache: MediaItem[] | undefined;
   var __landingPagesCache: LandingPageItem[] | undefined;
+  var __lastBackupTimestamps: Record<string, number> | undefined;
 }
 
 const DEFAULT_SITE_CONTENT: SiteContentData = {
@@ -336,6 +339,9 @@ export function updateSiteContent(newContent: SiteContentData): boolean {
   // Asynchronously commit to GitHub repository for permanent serverless persistence
   syncFileToGitHub('data/site-content.json', JSON.stringify(merged, null, 2), 'chore(cms): auto-persist site-content from admin').catch(() => {});
 
+  // Create automatic versioned backup snapshot
+  createBackupSnapshot('content', merged);
+
   return saved;
 }
 
@@ -402,6 +408,9 @@ export function saveBlogPosts(posts: BlogPost[]): boolean {
 
   // Asynchronously commit to GitHub repository for permanent serverless persistence
   syncFileToGitHub('data/blog-posts.json', JSON.stringify(posts, null, 2), 'chore(cms): auto-persist blog-posts from admin').catch(() => {});
+
+  // Create automatic versioned backup snapshot
+  createBackupSnapshot('posts', posts);
 
   return saved;
 }
@@ -571,6 +580,9 @@ export function saveLandingPages(pages: LandingPageItem[]): boolean {
   // 3. Commit to GitHub repo asynchronously
   syncFileToGitHub('data/landing-pages.json', JSON.stringify(pages, null, 2), 'chore(cms): auto-persist landing pages from admin').catch(() => {});
 
+  // Create automatic versioned backup snapshot
+  createBackupSnapshot('landing', pages);
+
   return saved;
 }
 
@@ -597,4 +609,168 @@ export function getLandingPageStats(): LandingPageStats {
     storageUsagePercent
   };
 }
+
+// ==========================================
+// 🛡️ MULTI-LAYER BACKUP & VERSION HISTORY
+// ==========================================
+
+export function createBackupSnapshot(
+  type: 'content' | 'posts' | 'landing' | 'full',
+  data: any,
+  description?: string
+): string | null {
+  try {
+    const now = Date.now();
+    if (!globalThis.__lastBackupTimestamps) {
+      globalThis.__lastBackupTimestamps = {};
+    }
+    const lastTime = globalThis.__lastBackupTimestamps[type] || 0;
+    // Throttle to at most 1 snapshot per 10 seconds per type to prevent spamming
+    if (now - lastTime < 10000 && type !== 'full') {
+      return null;
+    }
+    globalThis.__lastBackupTimestamps[type] = now;
+
+    const isoStr = new Date().toISOString();
+    const cleanTimestamp = isoStr.replace(/:/g, '-').replace(/\..+/, '');
+    const fileName = `${type}-${cleanTimestamp}.json`;
+    const jsonString = JSON.stringify(data, null, 2);
+
+    // 1. Save to /tmp backup dir
+    try {
+      if (!fs.existsSync(tmpBackupsDir)) {
+        fs.mkdirSync(tmpBackupsDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(tmpBackupsDir, fileName), jsonString, 'utf8');
+    } catch (e) {}
+
+    // 2. Save to data/backups dir
+    try {
+      if (!fs.existsSync(backupsDir)) {
+        fs.mkdirSync(backupsDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(backupsDir, fileName), jsonString, 'utf8');
+    } catch (e) {}
+
+    // 3. Commit snapshot to GitHub for permanent cloud versioning
+    syncFileToGitHub(`data/backups/${fileName}`, jsonString, `backup(${type}): snapshot ${cleanTimestamp} ${description || ''}`).catch(() => {});
+
+    return fileName;
+  } catch (err) {
+    console.error(`[Backup Snapshot Error for ${type}]:`, err);
+    return null;
+  }
+}
+
+export function getBackupSnapshots(): BackupSnapshotItem[] {
+  const map = new Map<string, BackupSnapshotItem>();
+
+  const scanDir = (dir: string) => {
+    try {
+      if (!fs.existsSync(dir)) return;
+      const files = fs.readdirSync(dir);
+      for (const file of files) {
+        if (!file.endsWith('.json')) continue;
+        const fullPath = path.join(dir, file);
+        const stats = fs.statSync(fullPath);
+        
+        let type: BackupSnapshotItem['type'] = 'content';
+        if (file.startsWith('posts-')) type = 'posts';
+        else if (file.startsWith('landing-')) type = 'landing';
+        else if (file.startsWith('full-')) type = 'full';
+        else if (file.startsWith('users-')) type = 'users';
+
+        if (!map.has(file)) {
+          map.set(file, {
+            id: file,
+            type,
+            fileName: file,
+            timestamp: stats.mtime.toISOString(),
+            sizeBytes: stats.size,
+            description: `Bản lưu ${type.toUpperCase()} lúc ${stats.mtime.toLocaleString('vi-VN')}`
+          });
+        }
+      }
+    } catch (e) {}
+  };
+
+  scanDir(tmpBackupsDir);
+  scanDir(backupsDir);
+
+  const list = Array.from(map.values());
+  list.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  return list;
+}
+
+export function restoreBackupSnapshot(fileName: string): { success: boolean; message: string } {
+  try {
+    let filePath = path.join(tmpBackupsDir, fileName);
+    if (!fs.existsSync(filePath)) {
+      filePath = path.join(backupsDir, fileName);
+    }
+    if (!fs.existsSync(filePath)) {
+      return { success: false, message: `Không tìm thấy file backup "${fileName}"` };
+    }
+
+    const raw = fs.readFileSync(filePath, 'utf8');
+    const parsed = JSON.parse(raw);
+
+    if (fileName.startsWith('content-')) {
+      updateSiteContent(parsed);
+      return { success: true, message: 'Đã khôi phục toàn bộ cấu hình trang chủ từ bản lưu!' };
+    } else if (fileName.startsWith('posts-')) {
+      saveBlogPosts(parsed);
+      return { success: true, message: 'Đã khôi phục danh sách bài viết từ bản lưu!' };
+    } else if (fileName.startsWith('landing-')) {
+      saveLandingPages(parsed);
+      return { success: true, message: 'Đã khôi phục danh sách Landing Page từ bản lưu!' };
+    } else if (fileName.startsWith('full-')) {
+      restoreFullSystemBackup(parsed);
+      return { success: true, message: 'Đã khôi phục toàn bộ hệ thống từ gói sao lưu tổng thể!' };
+    }
+
+    return { success: false, message: 'Loại file backup không xác định.' };
+  } catch (err: any) {
+    return { success: false, message: `Lỗi khôi phục: ${err.message}` };
+  }
+}
+
+export function getFullSystemBackup(): FullSystemBackup {
+  return {
+    version: '1.0.0',
+    exportedAt: new Date().toISOString(),
+    siteContent: getSiteContent(),
+    blogPosts: getBlogPosts(),
+    media: getMediaLibrary(),
+    landingPages: getLandingPages()
+  };
+}
+
+export function restoreFullSystemBackup(backup: FullSystemBackup): { success: boolean; message: string } {
+  try {
+    if (!backup || typeof backup !== 'object') {
+      return { success: false, message: 'Dữ liệu file backup không hợp lệ.' };
+    }
+
+    if (backup.siteContent) {
+      updateSiteContent(backup.siteContent);
+    }
+    if (Array.isArray(backup.blogPosts)) {
+      saveBlogPosts(backup.blogPosts);
+    }
+    if (Array.isArray(backup.media)) {
+      saveMediaLibrary(backup.media);
+    }
+    if (Array.isArray(backup.landingPages)) {
+      saveLandingPages(backup.landingPages);
+    }
+
+    createBackupSnapshot('full', backup, 'Khôi phục toàn diện');
+
+    return { success: true, message: 'Đã khôi phục thành công toàn bộ website!' };
+  } catch (err: any) {
+    return { success: false, message: `Lỗi khôi phục hệ thống: ${err.message}` };
+  }
+}
+
 
