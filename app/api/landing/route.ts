@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLandingPages, saveLandingPages, getLandingPageStats } from '@/lib/storage';
+import { verifyEditorSession } from '@/lib/auth';
 import { LandingPageItem } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -32,6 +33,11 @@ export async function GET() {
 
 // 2. POST: Create a new landing page
 export async function POST(req: NextRequest) {
+  const isAuth = verifyEditorSession();
+  if (!isAuth) {
+    return NextResponse.json({ error: 'Chỉ Quản trị viên/Biên tập viên mới có quyền tạo Landing Page.' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { title, slug, type, htmlContent, proxyUrl, isActive = true } = body;
@@ -104,6 +110,11 @@ export async function POST(req: NextRequest) {
 
 // 3. PUT: Update an existing landing page
 export async function PUT(req: NextRequest) {
+  const isAuth = verifyEditorSession();
+  if (!isAuth) {
+    return NextResponse.json({ error: 'Chỉ Quản trị viên/Biên tập viên mới có quyền cập nhật Landing Page.' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { id, title, slug, type, htmlContent, proxyUrl, isActive } = body;
@@ -173,6 +184,11 @@ export async function PUT(req: NextRequest) {
 
 // 4. DELETE: Delete a landing page
 export async function DELETE(req: NextRequest) {
+  const isAuth = verifyEditorSession();
+  if (!isAuth) {
+    return NextResponse.json({ error: 'Chỉ Quản trị viên/Biên tập viên mới có quyền xóa Landing Page.' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     let id = searchParams.get('id');
