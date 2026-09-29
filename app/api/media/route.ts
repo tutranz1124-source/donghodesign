@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { getMediaLibrary, saveMediaLibrary, syncFileToGitHub } from '@/lib/storage';
-import { verifyAdminSession } from '@/lib/auth';
+import { verifyAdminSession, verifyEditorSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +12,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const isAuth = verifyEditorSession();
+  if (!isAuth) {
+    return NextResponse.json({ error: 'Chỉ Quản trị viên/Biên tập viên mới có quyền tải lên media.' }, { status: 401 });
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -19,7 +24,11 @@ export async function POST(request: Request) {
     const category = (formData.get('category') as string) || 'Asset';
 
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json({ error: 'Không tìm thấy file để tải lên' }, { status: 400 });
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Dung lượng file vượt quá giới hạn 15 MB' }, { status: 400 });
     }
 
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
