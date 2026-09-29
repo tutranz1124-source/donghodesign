@@ -1,12 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import nodemailer from 'nodemailer';
+import { getSiteContent, syncFileToGitHub } from '@/lib/storage';
+import { verifyEditorSession } from '@/lib/auth';
 
-import { getSiteContent } from '@/lib/storage';
+export const dynamic = 'force-dynamic';
 
 const dataDir = path.join(process.cwd(), 'data');
 const requestsFile = path.join(dataDir, 'customer-requests.json');
+const tmpRequestsFile = path.join(os.tmpdir(), 'donghoa-customer-requests.json');
+
+declare global {
+  var __customerRequestsCache: any[] | undefined;
+}
 
 function getTargetEmail(): string {
   try {
@@ -20,20 +28,59 @@ function getTargetEmail(): string {
   return process.env.TARGET_EMAIL || 'Donghoadesign@gmail.com';
 }
 
-function saveRequestLocally(record: any) {
+function getCustomerRequests(): any[] {
+  if (globalThis.__customerRequestsCache) {
+    return globalThis.__customerRequestsCache;
+  }
+
   try {
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+    if (fs.existsSync(tmpRequestsFile)) {
+      const raw = fs.readFileSync(tmpRequestsFile, 'utf8');
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        globalThis.__customerRequestsCache = list;
+        return list;
+      }
     }
-    let list: any[] = [];
+  } catch (e) {}
+
+  try {
     if (fs.existsSync(requestsFile)) {
       const raw = fs.readFileSync(requestsFile, 'utf8');
-      list = JSON.parse(raw);
+      const list = JSON.parse(raw);
+      if (Array.isArray(list)) {
+        globalThis.__customerRequestsCache = list;
+        return list;
+      }
     }
+  } catch (e) {}
+
+  return [];
+}
+
+function saveRequestLocally(record: any) {
+  try {
+    const list = getCustomerRequests();
     list.unshift(record);
-    fs.writeFileSync(requestsFile, JSON.stringify(list, null, 2), 'utf8');
+    globalThis.__customerRequestsCache = list;
+
+    const jsonString = JSON.stringify(list, null, 2);
+
+    try {
+      fs.writeFileSync(tmpRequestsFile, jsonString, 'utf8');
+    } catch (e) {}
+
+    try {
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      fs.writeFileSync(requestsFile, jsonString, 'utf8');
+    } catch (e) {}
+
+    // Cloud auto-sync to GitHub
+    syncFileToGitHub('data/customer-requests.json', jsonString, `lead(contact): new request from ${record.fullName}`).catch(() => {});
   } catch (err) {
-    console.error('Error saving customer request locally:', err);
+    console.error('Error saving customer request:', err);
   }
 }
 
@@ -57,8 +104,8 @@ async function sendViaFormSubmit(
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Referer': 'https://donghoa-design-six.vercel.app',
-        'Origin': 'https://donghoa-design-six.vercel.app',
+        'Referer': 'https://donghoadesign.com',
+        'Origin': 'https://donghoadesign.com',
       },
       body: JSON.stringify({
         _subject: `[Đông Hòa Design] Yêu Cầu Tư Vấn & Báo Giá: ${data.fullName} - ${data.phone}`,
@@ -73,7 +120,7 @@ async function sendViaFormSubmit(
       }),
     });
 
-    const resJson = await response.json();
+    const resJson = await response.json().catch(() => ({}));
     return { success: true, resJson };
   } catch (err: any) {
     console.warn('FormSubmit dispatch warning:', err.message);
@@ -162,16 +209,36 @@ async function sendViaSmtp(
   }
 }
 
+export async function GET(request: NextRequest) {
+  const isAuth = verifyEditorSession();
+  if (!isAuth) {
+    return NextResponse.json({ error: 'Chỉ Quản trị viên mới có quyền xem danh sách yêu cầu tư vấn.' }, { status: 403 });
+  }
+
+  const requests = getCustomerRequests();
+  return NextResponse.json({
+    success: true,
+    total: requests.length,
+    requests
+  });
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { fullName, phone, propertyType, area, need } = body;
+    const { fullName, phone, propertyType, area, need, website_hp } = body;
 
-    if (!fullName || !phone) {
-      return NextResponse.json(
-        { error: 'Vui lòng nhập họ tên và số điện thoại.' },
-        { status: 400 }
-      );
+    // Honeypot spam check
+    if (website_hp) {
+      return NextResponse.json({ success: true, message: 'Yêu cầu tư vấn đã được ghi nhận.' });
+    }
+
+    if (!fullName || !fullName.trim()) {
+      return NextResponse.json({ error: 'Vui lòng nhập họ và tên của bạn.' }, { status: 400 });
+    }
+
+    if (!phone || !phone.trim() || phone.trim().length < 8) {
+      return NextResponse.json({ error: 'Vui lòng nhập số điện thoại hợp lệ (tối thiểu 8-11 số).' }, { status: 400 });
     }
 
     const targetEmail = getTargetEmail();
@@ -188,11 +255,11 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
     };
 
-    // 1. Always persist locally
+    // 1. Always persist locally and cloud-sync to GitHub
     saveRequestLocally(newRecord);
 
     // 2. Dispatch via FormSubmit directly to configured email
-    await sendViaFormSubmit(
+    sendViaFormSubmit(
       {
         fullName: newRecord.fullName,
         phone: newRecord.phone,
@@ -201,10 +268,10 @@ export async function POST(request: Request) {
         need: newRecord.need,
       },
       targetEmail
-    );
+    ).catch(() => {});
 
     // 3. Dispatch via SMTP if credentials are configured
-    await sendViaSmtp(
+    sendViaSmtp(
       {
         fullName: newRecord.fullName,
         phone: newRecord.phone,
@@ -213,7 +280,7 @@ export async function POST(request: Request) {
         need: newRecord.need,
       },
       targetEmail
-    );
+    ).catch(() => {});
 
     return NextResponse.json({
       success: true,
